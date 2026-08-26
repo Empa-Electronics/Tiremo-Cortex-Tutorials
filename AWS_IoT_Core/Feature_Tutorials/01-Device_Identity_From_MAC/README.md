@@ -1,0 +1,48 @@
+<table class="sphinxhide" width="100%">
+  <tr>
+    <td align="center">
+      <h1>Device Identity from MAC</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+    </td>
+  </tr>
+</table>
+
+
+# Device Identity from MAC
+
+***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Feature Tutorials · Difficulty: Medium***
+
+## Introduction
+
+Fleet provisioning and shadow topics both need a stable per-device identity. Rather than hardcoding one, derive it from hardware that's already unique: the ESP32's station MAC.
+
+## You Will Learn
+
+- `AT+CIPSTAMAC?` and formatting a MAC as a lowercase hex device ID
+- Why identity should be read from hardware, not baked into firmware source
+
+## Prerequisites
+
+- [Cloud Messaging](../../../Cloud_Messaging/) — mTLS MQTT connection working
+- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Reference Implementation
+
+This tutorial is one slice of the reference firmware kept in this repo.
+Read these before or after attempting the steps below to check your
+approach:
+
+- [tiremo_iot_identity.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_identity.c)
+- [tiremo_esp32.h — GetHwEui](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/include/tiremo_esp32.h)
+
+## Step Outline
+
+1. Read the station MAC via `GetHwEui()`
+2. Format it as a 12-hex-digit lowercase device ID with no separators
+3. Log it on every boot and confirm it's stable across power cycles
+
+## Done When
+
+The same device ID is produced on every boot, and differs between two different boards.
+
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

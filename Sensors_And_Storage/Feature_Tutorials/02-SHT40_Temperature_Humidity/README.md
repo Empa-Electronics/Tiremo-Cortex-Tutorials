@@ -1,0 +1,48 @@
+<table class="sphinxhide" width="100%">
+  <tr>
+    <td align="center">
+      <h1>SHT40 Temperature / Humidity</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+    </td>
+  </tr>
+</table>
+
+
+# SHT40 Temperature / Humidity
+
+***Board: Tiremo Cortex (ESP32) · Section: Sensors & Local Storage / Feature Tutorials · Difficulty: Easy***
+
+## Introduction
+
+SHT40 is the first real sensor driver in the stack, and the simplest — a single I2C transaction returns both temperature and humidity. It's also the sensor the shadow schema (AWS IoT Core) will later tune via `unit` and `offset`.
+
+## You Will Learn
+
+- The Sensirion SHT4x measurement command/response protocol
+- Converting raw ticks to milli-°C / milli-%RH
+
+## Prerequisites
+
+- [01-I2C_Bus_Bringup](../01-I2C_Bus_Bringup/)
+- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Reference Implementation
+
+This tutorial is one slice of the reference firmware kept in this repo.
+Read these before or after attempting the steps below to check your
+approach:
+
+- [tiremo_sht40.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/sht40/Src/tiremo_sht40.c)
+- [SHADOW_README.md — sht40 fields](../../../referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md)
+
+## Step Outline
+
+1. Send the SHT40 measurement command and read back 6 bytes with CRC
+2. Convert to milli-°C / milli-%RH per the Sensirion formula
+3. Log a reading once per second
+
+## Done When
+
+UART prints plausible room temperature/humidity, stable within sensor noise across repeated reads.
+
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

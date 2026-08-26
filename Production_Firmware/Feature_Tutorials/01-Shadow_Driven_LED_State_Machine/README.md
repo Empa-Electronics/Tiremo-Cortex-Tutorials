@@ -1,0 +1,48 @@
+<table class="sphinxhide" width="100%">
+  <tr>
+    <td align="center">
+      <h1>Shadow-Driven LED State Machine</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+    </td>
+  </tr>
+</table>
+
+
+# Shadow-Driven LED State Machine
+
+***Board: Tiremo Cortex (ESP32) · Section: Production Firmware / Feature Tutorials · Difficulty: Hard***
+
+## Introduction
+
+Getting_Started Tutorial 05 built the pattern engine. This tutorial adds the selection logic on top: which mode is active is a function of MQTT connection state, alarms, and battery level — not something set directly.
+
+## You Will Learn
+
+- Priority-ordered mode selection (alert beats low_battery beats connecting beats normal)
+- Reporting `current_mode` back to the shadow so the cloud sees live device state
+
+## Prerequisites
+
+- [AWS IoT Core](../../../AWS_IoT_Core/) complete
+- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Reference Implementation
+
+This tutorial is one slice of the reference firmware kept in this repo.
+Read these before or after attempting the steps below to check your
+approach:
+
+- [tiremo_iot_runtime.c — prvSelectLedMode/prvServiceLeds](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_runtime.c)
+- [SHADOW_README.md — desired.leds](../../../referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md)
+
+## Step Outline
+
+1. Implement mode selection: off (if disabled) > alert > low_battery > connecting > normal
+2. Drive the Getting_Started pattern engine from the selected mode
+3. Publish `current_mode` in shadow reported and confirm it updates live in the AWS console as state changes
+
+## Done When
+
+Disconnecting WiFi flips the LED to `connecting` within one poll cycle, and the shadow's reported `current_mode` matches what's physically lit.
+
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

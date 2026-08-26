@@ -1,0 +1,48 @@
+<table class="sphinxhide" width="100%">
+  <tr>
+    <td align="center">
+      <h1>Standalone Environmental Logger</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+    </td>
+  </tr>
+</table>
+
+
+# Standalone Environmental Logger
+
+***Board: Tiremo Cortex (ESP32) · Section: Sensors & Local Storage / Design Tutorials · Difficulty: Medium***
+
+## Introduction
+
+Before adding a single line of networking code, prove the full sensor stack works together: SHT40 + LIS2DE12 + battery + mic sampled on a schedule, with the last N readings persisted to flash and dumped over UART on boot.
+
+## You Will Learn
+
+- Composing multiple drivers into one sample loop without a cloud dependency
+- Batch-storing readings to flash and replaying them on boot
+
+## Prerequisites
+
+- All of Sensors & Local Storage / Feature Tutorials (01–07)
+- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Reference Implementation
+
+This tutorial is one slice of the reference firmware kept in this repo.
+Read these before or after attempting the steps below to check your
+approach:
+
+- [tiremo_app_sensor.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app_sensor.c)
+- [tiremo_iot_runtime.c — prvSampleSensors (the production version of this loop)](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_runtime.c)
+
+## Step Outline
+
+1. Sample all four sensors on a fixed interval using the shared SysTick loop
+2. Store the last N samples as a ring buffer in flash
+3. On boot, dump stored history over UART before resuming live sampling
+
+## Done When
+
+Power-cycling mid-run does not lose the last several samples; UART shows them replayed on the next boot.
+
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

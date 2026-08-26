@@ -1,0 +1,42 @@
+<table class="sphinxhide" width="100%">
+  <tr>
+    <td align="center">
+      <h1>AWS IoT Core Tutorials</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+    </td>
+  </tr>
+</table>
+
+
+# Feature Tutorials
+
+Feature tutorials cover one concept each — a single driver, a single AT command sequence, a single cloud primitive. Work through them in order; each one names its prerequisite.
+
+ <table style="width:100%">
+ <tr>
+ <td width="35%" align="center"><b>Tutorial</b>
+ <td width="65%" align="center"><b>Description</b>
+ </tr>
+ <tr>
+ <td align="center"><a href="./01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
+ <td>Derive a stable deviceId/thingName from the ESP32's station MAC.</td>
+ </tr>
+ <tr>
+ <td align="center"><a href="./02-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
+ <td>Implement AWS IoT fleet provisioning: CreateKeysAndCertificate → RegisterThing → store the issued cert.</td>
+ </tr>
+ <tr>
+ <td align="center"><a href="./03-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
+ <td>Build just enough JSON find/write helpers to parse shadow documents without a full parser library.</td>
+ </tr>
+ <tr>
+ <td align="center"><a href="./04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
+ <td>On boot, fetch the shadow, apply desired state locally, and echo reported so AWS clears the delta.</td>
+ </tr>
+ <tr>
+ <td align="center"><a href="./05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
+ <td>Subscribe to shadow/update/delta and apply a change live, with no reboot.</td>
+ </tr>
+ </table>
+
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

@@ -1,0 +1,30 @@
+<table class="sphinxhide" width="100%">
+  <tr>
+    <td align="center">
+      <h1>Production Firmware Tutorials</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+    </td>
+  </tr>
+</table>
+
+
+# Design Tutorials
+
+Design tutorials combine several feature tutorials into one working subsystem, closer to what actually ships.
+
+ <table style="width:100%">
+ <tr>
+ <td width="35%" align="center"><b>Tutorial</b>
+ <td width="65%" align="center"><b>Description</b>
+ </tr>
+ <tr>
+ <td align="center"><a href="./01-Full_Event_Loop_Integration/">Full Event Loop Integration (Capstone)</a></td>
+ <td>Assemble every prior tutorial into one ProbeAndInitialize() / Run() firmware image.</td>
+ </tr>
+ <tr>
+ <td align="center"><a href="./02-Add_A_New_Sensor_End_To_End/">Add a New Sensor End-to-End</a></td>
+ <td>Extension template: driver → shadow schema → alarm → telemetry, for a sensor not in the kit.</td>
+ </tr>
+ </table>
+
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
