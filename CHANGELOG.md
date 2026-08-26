@@ -169,6 +169,21 @@ release.
   refuses to overwrite an existing folder. Root README and
   `docs-tr/README.md` updated with the command; noted as a natural fit
   for a future "Creating a New Project" tutorial, not yet written.
+- Added [`Hardware.md`](Hardware.md) (+ Turkish translation): a
+  board-level reference page, diagrams and a pinout table only, no
+  firmware. Two Mermaid diagrams — a board block diagram (MCU, ten
+  LEDs, USER button, the shared SHT40/LIS2DE12 I2C bus, the MP23ABS1
+  microphone, the internal supply-voltage monitor, the ESP32 WiFi
+  module, and the onboard SWD/UART0 debug probe) and a host-connection
+  diagram (one USB cable carrying both the SWD and UART0 paths) — plus
+  a full port/pin table. Every pin and address transcribed from the
+  reference firmware's `board_config.h`, not guessed; cross-checked for
+  internal consistency (no two peripherals claim the same pin) and
+  against each sensor's own driver header for anything board_config.h
+  might have missed. Also fixed a real, unrelated bug found along the
+  way: `tools/__pycache__/tdf.cpython-314.pyc` had been committed by
+  accident in an earlier commit — untracked it (`git rm --cached`,
+  file kept on disk) and added `__pycache__/`/`*.pyc` to `.gitignore`.
 
 ### Changed
 

@@ -57,6 +57,10 @@ Each topic splits into two kinds of tutorial:
 git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 ```
 
+## Hardware
+
+[Hardware Overview](./Hardware.md) — board block diagram, host connection diagram, and pinout reference. No firmware, just the board itself.
+
 ## Release Notes
 
 [Change Log](./CHANGELOG.md)
@@ -327,56 +331,35 @@ solution, when one exists, in a local `Sw/` folder next to its
 status.
 
 Buildable tutorials share one copy of the ABOV vendor SDK, checked into
-this repo once at [`Generation/`](Generation/) (~107 MB — see that
-folder's own note on why it's shared rather than duplicated per tutorial,
-and its bundled `Document/LICENSE.md` for the vendor's BSD-3-Clause
-terms), and share one build/flash CLI: [`tools/tdf.py`](tools/tdf.py)
-("Tiremo Development Framework" — the same role `idf.py` plays for
-ESP-IDF). First time only:
+this repo once at [`Generation/`](Generation/), and one build/flash CLI:
+[`tools/tdf.py`](tools/tdf.py) ("Tiremo Development Framework" — the
+same role `idf.py` plays for ESP-IDF). First time only:
 
 ```sh
-./install.sh          # checks for / offers to install arm-none-eabi-gcc, cmake, ninja, and a tdf_venv/ with pyserial
-source ./export.sh     # puts tdf.py on PATH and activates tdf_venv/ for this shell session (optional)
+./install.sh
+source ./export.sh
 ```
 
-Then, from any tutorial's `Sw/` directory: `tdf.py build`, `tdf.py
-flash`, `tdf.py monitor` (reset the board over SWD, then stream the
-UART log color-coded by level), `tdf.py clean`, `tdf.py clean-device`
-(mass-erases the connected board's chip flash). `tdf.py build`/`flash`/
-`clean`/`clean-device` are thin wrappers — they own no OpenOCD or
-compiler logic themselves, every command just runs the matching `cmake
---build build [--target ...]` in that tutorial's `CMakeLists.txt`, and
-`tdf.py` self-locates the repo from its own file path, so `python
-tools/tdf.py build` works identically with or without `export.sh`.
-`monitor` is the one exception: reading a live UART needs an actual
-serial port, which CMake/OpenOCD have no concept of, so that part uses
-`pyserial` — installed into a dedicated `tdf_venv/` by `install.sh`
-(not a plain `pip install`, which fails outright on most current Python
-installs — PEP 668) and activated by `export.sh`. Runs identically in
-cmd.exe, PowerShell, bash, or zsh; no Git Bash or WSL required on
-Windows to build, flash, or monitor (`install.sh`/`export.sh`
-themselves are bash, though — Windows users either run those once from
-Git Bash/WSL, or install the tools manually and skip straight to
-`python tools\tdf.py build`). See
-[01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
-for the full story, including why this repo is on CMake rather than a
-hand-written Makefile.
+Then, from any tutorial's `Sw/` directory:
 
-Starting your own project instead of following a tutorial? `tdf.py
-create-project <Name> [--dir PARENT_DIR]` scaffolds a new, empty,
-buildable `<Name>/Sw/` — `CMakeLists.txt`, `Src/main.c`, and an empty
-`Src/prv_user_code.c`, deliberately minimal (no `board_config.h`, no
-`Tiremo_Hal` — copy those in from a tutorial as needed). It computes the
-relative path back to this repo's shared `Generation/` SDK for wherever
-the new folder actually lands, rather than assuming the fixed
-three-levels-deep layout every `Getting_Started` tutorial uses, so it
-works anywhere inside this repo, not just under `Getting_Started/`.
+```sh
+tdf.py build             # configure + build
+tdf.py flash              # build, then flash over SWD
+tdf.py monitor            # reset the board, stream the UART log (color-coded)
+tdf.py clean              # remove build/
+tdf.py clean-device       # mass-erase the board's chip flash (asks first)
+tdf.py create-project <Name>   # scaffold a new, empty Sw/ project
+```
 
-- [x] [Getting_Started/01-Hello_Blink](Getting_Started/01-Hello_Blink/) — builds, links, flashed and verified on a real ABOV A34G43A Starter Kit over SWD
-- [x] [Getting_Started/02-SysTick_Timing](Getting_Started/02-SysTick_Timing/) — builds, links, flashed and confirmed on a real ABOV A34G43A Starter Kit: both LEDs blink at clearly different rates
-- [x] [Getting_Started/03-Debug_UART_Logging](Getting_Started/03-Debug_UART_Logging/) — builds, links (at two debug levels, verified different binary sizes), flashed and verified over SWD, and — via `tdf.py monitor`, added in Tutorial 04 — actual UART output genuinely confirmed too
-- [x] [Getting_Started/04-Button_Read_And_Debounce](Getting_Started/04-Button_Read_And_Debounce/) — builds, links, flashed + verified over SWD; `tdf.py monitor`'s boot/LED log lines confirmed for real; button-press/debounce behavior itself still needs a human finger, not yet confirmed
-- [x] [Getting_Started/05-Ten_LED_Pattern_Driver](Getting_Started/05-Ten_LED_Pattern_Driver/) — builds, links, flashed + verified over SWD; `tdf.py monitor` confirmed the SOLID→BLINK→PULSE auto-cycle for real, exactly on its 8 s interval; whether all ten LEDs are visibly staggered and button-triggered advance work still need eyes on the board and a human finger
+See [01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
+for the full story — what each command actually does, why CMake instead
+of a hand-written Makefile, and Windows-specific notes.
+
+- [x] [01-Hello_Blink](Getting_Started/01-Hello_Blink/) — built, flashed, verified on real hardware
+- [x] [02-SysTick_Timing](Getting_Started/02-SysTick_Timing/) — built, flashed, verified
+- [x] [03-Debug_UART_Logging](Getting_Started/03-Debug_UART_Logging/) — built, flashed, verified; UART output confirmed via `tdf.py monitor`
+- [x] [04-Button_Read_And_Debounce](Getting_Started/04-Button_Read_And_Debounce/) — built, flashed, verified; button-press behavior itself not yet confirmed (needs a human finger — see the tutorial's own Solution)
+- [x] [05-Ten_LED_Pattern_Driver](Getting_Started/05-Ten_LED_Pattern_Driver/) — built, flashed, verified; auto-cycle timing confirmed; LED staggering and button-triggered advance not yet confirmed (see the tutorial's own Solution)
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 
