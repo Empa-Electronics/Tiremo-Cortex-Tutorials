@@ -7,7 +7,7 @@
         <img alt="Tiremo Cortex" src="images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="images/banner.png" width="65%">
+      <img alt="" src="images/banner.png" width="100%">
       <h1>Tiremo Cortex — In-Depth Tutorials</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -318,6 +318,6 @@ finished course. The plan is for each tutorial to eventually ship its own
 worked solution in a local `Sw/` folder next to its `README.md`; check that
 tutorial's own **Solution** section for current status.
 
-<p align="center"><img alt="" src="images/banner.png" width="65%"></p>
+<p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

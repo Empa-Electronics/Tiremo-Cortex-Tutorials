@@ -6,7 +6,7 @@
         <img alt="Tiremo Cortex" src="../../../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../../../images/banner.png" width="65%">
+      <img alt="" src="../../../images/banner.png" width="100%">
       <h1>AWS IoT Jobs — Health Check</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -46,6 +46,6 @@ No solution has been written for this tutorial yet — this repo is still a curr
 
 A job created in the AWS console reaches `SUCCEEDED` with `firmware_version`, `connectivity`, `mqtt`, and `uptime_s` populated in `statusDetails`.
 
-<p align="center"><img alt="" src="../../../images/banner.png" width="65%"></p>
+<p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
