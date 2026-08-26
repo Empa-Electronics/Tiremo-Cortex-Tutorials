@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -20,31 +21,56 @@
 
 ## Introduction
 
-The A34G43x has no hardware RTC, so wall-clock time is reconstructed from an NTP-provided epoch plus the free-running SysTick counter. This tutorial builds that pattern standalone; ESP32 Connectivity will feed it a real NTP sync.
+The A34G43x has no hardware RTC. Wall-clock time is `epoch_at_sync + (SysTick_now - SysTick_at_sync) / 1000`. This tutorial plants a known epoch by hand; ESP32 Connectivity will later feed a real NTP sample into the same API.
 
 ## You Will Learn
 
-- Why `epoch_at_sync + (SysTick_now - SysTick_at_sync)` is enough without a battery-backed RTC
-- The tradeoff: this clock resets to zero on every reboot until re-synced
+- Why that offset is enough without a battery-backed RTC
+- The tradeoff: RAM-only — every reboot starts unsynced until `SetEpoch()` runs again
+- [`Sw/Common/Src/tiremo_clock.c`](./Sw/Common/Src/tiremo_clock.c) is copied from the reference firmware
 
 ## Prerequisites
 
-- [06-Flash_Backed_Config](../06-Flash_Backed_Config/)
-- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+- [06-Flash_Backed_Config](../06-Flash_Backed_Config/) conceptually; this `Sw/` is SysTick + UART only
+
+## Understanding the offset
+
+```c
+void TIREMO_Clock_SetEpoch(uint32_t epochSeconds)
+{
+    s_epochAtSync = epochSeconds;
+    s_msAtSync = TIREMO_SysTick_GetMs();
+    s_synced = true;
+}
+
+*pEpochSeconds = s_epochAtSync + ((TIREMO_SysTick_GetMs() - s_msAtSync) / 1000U);
+```
+
+No NTP here. [`prv_user_code.c`](./Sw/Src/prv_user_code.c) calls `SetEpoch(1704067200)` (2024-01-01 00:00:00 UTC) once at boot.
 
 ## Solution
 
-No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
+```sh
+cd Sw
+tdf.py build
+tdf.py flash
+tdf.py monitor
+```
 
-## Step Outline
+**Verified:** `.text` 12344 bytes, flash **Verified OK**. Consecutive seconds:
 
-1. Implement `SetEpoch(epochSeconds)` capturing the current SysTick alongside it
-2. Implement `GetEpoch()` computing current wall time from the offset
-3. Manually call `SetEpoch()` with a known value and confirm `GetEpoch()` tracks real elapsed time
+```text
+[INFO] clock: epoch=1704067201  elapsed=1 s
+[INFO] clock: epoch=1704067202  elapsed=2 s
+[INFO] clock: epoch=1704067203  elapsed=3 s
+```
+
+`elapsed` tracks real time one-for-one over the capture window. Multi-minute lockstep is the same math; not soaked for minutes this session.
 
 ## Done When
 
-After calling `SetEpoch()` once, `GetEpoch()` advances in lockstep with a real clock for several minutes with no additional sync.
+After one `SetEpoch()`, `GetEpoch()` advances with a real clock — **confirmed at 1 Hz** on hardware.
+
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

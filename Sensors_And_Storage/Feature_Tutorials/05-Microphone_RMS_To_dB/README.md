@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Sensors_And_Storage/Feature_Tutorials/05-Microphone_RMS_To_dB/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -20,32 +21,55 @@
 
 ## Introduction
 
-This is the hardest local-sensor tutorial: burst-mode ADC clocked by Timer1, captured via DMA, then DC-offset removal and an RMS→dB conversion. It's also the first tutorial that touches vendor HAL types directly instead of `Tiremo_Hal`.
+Hardest local-sensor tutorial: Timer1-clocked ADC burst, DMA into a buffer, DC-offset removal, RMS→dB. First tutorial that talks to vendor `hal_adc` / `hal_timer1` / `hal_pcu` directly instead of `Tiremo_Hal`.
 
 ## You Will Learn
 
-- Why this driver bypasses `Tiremo_Hal` and talks to vendor `hal_adc`/`hal_timer1`/`hal_pcu` directly
-- Timer-triggered ADC burst capture into a DMA buffer
-- DC-offset removal and RMS→dB (`20·log10(rms)`, relative not calibrated SPL)
+- Why burst-DMA capture is not in `Tiremo_Hal_ADC` (that wrapper is one polled conversion)
+- Timer1 as the ADC trigger, HPL DMA arm/service, PA0 analog mux
+- DC-offset + RMS and `20·log10(rms)` as integer dB (relative, not calibrated SPL)
+- `CONFIG_HAL_DMAC` is already `1` in this SDK's `abov_module_config.h`
 
 ## Prerequisites
 
-- [04-Battery_Voltage_ADC](../04-Battery_Voltage_ADC/); `CONFIG_HAL_DMAC` must be enabled in the vendor module config
-- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+- [04-Battery_Voltage_ADC](../04-Battery_Voltage_ADC/)
+- Kit with the MP23ABS1 on PA0 / ADC0
+
+## Understanding the bypass
+
+[`Sw/Drivers/mic/`](./Sw/Drivers/mic/) is copied from the reference firmware (`tiremo_mic_bsp.c` + `tiremo_mic_app.c` + `tiremo_mic_adc_reg.h`). The BSP writes ADC/Timer1/DMA registers that `TIREMO_HAL_ADC_ReadChannel()` never exposes. `board_config.h` therefore uses vendor types (`ADC_ID_0`, `TIMER1_ID_0`, `PCU_ID_A`) — called out in that header.
+
+`PRV_ADC_Init()` configures ADC0 burst + Timer1 trigger on channel 0; `PRV_Timer1_Init()` enables the ADC trigger output. The BSP then starts capture and `Service()` polls DMA-complete.
+
+dB is `TIREMO_MIC_RmsToDb()`: `20*log10(rms) ≈ 6.0206 * log2(rms)`, integer. Not SPL.
 
 ## Solution
 
-No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
+```sh
+cd Sw
+tdf.py build
+tdf.py flash
+tdf.py monitor
+```
 
-## Step Outline
+**Verified:** `.text` 18316 bytes, flash **Verified OK**. Quiet room:
 
-1. Enable `CONFIG_HAL_DMAC` and wire Timer1 to trigger ADC0 bursts on PA0
-2. Capture a burst window into a DMA buffer and compute a DC-offset-corrected RMS
-3. Convert RMS to an approximate dB value and log it while talking near the mic vs. silent
+```text
+[INFO] MIC: blocks=18078  rms=18  dB=24
+[INFO] MIC: blocks=27122  rms=20  dB=25
+```
+
+`blocks` climbing proves DMA is actually completing. Talking near the mic (dB should rise) was **not** confirmed this session — needs a human voice.
+
+## Walkthrough
+
+1. [`main.c`](./Sw/Src/main.c) — `PRV_ADC_Init()` + `PRV_Timer1_Init()`
+2. [`prv_user_code.c`](./Sw/Src/prv_user_code.c) — `Init` / `Start` / poll `Service()`, log RMS/dB once a second; `TIREMO_MIC_OnVoiceAlert()` logs HIGH_VOICE / SILENCE
 
 ## Done When
 
-dB reading rises measurably when you talk near the mic and settles to a quiet baseline in silence.
+dB rises when you talk, settles when silent — **quiet baseline confirmed**; talk-vs-silence not confirmed.
+
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

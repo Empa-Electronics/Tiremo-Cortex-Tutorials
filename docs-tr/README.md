@@ -368,6 +368,14 @@ bakın.
 - [x] [03-Debug_UART_Logging](../Getting_Started/03-Debug_UART_Logging/) — derlendi, flaşlandı, doğrulandı; UART çıktısı `tdf.py monitor` ile doğrulandı
 - [x] [04-Button_Read_And_Debounce](../Getting_Started/04-Button_Read_And_Debounce/) — derlendi, flaşlandı, doğrulandı; buton-basma davranışının kendisi henüz doğrulanmadı (bir insan parmağı gerektiriyor — eğitimin kendi Çözüm bölümüne bakın)
 - [x] [05-Ten_LED_Pattern_Driver](../Getting_Started/05-Ten_LED_Pattern_Driver/) — derlendi, flaşlandı, doğrulandı; otomatik döngü zamanlaması doğrulandı; LED kademelenmesi ve buton ile tetiklenen ilerleme henüz doğrulanmadı (eğitimin kendi Çözüm bölümüne bakın)
+- [x] [Sensors_And_Storage/01-I2C_Bus_Bringup](../Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/) — derlendi, flaşlandı, doğrulandı; hem SHT40 hem LIS2DE12, I2C2'de gerçekten ACK ediyor, `tdf.py monitor` üzerinden canlı doğrulandı
+- [x] [Sensors_And_Storage/02-SHT40_Temperature_Humidity](../Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/) — derlendi, flaşlandı, doğrulandı; `tdf.py monitor` üzerinden saniyede bir canlı T/RH (CRC-geçerli, sensör gürültüsü içinde kararlı)
+- [x] [Sensors_And_Storage/03-LIS2DE12_Accelerometer](../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/) — derlendi, flaşlandı, doğrulandı; WHO_AM_I=0x33, dururken Z≈1036 mg; eksen eksen eğme doğrulanmadı
+- [x] [Sensors_And_Storage/04-Battery_Voltage_ADC](../Sensors_And_Storage/Feature_Tutorials/04-Battery_Voltage_ADC/) — derlendi, flaşlandı, doğrulandı; canlı VCORE ham + AVDD mV; multimetre ile karşılaştırılmadı
+- [x] [Sensors_And_Storage/05-Microphone_RMS_To_dB](../Sensors_And_Storage/Feature_Tutorials/05-Microphone_RMS_To_dB/) — derlendi, flaşlandı, doğrulandı; DMA blokları artıyor, sessiz ~24 dB; konuşma-sessizlik doğrulanmadı
+- [x] [Sensors_And_Storage/06-Flash_Backed_Config](../Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/) — derlendi, flaşlandı, doğrulandı; bootCount reset sonrası kaldı, bozuk CRC reddedildi
+- [x] [Sensors_And_Storage/07-Software_Wall_Clock](../Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/) — derlendi, flaşlandı, doğrulandı; elle SetEpoch sonrası GetEpoch saniyede 1 s ilerliyor
+- [x] [Sensors_And_Storage/Design/01-Standalone_Environmental_Logger](../Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/) — derlendi, flaşlandı, doğrulandı; canlı SHT40+accel+batarya+mik örnek (`flags=0x07`); `seq` geçmişi SWD reset sonrası kaldı
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 

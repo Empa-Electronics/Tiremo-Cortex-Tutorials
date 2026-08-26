@@ -184,6 +184,85 @@ release.
   way: `tools/__pycache__/tdf.cpython-314.pyc` had been committed by
   accident in an earlier commit — untracked it (`git rm --cached`,
   file kept on disk) and added `__pycache__/`/`*.pyc` to `.gitignore`.
+- `Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/Sw/`: first
+  real, buildable solution outside `Getting_Started`, and the first
+  tutorial in `Sensors_And_Storage` — starts a fresh, minimal `Sw/`
+  (SysTick + debug UART + the new I2C HAL only, no LED/button carried
+  forward from `Getting_Started`, since this tutorial doesn't use them).
+  Brings in `Tiremo_Hal/tiremo_hal_i2c` (copied verbatim) and the
+  vendor's `PRV_I2C_Init()` (`user_i2c.c`/`user_i2c_isr.c`, scoped to
+  exactly `I2C_ID_2`); new vendor dependency `hal_i2c.c` found by
+  reading `tiremo_hal_i2c.c`'s own includes, not guessed. The HAL has
+  no `Probe()` function, so this tutorial builds one from a one-byte
+  `TIREMO_HAL_I2C_Receive()` — a read, deliberately, so the transaction
+  can never write to (and potentially corrupt) a sensor's internal
+  state — documented in the README's "Understanding the Probe" section
+  alongside why a bare ACK/NACK is the right level of protocol
+  knowledge for a *bus* bring-up tutorial specifically. `CMakeLists.txt`
+  is the first to need `../../../../Generation/...` (four `../`, not
+  three) since `Sensors_And_Storage/Feature_Tutorials/<name>/Sw/` sits
+  one directory deeper than every `Getting_Started` tutorial. Built
+  clean on the first try (no missing-dependency iteration needed),
+  flashed and OpenOCD-verified over SWD, and — genuinely confirmed live
+  via `tdf.py monitor` against the real connected board — both `SHT40
+  (0x44): ACK` and `LIS2DE12 (0x19): ACK`, repeating every 5 s: this
+  tutorial's entire "Done When" criterion, verified on real hardware,
+  not simulated. Full walkthrough + Turkish translation written
+  alongside it (the first Turkish translation under
+  `docs-tr/Sensors_And_Storage/`).
+- `Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/Sw/`:
+  first real I2C *device* driver in this repo (Tutorial 01 only probed
+  the bus). Reuses 01's SysTick + debug UART + I2C HAL + `PRV_I2C_Init()`
+  with no new vendor sources. Production firmware wraps Sensirion's C
+  library; this tutorial implements the SHT4x protocol directly in
+  `Drivers/sht40` so the command/response stays visible: write `0xFD`,
+  STOP, wait 10 ms, read six bytes, CRC-8 (`0x31` / init `0xFF`) on
+  each 2-byte word, integer milli-°C / milli-%RH conversion
+  (`21875*ticks >> 13` / `15625*ticks >> 13`) with RH clamped to
+  `[0, 100000]`. Documented in the README's "Understanding the SHT4x
+  Protocol" section alongside why this is `Transmit`+`Receive`, not
+  `WriteRead()` (repeated START would interrupt the conversion — that's
+  the LIS2DE12 tutorial). 1 Hz sample loop in `prv_user_code.c` only;
+  driver never formats strings. Built clean (`.text` 15660 bytes),
+  flashed and OpenOCD-verified over SWD, and genuinely confirmed live
+  via `tdf.py monitor`: repeating `SHT40 T: 33.282 C` / `SHT40 RH:
+  52.431 %RH` (stable within sensor noise; ~33 °C is kit self-heat, not
+  a conversion bug). Full walkthrough + Turkish translation written
+  alongside it.
+- `Sensors_And_Storage` feature tutorials 03–07 now have real `Sw/`
+  solutions, using the gitignored reference firmware
+  (`referance_only/Tiremo-Secure-Iot-Sw`) as the source for HAL wrappers
+  and the production mic/battery/clock/flash drivers:
+  - **03-LIS2DE12**: register-level driver (not ST's PID library) over
+    `WriteRead()`; `Configure(2g, 100 Hz)`; mg conversion
+    `(raw16 * sens) / 256`. Built (`.text` 15708), flashed, WHO_AM_I=0x33,
+    rest gravity `Z=1036 mg`. Axis-by-axis tilt not confirmed.
+  - **04-Battery ADC**: `tiremo_hal_adc` + reference `tiremo_battery`
+    (`AVDD = 1000*4096/vcoreRaw`). Built (14436), flashed, live
+    `VCORE raw=2032 AVDD=2015 mV`. Not meter-checked.
+  - **05-Microphone**: reference mic BSP/app copied verbatim (vendor
+    ADC/Timer1/DMA). Built (18316), flashed, DMA `blocks` climbing,
+    quiet ~24 dB. Talk-vs-silence not confirmed.
+  - **06-Flash config**: reference `tiremo_hal_flash` + tutorial-sized
+    magic/CRC32 persist (`bootCount` + label). Built (16120), flashed,
+    `bootCount` 4→5 across reflash, corrupt CRC rejected.
+  - **07-Wall clock**: reference `tiremo_clock` unchanged. Built (12344),
+    flashed, `GetEpoch` +1 s per second after `SetEpoch(1704067200)`.
+  English walkthroughs + Turkish translations written alongside each.
+- `Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/Sw/`:
+  first Design Tutorial solution — composes feature tutorials 02–06
+  (SHT40, LIS2DE12, battery, mic, flash) into one 3 s sample loop and an
+  8-deep CRC32 ring in data-flash sector 0 (`ENV1`, overwrites tutorial
+  06's bootCount record). Boot dumps oldest-first `hist` lines, then
+  `live` appends. Built (`.text` 29752), flashed, live `flags=0x07`
+  (T/RH + accel + AVDD + mic dB); `seq` continued across SWD reset.
+  English + Turkish walkthroughs written alongside it.
+- `tiremo_banner` (`Sw/Common/`): Tiremo Cortex wordmark printed over UART
+  at boot, as the marker that a tutorial is an integrated application.
+  Design Tutorials only — Feature Tutorials stay minimal. 100 columns
+  wide, traced from `images/tiremo_sub_brand_1_mono_black.png`. Bypasses
+  `TIREMO_LOG_INFO` so no `[INFO]` prefix breaks the artwork, and is
+  suppressed below INFO verbosity. Verified on hardware.
 
 ### Changed
 

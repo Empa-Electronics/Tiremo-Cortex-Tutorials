@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -20,32 +21,55 @@
 
 ## Introduction
 
-WiFi credentials and sensor enable flags need to survive a power cycle. This tutorial builds the generic persistence mechanism — a magic-tagged, CRC32-checked record in data flash — that later tutorials (WiFi credentials, factory reset) both depend on.
+WiFi credentials and sensor flags need to survive a power cycle. This tutorial builds the generic persistence mechanism — magic + CRC32 in data flash — that later WiFi / factory-reset tutorials depend on.
 
 ## You Will Learn
 
-- The `Tiremo_Hal_Flash` wrapper and why `CONFIG_HAL_FMC` must be enabled
-- A magic-number + CRC32 record format for safe load/corrupt-detection
+- `Tiremo_Hal_Flash` (erase/write/read one 2 KB DFMC sector). `CONFIG_HAL_FMC` is already `1` in this SDK
+- A `"TRM1"` magic + version + CRC32 (poly `0xEDB88320`) record, same idea as production `TIREMO_APP` config, stripped to `bootCount` + a short `label`
 
 ## Prerequisites
 
-- [05-Microphone_RMS_To_dB](../05-Microphone_RMS_To_dB/)
-- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+- [05-Microphone_RMS_To_dB](../05-Microphone_RMS_To_dB/) conceptually; this `Sw/` is flash-only
+- Kit (data flash is on-chip)
+
+## Understanding the record
+
+[`Sw/Common/Src/tiremo_persist.c`](./Sw/Common/Src/tiremo_persist.c) stores one `TIREMO_PersistRecord_t` at data-flash offset 0. Load checks magic, version, then CRC over every byte *before* the `crc32` field. Bad flash (blank, wrong magic, bad CRC) → caller applies defaults. Save is erase-sector then write.
+
+The loop also takes a RAM copy, flips one CRC bit, and asserts `IsValid()` fails — the "deliberately corrupted record" check without destroying the sector.
+
+`tdf.py flash` programs **code** flash; the DFMC record survives it. `tdf.py monitor`'s SWD reset does too. A full chip erase (`tdf.py clean-device`) does not.
 
 ## Solution
 
-No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
+```sh
+cd Sw
+tdf.py build
+tdf.py flash
+tdf.py monitor
+```
 
-## Step Outline
+**Verified:** `.text` 16120 bytes, flash **Verified OK**. After a previous run had already stored a record:
 
-1. Define a small config struct (e.g. a counter and a string field)
-2. Write it to a data-flash sector with a magic number and CRC32 trailer
-3. On boot, load it back, validate the magic/CRC, and fall back to defaults on mismatch
-4. Power-cycle the board and confirm the counter persisted
+```text
+[INFO] persist: loaded bootCount=4 label=tutorial
+[INFO] persist: saved bootCount=5 (survives reset)
+[INFO] persist: corrupt CRC rejected (expected)
+```
+
+`bootCount` climbing across resets/reflashes is the persistence proof. First-ever boot on a blank DFMC logs `no valid record, using defaults` then saves `1`.
+
+## Walkthrough
+
+1. [`tiremo_hal_flash.c`](./Sw/Tiremo_Hal/Src/tiremo_hal_flash.c) — copied from reference
+2. [`tiremo_persist.c`](./Sw/Common/Src/tiremo_persist.c) — tutorial-sized blob
+3. [`prv_user_code.c`](./Sw/Src/prv_user_code.c) — load / increment / save / corrupt-demo
 
 ## Done When
 
-A value written before a power cycle reads back correctly after it; a deliberately corrupted record falls back to defaults instead of garbage.
+A value written before reset reads back after; corrupt CRC falls back — **both confirmed** (`bootCount` 4→5, corrupt demo rejected).
+
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

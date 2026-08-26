@@ -360,6 +360,14 @@ of a hand-written Makefile, and Windows-specific notes.
 - [x] [03-Debug_UART_Logging](Getting_Started/03-Debug_UART_Logging/) — built, flashed, verified; UART output confirmed via `tdf.py monitor`
 - [x] [04-Button_Read_And_Debounce](Getting_Started/04-Button_Read_And_Debounce/) — built, flashed, verified; button-press behavior itself not yet confirmed (needs a human finger — see the tutorial's own Solution)
 - [x] [05-Ten_LED_Pattern_Driver](Getting_Started/05-Ten_LED_Pattern_Driver/) — built, flashed, verified; auto-cycle timing confirmed; LED staggering and button-triggered advance not yet confirmed (see the tutorial's own Solution)
+- [x] [Sensors_And_Storage/01-I2C_Bus_Bringup](Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/) — built, flashed, verified; both SHT40 and LIS2DE12 genuinely ACK on I2C2, confirmed live over `tdf.py monitor`
+- [x] [Sensors_And_Storage/02-SHT40_Temperature_Humidity](Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/) — built, flashed, verified; live T/RH once per second over `tdf.py monitor` (CRC-valid, stable within sensor noise)
+- [x] [Sensors_And_Storage/03-LIS2DE12_Accelerometer](Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/) — built, flashed, verified; WHO_AM_I=0x33, Z≈1036 mg at rest; axis-by-axis tilt not confirmed
+- [x] [Sensors_And_Storage/04-Battery_Voltage_ADC](Sensors_And_Storage/Feature_Tutorials/04-Battery_Voltage_ADC/) — built, flashed, verified; live VCORE raw + AVDD mV; not compared to a multimeter
+- [x] [Sensors_And_Storage/05-Microphone_RMS_To_dB](Sensors_And_Storage/Feature_Tutorials/05-Microphone_RMS_To_dB/) — built, flashed, verified; DMA blocks climbing, quiet ~24 dB; talk-vs-silence not confirmed
+- [x] [Sensors_And_Storage/06-Flash_Backed_Config](Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/) — built, flashed, verified; bootCount persisted across reset, corrupt CRC rejected
+- [x] [Sensors_And_Storage/07-Software_Wall_Clock](Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/) — built, flashed, verified; GetEpoch advances 1 s per second after a manual SetEpoch
+- [x] [Sensors_And_Storage/Design/01-Standalone_Environmental_Logger](Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/) — built, flashed, verified; live SHT40+accel+battery+mic sample (`flags=0x07`); `seq` history survived SWD reset
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 
