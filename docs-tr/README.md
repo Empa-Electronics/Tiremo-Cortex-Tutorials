@@ -70,6 +70,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 ## Eğitimler
 
 <table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
@@ -93,6 +94,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 <table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
@@ -140,6 +142,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 <table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
@@ -179,6 +182,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 <table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
@@ -214,6 +218,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 <table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
@@ -253,6 +258,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 <table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
@@ -300,6 +306,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 <table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
