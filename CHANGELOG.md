@@ -147,6 +147,28 @@ release.
   press logs `(button)` and advances early — both need eyes on the
   board and a human finger. Full walkthrough + Turkish translation
   written alongside it.
+- Added `tdf.py create-project <name> [--dir PARENT_DIR]`: scaffolds a
+  new, empty, buildable `<name>/Sw/` from templates at
+  `tools/templates/new_project/` (`CMakeLists.txt`, `Src/main.c`, an
+  empty `Src/prv_user_code.c`) — deliberately minimal, no
+  `board_config.h`/`Tiremo_Hal`, meant to be a blank starting point you
+  copy tutorial modules into as needed. Unlike every tutorial's
+  hand-written `CMakeLists.txt`, which hardcodes the fixed
+  three-`../`-levels-deep path back to `Generation/` (every
+  `Getting_Started/NN-Name/Sw/` sits at the same depth), this command
+  computes that relative path at generation time for wherever the new
+  project actually lands, so it works from anywhere inside the repo —
+  verified for real by scaffolding a throwaway project both outside the
+  repo (correctly rejected: `New projects need to stay inside the
+  repo...`) and inside it at a non-standard depth, where the generated
+  `CMakeLists.txt`'s `../../../Generation/...` path, `tdf.py build`
+  (clean, `.text` 4636 bytes — smaller than every tutorial, since it
+  skips the GPIO HAL entirely), and `tdf.py flash` (`** Verified OK
+  **`) all worked against the connected board on the first try. Also
+  validates the project name as a legal CMake target identifier and
+  refuses to overwrite an existing folder. Root README and
+  `docs-tr/README.md` updated with the command; noted as a natural fit
+  for a future "Creating a New Project" tutorial, not yet written.
 
 ### Changed
 

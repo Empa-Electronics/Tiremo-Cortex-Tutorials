@@ -21,6 +21,7 @@ lives):
                                         color-coded UART log output (Ctrl+C to exit)
     tdf.py clean                       remove build/
     tdf.py clean-device                mass-erase the connected board's chip flash
+    tdf.py create-project <name>       scaffold a new, empty buildable Sw/ project
 
 `monitor` is the one command that isn't pure CMake delegation underneath
 -- resetting the board is still just `cmake --build build --target
@@ -28,6 +29,16 @@ reset-device`, but reading the UART afterwards needs a serial port, and
 CMake/OpenOCD has no such concept. That part uses `pyserial`
 (`python3 -m pip install pyserial`, or `./install.sh`, which checks for
 it alongside the compiler toolchain).
+
+`create-project` doesn't need to run from inside an existing project --
+run it from wherever the new project's parent directory should be. It
+creates `<name>/Sw/` (CMakeLists.txt, Src/main.c, an empty
+Src/prv_user_code.c) from the templates in `tools/templates/new_project/`,
+computing the relative path back to this repo's shared `Generation/`
+vendor SDK for wherever it lands, rather than assuming the fixed
+three-levels-deep layout every Getting_Started tutorial uses. It's
+deliberately minimal -- no board_config.h, no Tiremo_Hal -- copy in
+whichever modules you need from an existing tutorial's `Sw/`.
 
 Self-locating: this file lives at <repo>/tools/tdf.py, so it finds the
 shared toolchain file from its own path -- no environment variables
@@ -38,6 +49,8 @@ build` works identically without ever running export.sh.
 """
 
 import argparse
+import os
+import re
 import shutil
 import subprocess
 import sys
@@ -46,6 +59,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TOOLCHAIN_FILE = REPO_ROOT / "cmake" / "toolchain-arm-none-eabi.cmake"
 BUILD_DIR = Path("build")
+NEW_PROJECT_TEMPLATE_DIR = REPO_ROOT / "tools" / "templates" / "new_project"
+_PROJECT_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 # TIREMO_Debug_Log()'s exact wire format is "[LEVEL] message\r\n" -- see
 # Common/Src/tiremo_debug.c. Matched against the first whitespace-delimited
@@ -225,6 +240,47 @@ def cmd_clean_device(args):
     run(["cmake", "--build", str(BUILD_DIR), "--target", "erase-device"])
 
 
+def cmd_create_project(args):
+    if not _PROJECT_NAME_RE.match(args.name):
+        die(
+            f"'{args.name}' isn't a valid project name -- it becomes a CMake "
+            "target name, so it must start with a letter or underscore and "
+            "contain only letters, digits, and underscores."
+        )
+
+    parent = Path(args.dir).resolve() if args.dir else Path.cwd().resolve()
+    sw_dir = parent / args.name / "Sw"
+
+    if sw_dir.exists():
+        die(f"{sw_dir} already exists -- pick a different name or --dir, "
+            "or remove it yourself first.")
+
+    try:
+        sw_dir.relative_to(REPO_ROOT)
+    except ValueError:
+        die(
+            f"{sw_dir} would be outside this repo ({REPO_ROOT}).\n"
+            "       New projects need to stay inside the repo so their "
+            "CMakeLists.txt can reach the shared Generation/ vendor SDK "
+            "by a relative path."
+        )
+
+    gen_dir_rel = os.path.relpath(REPO_ROOT, sw_dir)
+
+    (sw_dir / "Src").mkdir(parents=True)
+
+    cmakelists = (NEW_PROJECT_TEMPLATE_DIR / "CMakeLists.txt").read_text()
+    cmakelists = cmakelists.replace("__PROJECT_NAME__", args.name)
+    cmakelists = cmakelists.replace("__GEN_DIR_REL__", gen_dir_rel)
+    (sw_dir / "CMakeLists.txt").write_text(cmakelists)
+
+    shutil.copy(NEW_PROJECT_TEMPLATE_DIR / "Src" / "main.c", sw_dir / "Src" / "main.c")
+    shutil.copy(NEW_PROJECT_TEMPLATE_DIR / "Src" / "prv_user_code.c", sw_dir / "Src" / "prv_user_code.c")
+
+    log(f"created {sw_dir}")
+    log(f"next: cd {sw_dir} && tdf.py build && tdf.py flash")
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="tdf.py",
@@ -279,6 +335,17 @@ def main():
     )
     p_erase.add_argument("-y", "--yes", action="store_true", help="Skip the confirmation prompt")
     p_erase.set_defaults(func=cmd_clean_device)
+
+    p_create = sub.add_parser(
+        "create-project",
+        help="Scaffold a new, empty buildable Sw/ project (CMakeLists.txt + main.c + empty prv_user_code.c)",
+    )
+    p_create.add_argument("name", help="Project name -- used as the CMake target name and the new folder's name")
+    p_create.add_argument(
+        "--dir", metavar="PARENT_DIR",
+        help="Parent directory for the new <name>/ project folder (default: current directory)",
+    )
+    p_create.set_defaults(func=cmd_create_project)
 
     args = parser.parse_args()
     args.func(args)

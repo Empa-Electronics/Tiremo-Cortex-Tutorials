@@ -362,6 +362,16 @@ Git Bash/WSL, or install the tools manually and skip straight to
 for the full story, including why this repo is on CMake rather than a
 hand-written Makefile.
 
+Starting your own project instead of following a tutorial? `tdf.py
+create-project <Name> [--dir PARENT_DIR]` scaffolds a new, empty,
+buildable `<Name>/Sw/` — `CMakeLists.txt`, `Src/main.c`, and an empty
+`Src/prv_user_code.c`, deliberately minimal (no `board_config.h`, no
+`Tiremo_Hal` — copy those in from a tutorial as needed). It computes the
+relative path back to this repo's shared `Generation/` SDK for wherever
+the new folder actually lands, rather than assuming the fixed
+three-levels-deep layout every `Getting_Started` tutorial uses, so it
+works anywhere inside this repo, not just under `Getting_Started/`.
+
 - [x] [Getting_Started/01-Hello_Blink](Getting_Started/01-Hello_Blink/) — builds, links, flashed and verified on a real ABOV A34G43A Starter Kit over SWD
 - [x] [Getting_Started/02-SysTick_Timing](Getting_Started/02-SysTick_Timing/) — builds, links, flashed and confirmed on a real ABOV A34G43A Starter Kit: both LEDs blink at clearly different rates
 - [x] [Getting_Started/03-Debug_UART_Logging](Getting_Started/03-Debug_UART_Logging/) — builds, links (at two debug levels, verified different binary sizes), flashed and verified over SWD, and — via `tdf.py monitor`, added in Tutorial 04 — actual UART output genuinely confirmed too

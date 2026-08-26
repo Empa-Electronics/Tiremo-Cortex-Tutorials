@@ -370,6 +370,17 @@ neden elle yazılmış bir Makefile yerine CMake kullandığı için
 [01-Hello_Blink'in Çözüm bölümüne](../Getting_Started/01-Hello_Blink/README.md#solution)
 bakın.
 
+Bir eğitimi takip etmek yerine kendi projenizi mi başlatıyorsunuz?
+`tdf.py create-project <Name> [--dir PARENT_DIR]`, yeni, boş,
+derlenebilir bir `<Name>/Sw/` oluşturur — `CMakeLists.txt`,
+`Src/main.c`, ve boş bir `Src/prv_user_code.c`, bilinçli olarak minimal
+(`board_config.h` yok, `Tiremo_Hal` yok — ihtiyaç duydukça bir
+eğitimden kopyalayın). Bu depodaki paylaşılan `Generation/` SDK'sına
+geri dönen göreli yolu, yeni klasörün gerçekte nereye indiğine göre
+hesaplar, her `Getting_Started` eğitiminin kullandığı sabit üç-seviye-derin
+düzeni varsaymak yerine, bu yüzden yalnızca `Getting_Started/` altında
+değil, bu deponun içindeki her yerde çalışır.
+
 - [x] [Getting_Started/01-Hello_Blink](../Getting_Started/01-Hello_Blink/) — derlenir, bağlanır, gerçek bir ABOV A34G43A Starter Kit'e SWD üzerinden flaşlandı ve doğrulandı
 - [x] [Getting_Started/02-SysTick_Timing](../Getting_Started/02-SysTick_Timing/) — derlenir, bağlanır, gerçek bir ABOV A34G43A Starter Kit'e flaşlandı ve doğrulandı: iki LED de belirgin şekilde farklı hızlarda yanıp sönüyor
 - [x] [Getting_Started/03-Debug_UART_Logging](../Getting_Started/03-Debug_UART_Logging/) — derlenir, bağlanır (iki debug seviyesinde, farklı ikili boyutları doğrulandı), SWD üzerinden flaşlandı ve doğrulandı, ve — Tutorial 04'te eklenen `tdf.py monitor` ile — gerçek UART çıktısı da gerçekten doğrulandı
