@@ -189,7 +189,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Get MQTT working end to end: a public broker first with no TLS, then mutual-TLS credentials staged in the ESP32's own NVS, then a real AWS IoT Core session, then the handler-driven polling pattern production firmware relies on.
+                Get MQTT working end to end: a public broker first with no TLS, then mutual-TLS credentials staged in the ESP32's own NVS, then a real AWS IoT Core session.
             </td>
         </tr>
         <tr>
@@ -208,10 +208,6 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td><a href="./Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to AWS IoT Core</a></td>
             <td></td>
         </tr>
-        <tr>
-            <td><a href="./Cloud_Messaging/Feature_Tutorials/04-Reliable_Inbound_Message_Draining/">Reliable Inbound Message Draining</a></td>
-            <td></td>
-        </tr>
     </tbody>
 </table>
 
@@ -225,7 +221,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Device identity, fleet provisioning by claim certificate, the minimal JSON helpers this firmware relies on instead of a full parser library, and the device shadow control loop — get, apply, report, and live delta.
+                Device identity, the minimal JSON helpers this firmware relies on instead of a full parser library, fleet provisioning by claim certificate, the device shadow control loop, telemetry and alarms, and AWS IoT Jobs.
             </td>
         </tr>
         <tr>
@@ -234,14 +230,14 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="./AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
-            <td><a href="./AWS_IoT_Core/Design_Tutorials/01-Provision_And_Sync_A_Real_Thing/">Provision and Sync a Real Thing</a></td>
+            <td><a href="./AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/02-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
+            <td><a href="./AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/03-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
+            <td><a href="./AWS_IoT_Core/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
             <td></td>
         </tr>
         <tr>
@@ -250,6 +246,14 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="./AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="./AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="./AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/">AWS Jobs</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -368,6 +372,22 @@ of a hand-written Makefile, and Windows-specific notes.
 - [x] [Sensors_And_Storage/06-Flash_Backed_Config](Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/) — built, flashed, verified; bootCount persisted across reset, corrupt CRC rejected
 - [x] [Sensors_And_Storage/07-Software_Wall_Clock](Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/) — built, flashed, verified; GetEpoch advances 1 s per second after a manual SetEpoch
 - [x] [Sensors_And_Storage/Design/01-Standalone_Environmental_Logger](Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/) — built, flashed, verified; live SHT40+accel+battery+mic sample (`flags=0x07`); `seq` history survived SWD reset
+- [x] [ESP32_Connectivity/01-AT_Command_Transport](ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/) — built, flashed, verified; `AT`→`OK`, echo-on then `ATE0` echo-free, 5 s heartbeat
+- [x] [ESP32_Connectivity/02-WiFi_Station_Join](ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/) — built (`.text` 15200); `CWMODE` / `CWJAP` / `CWSTATE:2` + substring-gotcha; join confirmed on a real 2.4 GHz AP
+- [x] [ESP32_Connectivity/03-Connect_Retry_State_Machine](ESP32_Connectivity/Feature_Tutorials/03-Connect_Retry_State_Machine/) — built (`.text` 19440), flashed; `CWLAP` scan-first, 3 retries, `WF01` last-good SSID; heartbeat after join confirmed
+- [x] [ESP32_Connectivity/04-NTP_Time_Sync](ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/) — built (`.text` 20956), flashed; SNTP → `SetEpoch`; `GetEpoch()` matched UTC and advanced 1 s/s
+- [x] [ESP32_Connectivity/05-BluFi_Provisioning](ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/) — built (`.text` 21156), flashed; `AT+BLUFI=1` advertising `Tiremo-Cortex` confirmed; EspBluFi Configure is a human step
+- [x] [Cloud_Messaging/01-MQTT_To_Public_Broker](Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/) — built (`.text` 17268), flashed, verified over SWD; full publish/subscribe round trip (string + binary-safe) confirmed live, and independently cross-checked with a separate `mqttx` CLI subscriber on the same public broker
+- [x] [Cloud_Messaging/02-mTLS_Credentials_In_Module_NVS](Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/) — built (`.text` 21140), flashed, verified over SWD; write/read-back/erase round-trips byte-for-byte confirmed live for all three real (self-signed test) PEM credential slots against the correct `mqtt_*` SYSMFG namespace (see the tutorial's own "A Real Bug" note)
+- [x] [Cloud_Messaging/03-MQTT_mTLS_To_AWS_IoT](Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — built (`.text` 21648), flashed, verified over SWD; genuine mutual-TLS `+MQTTCONNECTED` against a real AWS IoT Core endpoint, with SNTP time sync ahead of the connect sequence; connect only, no publish/subscribe yet
+- [x] [ESP32_Connectivity/Design/01-Boot_Cascade_Saved_WiFi_Then_BluFi](ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/) — built (`.text` 25196), flashed; EspBluFi provisioned → `CS01` saved → next reset came up on the `nvs` path with NTP, no BluFi step
+- [x] [AWS_IoT_Core/01-Device_Identity_From_MAC](AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/) — built (`.text` 15060), flashed; `CIPSTAMAC?` → `deviceId 30eda0806324`, heartbeat re-read unchanged
+- [x] [AWS_IoT_Core/02-Minimal_JSON_Helpers](AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/) — built (`.text` 16156), flashed; Find* + writer round-trip on a sample shadow (`reporting.enabled`, colon-in-string, sibling-key miss)
+- [x] [AWS_IoT_Core/04-Shadow_Get_Apply_Report](AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — built (`.text` 33764), flashed; boot GET → apply `reporting.enabled` / `led.on` → full desired echo as `reported` → second GET `no leftover delta`
+- [x] [AWS_IoT_Core/05-Live_Shadow_Delta_Handling](AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — built (`.text` 34928), flashed; boot GET/report then `subscribed update/delta`; flip `desired` in the console to apply live (no reboot)
+- [ ] [AWS_IoT_Core/06-Publishing_Alarms_And_Telemetry](AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — README scaffold only
+- [ ] [AWS_IoT_Core/07-AWS_Jobs](AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/) — README scaffold only
+- [ ] [AWS_IoT_Core/Design/01-Sensor_Telemetry_And_Shadow_Control](AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — README scaffold only
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 

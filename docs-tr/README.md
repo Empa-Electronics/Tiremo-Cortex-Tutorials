@@ -195,7 +195,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                MQTT'yi baştan sona çalışır hale getirin: önce TLS'siz genel bir broker, sonra ESP32'nin kendi NVS'sinde tutulan karşılıklı TLS kimlik bilgileri, sonra gerçek bir AWS IoT Core oturumu, sonra üretim üretici yazılımının dayandığı işleyici tabanlı yoklama deseni.
+                MQTT'yi baştan sona çalışır hale getirin: önce TLS'siz genel bir broker, sonra ESP32'nin kendi NVS'sinde tutulan karşılıklı TLS kimlik bilgileri, sonra gerçek bir AWS IoT Core oturumu.
             </td>
         </tr>
         <tr>
@@ -214,10 +214,6 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td><a href="../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to AWS IoT Core</a></td>
             <td></td>
         </tr>
-        <tr>
-            <td><a href="../Cloud_Messaging/Feature_Tutorials/04-Reliable_Inbound_Message_Draining/">Reliable Inbound Message Draining</a></td>
-            <td></td>
-        </tr>
     </tbody>
 </table>
 
@@ -231,7 +227,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Cihaz kimliği, iddia sertifikası ile filo kurulumu, bu üretici yazılımının tam bir ayrıştırma kütüphanesi yerine kullandığı minimal JSON yardımcıları ve cihaz shadow kontrol döngüsü — get, apply, report ve canlı delta.
+                Cihaz kimliği, bu üretici yazılımının tam bir ayrıştırma kütüphanesi yerine kullandığı minimal JSON yardımcıları, iddia sertifikası ile filo kurulumu, cihaz shadow kontrol döngüsü, telemetri ve alarmlar ve AWS IoT Jobs.
             </td>
         </tr>
         <tr>
@@ -240,14 +236,14 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="../AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
-            <td><a href="../AWS_IoT_Core/Design_Tutorials/01-Provision_And_Sync_A_Real_Thing/">Provision and Sync a Real Thing</a></td>
+            <td><a href="../AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/02-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
+            <td><a href="../AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/03-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
+            <td><a href="../AWS_IoT_Core/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
             <td></td>
         </tr>
         <tr>
@@ -256,6 +252,14 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="../AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="../AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/">AWS Jobs</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -376,6 +380,22 @@ bakın.
 - [x] [Sensors_And_Storage/06-Flash_Backed_Config](../Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/) — derlendi, flaşlandı, doğrulandı; bootCount reset sonrası kaldı, bozuk CRC reddedildi
 - [x] [Sensors_And_Storage/07-Software_Wall_Clock](../Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/) — derlendi, flaşlandı, doğrulandı; elle SetEpoch sonrası GetEpoch saniyede 1 s ilerliyor
 - [x] [Sensors_And_Storage/Design/01-Standalone_Environmental_Logger](../Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/) — derlendi, flaşlandı, doğrulandı; canlı SHT40+accel+batarya+mik örnek (`flags=0x07`); `seq` geçmişi SWD reset sonrası kaldı
+- [x] [ESP32_Connectivity/01-AT_Command_Transport](../ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/) — derlendi, flaşlandı, doğrulandı; `AT`→`OK`, yankı açık sonra `ATE0` yankısız, 5 s heartbeat
+- [x] [ESP32_Connectivity/02-WiFi_Station_Join](../ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/) — derlendi (`.text` 15200); `CWMODE` / `CWJAP` / `CWSTATE:2` + alt dize tuzağı; gerçek 2.4 GHz AP'de join doğrulandı
+- [x] [ESP32_Connectivity/03-Connect_Retry_State_Machine](../ESP32_Connectivity/Feature_Tutorials/03-Connect_Retry_State_Machine/) — derlendi (`.text` 19440), flaşlandı; `CWLAP` önce tarama, 3 deneme, `WF01` son iyi SSID; join sonrası heartbeat doğrulandı
+- [x] [ESP32_Connectivity/04-NTP_Time_Sync](../ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/) — derlendi (`.text` 20956), flaşlandı; SNTP → `SetEpoch`; `GetEpoch()` UTC ile örtüştü ve saniyede 1 s ilerledi
+- [x] [ESP32_Connectivity/05-BluFi_Provisioning](../ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/) — derlendi (`.text` 21156), flaşlandı; `Tiremo-Cortex` olarak `AT+BLUFI=1` reklamı doğrulandı; EspBluFi Configure insan adımıdır
+- [x] [Cloud_Messaging/01-MQTT_To_Public_Broker](../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/) — derlendi (`.text` 17268), flaşlandı, SWD üzerinden doğrulandı; tam yayınlama/abonelik gidiş-dönüşü (string + binary-safe) canlı doğrulandı, ve aynı genel broker'da ayrı bir `mqttx` CLI abonesiyle bağımsız olarak çapraz kontrol edildi
+- [x] [Cloud_Messaging/02-mTLS_Credentials_In_Module_NVS](../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/) — derlendi (`.text` 21140), flaşlandı, SWD üzerinden doğrulandı; üç gerçek (kendinden imzalı test) PEM kimlik bilgisi slotunun hepsi için yazma/geri-okuma/silme bayt-bayt canlı doğrulandı, doğru `mqtt_*` SYSMFG namespace'ine karşı (eğitimin kendi "Gerçek Bir Hata" notuna bakın)
+- [x] [Cloud_Messaging/03-MQTT_mTLS_To_AWS_IoT](../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — derlendi (`.text` 21648), flaşlandı, SWD üzerinden doğrulandı; gerçek bir AWS IoT Core uç noktasına karşı gerçek bir karşılıklı-TLS `+MQTTCONNECTED`, bağlantı sırasından önce SNTP zaman senkronizasyonuyla; yalnızca bağlantı, henüz publish/subscribe yok
+- [x] [ESP32_Connectivity/Design/01-Boot_Cascade_Saved_WiFi_Then_BluFi](../ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/) — derlendi (`.text` 25196), flaşlandı; EspBluFi kurulumu `CS01` yazdı, sonraki reset BluFi'siz `nvs` yolundan NTP ile açıldı
+- [x] [AWS_IoT_Core/01-Device_Identity_From_MAC](../AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/) — derlendi (`.text` 15060), flaşlandı; `CIPSTAMAC?` → `deviceId 30eda0806324`, heartbeat yeniden okuma değişmedi
+- [x] [AWS_IoT_Core/02-Minimal_JSON_Helpers](../AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/) — derlendi (`.text` 16156), flaşlandı; Find* + yazıcı örnek shadow üzerinde gidiş-dönüş (`reporting.enabled`, string içinde iki nokta, kardeş anahtar yok)
+- [x] [AWS_IoT_Core/04-Shadow_Get_Apply_Report](../AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — derlendi (`.text` 33764), flaşlandı; açılış GET → `reporting.enabled` / `led.on` uygula → tam desired yankısı `reported` → ikinci GET `no leftover delta`
+- [x] [AWS_IoT_Core/05-Live_Shadow_Delta_Handling](../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — derlendi (`.text` 34928), flaşlandı; açılış GET/report sonra `subscribed update/delta`; canlı uygulamak için konsolda `desired` değiştirin (sıfırlama yok)
+- [ ] [AWS_IoT_Core/06-Publishing_Alarms_And_Telemetry](../AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — yalnızca README iskeleti
+- [ ] [AWS_IoT_Core/07-AWS_Jobs](../AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/) — yalnızca README iskeleti
+- [ ] [AWS_IoT_Core/Design/01-Sensor_Telemetry_And_Shadow_Control](../AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — yalnızca README iskeleti
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 

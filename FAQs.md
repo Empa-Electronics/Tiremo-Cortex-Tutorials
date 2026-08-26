@@ -30,7 +30,7 @@ the firmware stack, roughly in build order:
 - [Sensors & Local Storage](./Sensors_And_Storage): SHT40, LIS2DE12, battery, microphone, flash config, software clock.
 - [ESP32 Connectivity](./ESP32_Connectivity): AT transport, WiFi join, retries, NTP, BluFi provisioning.
 - [Cloud Messaging](./Cloud_Messaging): MQTT, mTLS credentials, AWS IoT Core connection, reliable polling.
-- [AWS IoT Core](./AWS_IoT_Core): device identity, fleet provisioning, JSON helpers, device shadow.
+- [AWS IoT Core](./AWS_IoT_Core): device identity, JSON helpers, fleet provisioning, device shadow.
 - [Production Firmware](./Production_Firmware): shadow-driven LEDs, alarms, telemetry, jobs, factory reset, link recovery, and the full capstone build.
 - [Developer Contributed](./Developer_Contributed): anything community-submitted that doesn't fit the numbered curriculum.
 
@@ -43,13 +43,17 @@ Tutorials always list their Feature Tutorial prerequisites.
 
 ## Where do I check my work?
 
-Most tutorials: nowhere yet — no solution has been written for them. A
-few do have one, in a local `Sw/` folder next to that tutorial's
+Check the root [README's Solutions checklist](./README.md#solutions)
+for the current, up-to-date list — Getting Started, Sensors & Local
+Storage, and ESP32 Connectivity all have real solutions now; later
+sections (Cloud Messaging onward) are still mostly scaffold. Each
+solution lives in a local `Sw/` folder next to that tutorial's
 `README.md` (e.g. [Getting_Started/01-Hello_Blink/Sw/](./Getting_Started/01-Hello_Blink/Sw/));
-check that tutorial's own **Solution** section for current status.
-Buildable solutions share one copy of the ABOV vendor SDK checked into
-this repo at [`Generation/`](./Generation/) — see that folder's README
-before trying to build one.
+check that tutorial's own **Solution** section for exactly what's been
+verified on real hardware versus what still needs a human hand on the
+board. Buildable solutions share one copy of the ABOV vendor SDK
+checked into this repo at [`Generation/`](./Generation/) — see that
+folder's README before trying to build one.
 
 ## How do I contribute a tutorial?
 

@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -20,31 +21,171 @@
 
 ## Introduction
 
-Tutorial 04 only applies desired state once, at boot. Real control-plane behavior means reacting to a delta the moment AWS publishes one — this tutorial adds the standing subscription and live-apply path.
+[Tutorial 04](../04-Shadow_Get_Apply_Report/) applies desired state once,
+at boot. A real control plane changes `desired` while the device is
+already running. AWS then publishes the difference on
+`$aws/things/<thingName>/shadow/update/delta`. This tutorial keeps 04's
+boot GET / apply / report, then adds that standing subscription and
+applies each inbound delta with no reboot.
+
+The 04 lesson still holds. A delta document only contains the keys that
+differ. Reporting just those keys — or rebuilding only `reporting` and
+`led` — leaves every other desired sibling (`note`, nested extras, …)
+in delta forever. AWS then republishes `update/delta` on every report
+and the UART storms. The live path overlays known fields for the log,
+merges the slice into the last full desired object, and echoes that
+whole object as `reported`.
+
+## The Exchange, at a Glance
+
+```mermaid
+sequenceDiagram
+    participant Board as Tiremo Cortex
+    participant AWS as AWS IoT Core
+
+    Note over Board: tutorial 04 boot GET / apply / full report
+    Board->>AWS: subscribe update/delta
+    Note over AWS: operator edits desired (no reboot)
+    AWS-->>Board: update/delta (changed keys only)
+    Note over Board: overlay + merge into last desired
+    Board->>AWS: shadow/update state.reported = full desired echo
+    AWS-->>Board: update/accepted (delta clears)
+```
+
+```mermaid
+flowchart TD
+    A([Boot]) --> B[Tutorial 04: GET, apply, full report]
+    B --> C[Subscribe update/delta]
+    C --> D([Ready loop: Poll + heartbeat])
+    D -->|inbound delta| E[Overlay known fields]
+    E --> F[Merge into last desired, echo reported]
+    F --> D
+    D -->|USER held 10 s| G[Erase issued identity]
+    G --> H[System reset]
+    H -.-> A
+
+    classDef normal fill:#bee3f8,stroke:#2b6cb0,color:#1a365d,stroke-width:1px
+    classDef lesson fill:#c6f6d5,stroke:#276749,color:#22543d,stroke-width:1px
+    classDef reset fill:#fed7d7,stroke:#c53030,color:#63171b,stroke-width:1px
+    class B,D normal
+    class C,E,F lesson
+    class G,H reset
+```
 
 ## You Will Learn
 
-- The standing `shadow/update/delta` subscription, distinct from the one-shot `shadow/get` exchange
-- Reusing Tutorial 04's apply/report logic for both the boot-time get and the live delta
+- `shadow/update/delta` as a standing subscription, distinct from the one-shot `shadow/get`
+- Why the delta payload's `state` *is* the partial desired diff — not `{desired, reported, delta}`
+- Reusing 04's apply + full desired echo so a live change does not recreate a leftover delta
+- Polling MQTT in the ready loop so the 10 s USER factory-reset still runs
 
 ## Prerequisites
 
-- [04-Shadow_Get_Apply_Report](../04-Shadow_Get_Apply_Report/)
+- [04-Shadow_Get_Apply_Report](../04-Shadow_Get_Apply_Report/) — boot GET / apply / full report, Thing name, claim/issued identity
+- The same gitignored files as 04 in this `Sw/`: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem`
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Understanding `update/delta`
+
+A classic-shadow delta looks like this when only the LED changed:
+
+```json
+{
+  "version": 12,
+  "timestamp": 1787785000,
+  "state": {
+    "led": { "on": true }
+  }
+}
+```
+
+`state` here is **not** the get/accepted envelope. There is no nested
+`desired`. Feeding that slice to `JsonWriter_Raw` as `reported` would
+publish `{"led":{"on":true}}` and AWS would keep `reporting` in delta.
+
+Rebuilding only the three known keys is the same bug. Boot desired in
+the storm log was 19 bytes (`{"led":{"on":false}}`); the live path then
+reported `{reporting, led}` and left every extra desired key unmatched,
+so `update/delta` never cleared.
+
+This firmware keeps the last full desired object from the boot GET.
+Each delta overlays `reporting.*` / `led.on` for the UART log, deep-
+merges the slice into that cached object (`null` deletes a key), and
+echoes the result with `JsonWriter_Raw`. If the merged desired is
+byte-for-byte what was last published, the report is skipped so a
+leftover delta cannot loop.
+
+`update/delta` is subscribed **after** the boot echo. Subscribing earlier
+would let `MqttWaitMessage` consume (and drop) a delta while the boot
+path is blocked waiting for get/accepted or update/accepted.
+
+Thing name is the same rule as 04: MQTT client ID
+(`<product>_<deviceId>`) unless `TIREMO_AWS_THING_NAME` is set.
 
 ## Solution
 
-No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
+[`Sw/`](./Sw/) has a real, buildable implementation. Copy the same
+gitignored files you already used in tutorial 04:
 
-## Step Outline
+```sh
+cd Sw
+cp ../04-Shadow_Get_Apply_Report/Sw/wifi_secrets.h .
+cp ../04-Shadow_Get_Apply_Report/Sw/aws_iot_config.h .
+cp ../04-Shadow_Get_Apply_Report/Sw/certs/claim_cert.pem certs/
+cp ../04-Shadow_Get_Apply_Report/Sw/certs/claim_key.pem certs/
+tdf.py build
+tdf.py flash
+tdf.py monitor
+```
 
-1. Subscribe to `shadow/update/delta` once at boot, alongside the get/accepted flow
-2. On an inbound delta, apply it and publish reported using the same code path as Tutorial 04
-3. From the AWS console, change `desired` twice in a row while the board runs and confirm both take effect with no reboot
+**Verified on the connected board:** `.text` 34928 bytes, flash
+**Verified OK**. After a successful tutorial 04 the UART skipped the
+claim exchange, repeated the boot GET / full report, then subscribed
+`update/delta`:
+
+```text
+[INFO] Live_Shadow_Delta: boot
+[INFO] identity: deviceId=30eda0806324 clientId=<product>_30eda0806324 thingName=<product>_30eda0806324
+[INFO] provision: marker matches 30eda0806324
+[INFO] shadow: get
+[INFO] shadow: applied reporting.enabled=true intervalS=60 led.on=false
+[INFO] shadow: update reported (77 bytes, full desired echo)
+[INFO] shadow: update accepted
+[INFO] shadow: no leftover delta
+[INFO] shadow: subscribed update/delta
+[INFO] shadow: ready thingName=<product>_30eda0806324 (live update/delta)
+```
+
+In the AWS console, edit the Thing's classic shadow `desired` (for
+example flip `led.on` or `reporting.enabled`) **twice** without
+resetting the board. Each edit should log:
+
+```text
+[INFO] shadow: delta ... bytes
+[INFO] shadow: applied reporting.enabled=... intervalS=... led.on=...
+[INFO] shadow: desired now ... bytes (merged)
+[INFO] shadow: update reported (... bytes, full desired echo)
+```
+
+The console delta should clear after each report.
+
+## Walkthrough
+
+1. [`prv_user_code.c`](./Sw/Src/prv_user_code.c) — 04's identity / WiFi /
+   SNTP / provision-or-skip / boot GET, then `TIREMO_Shadow_Poll()` in
+   the ready loop.
+2. [`tiremo_shadow.c`](./Sw/Common/Src/tiremo_shadow.c) — boot exchange
+   from 04; `Subscribe` to `update/delta` only after that succeeds;
+   `Poll` merges each delta into the last desired object and echoes it.
+3. [`tiremo_shadow.h`](./Sw/Common/Include/tiremo_shadow.h) —
+   `GetApplyReport` plus `Poll`.
 
 ## Done When
 
-Toggling a field in the AWS console while the board is running changes device behavior within one MQTT poll cycle, with no reboot required.
+Toggling a desired field in the AWS console while the board is sitting
+in the ready loop changes the applied log within one MQTT poll cycle,
+with no reboot. The published reported object is a full echo of desired
+(extra keys included) so the console delta clears and does not storm.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

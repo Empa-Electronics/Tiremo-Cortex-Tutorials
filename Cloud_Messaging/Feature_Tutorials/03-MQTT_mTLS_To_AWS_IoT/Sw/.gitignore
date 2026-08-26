@@ -1,0 +1,4 @@
+build/
+wifi_secrets.h
+certs/device_cert.pem
+certs/device_key.pem

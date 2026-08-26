@@ -24,8 +24,8 @@ Design tutorials combine several feature tutorials into one working subsystem, c
  <td width="65%" align="center"><b>Description</b>
  </tr>
  <tr>
- <td align="center"><a href="./01-Provision_And_Sync_A_Real_Thing/">Provision and Sync a Real Thing</a></td>
- <td>Combine claim-based provisioning with shadow get/apply/report into one boot flow against a live AWS account.</td>
+ <td align="center"><a href="./01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
+ <td>Demo: publish onboard sensor telemetry and open/close an output from classic shadow desired, with no reboot. (Not implemented yet.)</td>
  </tr>
  </table>
 

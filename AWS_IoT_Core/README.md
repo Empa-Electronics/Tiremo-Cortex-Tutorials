@@ -16,7 +16,7 @@
 
 # AWS IoT Core
 
-Device identity, fleet provisioning by claim certificate, the minimal JSON helpers this firmware relies on instead of a full parser library, and the device shadow control loop — get, apply, report, and live delta.
+Device identity, the minimal JSON helpers this firmware relies on instead of a full parser library, fleet provisioning by claim certificate, the device shadow control loop, telemetry and alarms, and AWS IoT Jobs.
 
 - The [**Feature Tutorials**](./Feature_Tutorials/) cover one concept each — a single driver, a single AT command sequence, a single cloud primitive.
 

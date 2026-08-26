@@ -9,6 +9,15 @@ release.
 
 ### Added
 
+- AWS IoT Core scaffolds (README only, firmware not yet written):
+  feature tutorials
+  [`06-Publishing_Alarms_And_Telemetry`](AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/)
+  and [`07-AWS_Jobs`](AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/),
+  plus design tutorial
+  [`01-Sensor_Telemetry_And_Shadow_Control`](AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/)
+  (sensor telemetry + shadow open/close demo). Removed the unused
+  `01-Provision_And_Sync_A_Real_Thing` scaffold.
+
 - Initial repository scaffold: `Getting_Started`, `Sensors_And_Storage`,
   `ESP32_Connectivity`, `Cloud_Messaging`, `AWS_IoT_Core`,
   `Production_Firmware`, and `Developer_Contributed`, each with a README and
@@ -263,8 +272,217 @@ release.
   wide, traced from `images/tiremo_sub_brand_1_mono_black.png`. Bypasses
   `TIREMO_LOG_INFO` so no `[INFO]` prefix breaks the artwork, and is
   suppressed below INFO verbosity. Verified on hardware.
+- `ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/Sw/`:
+  first ESP32 Connectivity solution — UART2 AT transport, PA12 power
+  cycle (500 ms off / 3000 ms boot), `SendCommand` expect/timeout, `AT`
+  then `ATE0`. Built (`.text` 14624), flashed, live `AT`→`OK` with echo
+  then echo-free after `ATE0`. English + Turkish walkthroughs written
+  alongside it.
+- `ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/Sw/`:
+  station join on the tutorial-01 transport. `CWMODE=1`, `CWJAP` waits
+  for `WIFI GOT IP` (not `OK`), `CWSTATE` matches `+CWSTATE:2` (not the
+  prefix), `CWJAP?` matches terminating `OK` then parses the quoted
+  SSID. Credentials in gitignored `wifi_secrets.h`. Built (`.text`
+  15200). Join confirmed on a real 2.4 GHz AP. English + Turkish
+  walkthroughs.
+- `ESP32_Connectivity/Feature_Tutorials/03-Connect_Retry_State_Machine/Sw/`:
+  scan-then-join (`AT+CWLAP` quoted SSID), `JoinAP` returns got-IP /
+  ERROR / timeout, three retries with 1 s between timeouts, last-good
+  credentials in DFMC sector 0 with magic `WF01` (not `TRM1`/`ENV1`).
+  Built (`.text` 19440), flashed; heartbeat after join confirmed.
+  English + Turkish walkthroughs.
+- `ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/Sw/`:
+  SNTP after the tutorial-03 join path. `CIPSNTPCFG` timezone 0 (UTC),
+  `CIPSNTPTIME?` matches terminating `OK` then parses asctime, rejects
+  the 1970 placeholder, `TIREMO_Clock_SetEpoch()`. Built (`.text`
+  20956), flashed; `GetEpoch()` locked to wall clock
+  (`1787769411` = 2026-08-26 18:36:51 UTC). English + Turkish
+  walkthroughs.
+- `ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/Sw/`:
+  no `wifi_secrets.h`. `AT+BLUFINAME` / `AT+BLUFI=1`, `BlufiPoll` as the
+  sole UART2 consumer (so `IsConnected` cannot eat `+SSID:` /
+  `+PASSWORD:`), persist magic `BL01`, `CWAUTOCONN=1` after GOT IP.
+  Built (`.text` 21156), flashed; advertising as `Tiremo-Cortex`
+  confirmed. Phone Configure is a human step. English + Turkish
+  walkthroughs.
+- `ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/Sw/`:
+  composes 01–05 as `prvTryScanJoin` / `prvTryNvsRejoin` / `prvTryBlufi`
+  then NTP. Persist magic `CS01`. Boot banner. Built (`.text` 25196),
+  flashed; full cascade confirmed on hardware — factory-fresh boot
+  advertised, EspBluFi provisioned and wrote `CS01`, and the next reset
+  came up on the `nvs` path with no BluFi step. English + Turkish
+  walkthroughs.
+- `Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/`:
+  first Cloud Messaging solution, and the first tutorial with no
+  reference implementation anywhere in the private repo for either
+  half of its subject (MQTT or TLS) — the ESP32's built-in MQTT client
+  is driven entirely through original AT-command code added to the
+  same `tiremo_esp32.c` ESP32 Connectivity already grew (based on
+  Tutorial 02's WiFi-join subset, not the full BluFi stack, which this
+  tutorial doesn't need). New driver surface: `MqttUserConfig`
+  (`AT+MQTTUSERCFG`), `MqttConnect`, `MqttSubscribe`, `MqttPublish`
+  (string) and `MqttPublishRaw` (binary-safe, `>`-prompt data-input
+  mode), and `MqttWaitMessage` — a genuine length-prefixed parser for
+  the async `+MQTTSUBRECV` URC, not a text heuristic, correct for
+  binary payloads up to the driver's 512-byte capture buffer. Found and
+  fixed two real bugs via `-D TIREMO_DEBUG_LEVEL=4` raw-AT-traffic
+  tracing and Espressif's own ESP-AT MQTT command reference: this
+  tutorial's own stub had assumed a 0-indexed `scheme` parameter
+  (`MQTTUSERCFG` rejected outright with `\r\nERROR\r\n` until fixed to
+  the real 1-indexed value, `scheme=1` for plain TCP — which also
+  confirmed Tutorial 03's stub was already right that mutual TLS is
+  `scheme=5`), and `MQTTPUBRAW`'s real completion marker is
+  `+MQTTPUB:OK`/`+MQTTPUB:FAIL`, not a bare `OK` (matching only `"OK"`
+  happened to still work, by coincidental substring overlap — fixed to
+  match the real marker instead of relying on that). Documented in the
+  README's "A Real Bug" section with the actual failing AT trace, not a
+  reconstruction. Built clean (`.text` 17268 bytes), flashed and
+  OpenOCD-verified over SWD, and genuinely confirmed live: full
+  publish/subscribe round trip against the real `broker.emqx.io`,
+  alternating string and binary-safe publishes, echoed back and logged
+  every 5 s. Independently cross-checked beyond the board's own
+  loopback-shaped proof: a separate `mqttx` CLI subscriber, a
+  completely different MQTT client with no connection to this
+  firmware, was run in parallel against the same broker/topic and
+  genuinely received the same messages the board published — real
+  confirmation this went over the open internet, not a local illusion.
+  Full walkthrough + Turkish translation written alongside it (the
+  first Turkish translation under `docs-tr/Cloud_Messaging/`).
+- `Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/`:
+  write/read/erase for the three mTLS credential slots
+  (`TIREMO_ESP32_CREDSLOT_ROOT_CA`/`CLIENT_CERT`/`CLIENT_KEY`) an AWS
+  IoT connection needs, stored in the ESP32 module's own manufacturing
+  NVS via `AT+SYSMFG` -- not MCU flash. Reconciled a real inconsistency
+  in the tutorial's own pre-existing step outline ("four slots" in one
+  bullet, "three" in another) -- three is correct, confirmed against
+  the command reference. Per user request, credential content lives in
+  real `Sw/certs/*.pem` files (genuine, locally-generated, self-signed
+  *test* certificates via `openssl req -x509`, clearly labeled as such
+  in their own subject line) instead of hand-typed C string literals,
+  embedded into the firmware at build time by a new, reusable
+  [`cmake/embed_pem.cmake`](cmake/embed_pem.cmake) (pure CMake --
+  `file(READ ... HEX)` plus a regex substitution, no xxd/Perl/external
+  tool, so it works identically on Windows without Git Bash/WSL) --
+  Tutorial 03 reuses this same mechanism verbatim, swapping in real AWS
+  IoT credentials. Driver based on ESP32 Connectivity Tutorial 01's
+  minimal transport subset, not the WiFi/MQTT-carrying version from
+  this section's own Tutorial 01, since `AT+SYSMFG` needs no network at
+  all. `CredRead()` does a genuine length-prefixed parse of
+  `+SYSMFG:"ns","key",<type>,<length>,<value>` (same technique as
+  Tutorial 01's `MqttWaitMessage()`), so it's correct for the full
+  multi-line PEM value, not a text heuristic; reading an erased slot's
+  expected `\r\nERROR\r\n` is logged at `WARN`, not treated as a bug,
+  since "prove it's now empty" is literally what the test needs. Built
+  clean, flashed and OpenOCD-verified over SWD, and genuinely confirmed
+  live: a clean pass on the first real hardware attempt -- write,
+  byte-for-byte `memcmp` read-back match, erase, and a correctly-failing
+  post-erase read, for all three slots (1245/1241/1704 bytes -- the
+  real sizes of the three test PEM files). Full walkthrough + Turkish
+  translation written alongside it.
+  **A real bug found afterward, while researching Tutorial 03:** the
+  namespace/key convention originally used here --
+  `client_ca`/`client_cert`/`client_key`, each with a `.0` index -- was
+  wrong for MQTT. Espressif's own `AT+SYSMFG` docs reserve a *separate*
+  namespace set per client feature; `client_*` is the generic SSL
+  client's set, but `AT+MQTTUSERCFG`'s `cert_key_ID`/`CA_ID` actually
+  read from the MQTT client's own set: `mqtt_ca`/`mqtt_cert`/`mqtt_key`,
+  no `.0` suffix, one set only. Because `AT+SYSMFG` is generic key-value
+  storage, the original write/read-back/erase test passed cleanly
+  against the wrong namespace too -- proof the *storage* worked, not
+  proof the *credentials were wired to where the TLS handshake actually
+  looks*. Caught by cross-referencing this driver against production's
+  own `tiremo_esp32.c` (which correctly uses `mqtt_*`) and Espressif's
+  namespace/key mapping table, before wiring up any real AWS connection
+  in Tutorial 03. Driver, header doc comment, and README corrected to
+  `mqtt_ca`/`mqtt_cert`/`mqtt_key`; re-verified clean on real hardware
+  after the fix (`.text` 21140 bytes, all three slots re-confirmed).
+- `Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/Sw/`: a
+  genuine mutual-TLS MQTT connection to a real AWS IoT Core endpoint.
+  Driver built on Tutorial 01's WiFi+MQTT base, with Tutorial 02's
+  credential-slot functions and ESP32 Connectivity Tutorial 04's SNTP
+  functions folded in, plus two new functions:
+  `TIREMO_ESP32_MqttUserConfigMtls()` (scheme 5 -- verify server cert,
+  present client cert) and `TIREMO_ESP32_MqttSni()`. `AT+MQTTCONN`
+  under scheme 5 requires the module to have synced real time via SNTP
+  first (checking the server certificate's validity dates needs a real
+  clock, and the module has none at boot) -- documented directly in
+  Espressif's own `AT+MQTTUSERCFG` notes; `EnableSntp()`/
+  `WaitSntpEpoch()` run before the MQTT sequence to satisfy it. Real
+  AWS IoT credentials: `certs/root_ca.pem` is Amazon's own public Root
+  CA 1 (committed); `certs/device_cert.pem`/`device_key.pem` are the
+  reader's own Thing certificate and private key, gitignored with
+  `.example` templates, matching the existing `wifi_secrets.h` pattern
+  -- a real device private key is never committed. Connect only in
+  this pass, deliberately -- no subscribe/publish yet (later
+  `AWS_IoT_Core` curriculum). Genuinely verified against a real AWS
+  IoT Core endpoint: built clean (`.text` 21648 bytes), flashed and
+  OpenOCD-verified over SWD, and a real
+  `+MQTTCONNECTED:0,5,"<endpoint>","8883","",0` from the module itself
+  confirmed live over `tdf.py monitor`. Full walkthrough + Turkish
+  translation written alongside it.
+- `AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/`:
+  first AWS IoT Core solution. Station MAC via `AT+CIPSTAMAC?`
+  (`GetHwEui` matches terminating `OK`, then parses
+  `"aa:bb:cc:dd:ee:ff"`), 12-hex lowercase `deviceId` with no
+  separators (`TIREMO_Identity_FromEui`). No WiFi join, no AWS
+  session — identity is a hardware property. Built (`.text` 15060),
+  flashed; `30:ed:a0:80:63:24` → `30eda0806324`, heartbeat re-read
+  unchanged. English + Turkish walkthroughs.
+- `AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/Sw/`:
+  `FindObject` / `FindBool` / `FindUint` / `FindString` and a nested
+  `JsonWriter`, no ESP32 and no AWS. Scan-at-current-depth only;
+  strings with colons are skipped so they cannot look like keys.
+  Built (`.text` 16156), flashed; sample shadow parsed, reported
+  object written and re-parsed (`round-trip ok`). English + Turkish
+  walkthroughs.
+- `AWS_IoT_Core/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/`:
+  fleet provisioning by claim. `certs/` matches Cloud Messaging 03:
+  Amazon Root CA 1 committed, `claim_cert.pem` / `claim_key.pem`
+  gitignored with instructional `.example` templates; CMake will not
+  configure if the real claim PEMs are missing (no silent fallback to
+  examples). Identity from tutorial 01, JSON from tutorial 02, scheme-5
+  MQTT + SYSMFG from Cloud Messaging 03. `CreateKeysAndCertificate` then
+  `RegisterThing` (`deviceIdentifier` = bare MAC), issued cert/key
+  written to `mqtt_cert`/`mqtt_key`, marker `tiremo`/`provisioned` so
+  the next boot skips the exchange. ESP-AT's 1024-byte MQTT buffer
+  splits CreateKeysAndCertificate across several `+MQTTSUBRECV` URCs;
+  fragments are reassembled before parse. 10 s USER hold factory-resets
+  `mqtt_cert` / `mqtt_key` / the provisioned marker and reboots.
+  English + Turkish walkthroughs. Hardware create/register round-trip
+  waits on the reader's own claim certificate and template (gitignored,
+  not shipped).
+- `AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/Sw/`:
+  boot-time Device Shadow get / apply / report on top of tutorial 03's
+  issued identity. Subscribes to get/accepted and get/rejected (not
+  `update/delta` — that is tutorial 05), applies `reporting.enabled` /
+  `intervalS` / `led.on`, and publishes `state.reported` as a full copy
+  of `state.desired` via new `TIREMO_JsonWriter_Raw` so AWS drops the
+  delta. A second get confirms `state.delta` is absent. Optional
+  `TIREMO_AWS_THING_NAME` when the fleet template does not name the
+  Thing as the MQTT client ID. Built (`.text` 33764), flashed; live
+  AWS get/accepted, full-echo report, second get `no leftover delta`.
+  English + Turkish walkthroughs.
+- `AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/`:
+  standing `shadow/update/delta` on top of tutorial 04's boot GET /
+  apply / report. Subscribes to delta only after the boot echo so a
+  wait for get/accepted cannot consume and drop it. Each inbound delta
+  overlays known fields onto the last applied state and publishes the
+  full applied object (not the delta slice) so unchanged siblings do
+  not stay in AWS's delta. Ready loop polls MQTT so the 10 s USER
+  factory-reset still runs. Built (`.text` 34928), flashed; boot GET /
+  full report then `subscribed update/delta`.   Live console toggles are
+  the reader's step. A leftover-desired storm (report rebuilt only
+  `reporting`+`led` while desired had extra keys) is fixed by GETting
+  the full document on each delta and echoing all of `state.desired`.
+  English + Turkish walkthroughs.
 
 ### Changed
+
+- AWS IoT Core feature order: **Minimal JSON Helpers is now 02**, Fleet
+  Provisioning by Claim is 03. JSON is used by provisioning replies and
+  by shadow, so it no longer sits after fleet. Shadow (04) and live
+  delta (05) keep their numbers. Tables, FAQs, and prerequisites
+  updated.
 
 - Removed every doc reference to `referance_only/` (private, gitignored,
   never shipped to a clone of this repo). Each tutorial's former
@@ -307,3 +525,20 @@ release.
   0xfffffffe`) → `flash` → working-again cycle. Every tutorial's Solution
   section and build/flash walkthrough steps updated to lead with `tdf.py`
   instead of raw `cmake` invocations, in both English and Turkish.
+
+### Fixed
+
+- BluFi provisioning could reach `WIFI GOT IP` and still persist nothing
+  (tutorial 05 and the boot cascade). Two causes: `AT+BLUFI=0` answers
+  `+BLUFIDISCONN` before `OK`, so a 1 s wait timed out and its late `OK`
+  then satisfied the following `AT+CWJAP?`, which returned without a
+  `+CWJAP:` line; and an ESP-AT build that never emits `+PASSWORD:` left
+  the app with no credentials to save. `BlufiStop()` now allows 5 s,
+  `GetConnectedSsid()` retries when the marker is missing,
+  `CWAUTOCONN=1` is armed before the stop so the module's NVS copy
+  survives, and the SSID is persisted with an empty password so the next
+  boot takes the NVS rejoin branch. Unrecognised BluFi lines are echoed
+  as `ESP32: BluFi URC "..."`.
+- `prvTryNvsRejoin()` in the boot cascade now watches `CWSTATE` for 15 s
+  while the module auto-rejoins, instead of immediately spending a
+  `CWJAP` timeout on a password-less join that WPA2 rejects.

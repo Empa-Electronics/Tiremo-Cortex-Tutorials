@@ -35,10 +35,6 @@ Feature tutorials cover one concept each — a single driver, a single AT comman
  <td align="center"><a href="./03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to AWS IoT Core</a></td>
  <td>Connect to a real AWS IoT endpoint using a manually-issued device certificate — no fleet provisioning yet.</td>
  </tr>
- <tr>
- <td align="center"><a href="./04-Reliable_Inbound_Message_Draining/">Reliable Inbound Message Draining</a></td>
- <td>Switch from polling IsConnected() to a handler-driven MqttPoll() loop so inbound URCs stop getting dropped.</td>
- </tr>
  </table>
 
 <p align="center"><img alt="" src="../../images/banner.png" width="100%"></p>

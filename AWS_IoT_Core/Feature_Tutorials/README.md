@@ -28,12 +28,12 @@ Feature tutorials cover one concept each — a single driver, a single AT comman
  <td>Derive a stable deviceId/thingName from the ESP32's station MAC.</td>
  </tr>
  <tr>
- <td align="center"><a href="./02-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
- <td>Implement AWS IoT fleet provisioning: CreateKeysAndCertificate → RegisterThing → store the issued cert.</td>
+ <td align="center"><a href="./02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
+ <td>Build just enough JSON find/write helpers to parse shadow documents without a full parser library.</td>
  </tr>
  <tr>
- <td align="center"><a href="./03-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
- <td>Build just enough JSON find/write helpers to parse shadow documents without a full parser library.</td>
+ <td align="center"><a href="./03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
+ <td>Implement AWS IoT fleet provisioning: CreateKeysAndCertificate → RegisterThing → store the issued cert.</td>
  </tr>
  <tr>
  <td align="center"><a href="./04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
@@ -42,6 +42,14 @@ Feature tutorials cover one concept each — a single driver, a single AT comman
  <tr>
  <td align="center"><a href="./05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
  <td>Subscribe to shadow/update/delta and apply a change live, with no reboot.</td>
+ </tr>
+ <tr>
+ <td align="center"><a href="./06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
+ <td>Publish sensor telemetry and edge alarms on MQTT topics, separate from the shadow control loop. (Not implemented yet.)</td>
+ </tr>
+ <tr>
+ <td align="center"><a href="./07-AWS_Jobs/">AWS Jobs</a></td>
+ <td>Accept and complete an AWS IoT Job over MQTT, with IN_PROGRESS / SUCCEEDED status. (Not implemented yet.)</td>
  </tr>
  </table>
 

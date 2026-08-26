@@ -2,3 +2,14 @@ referance_only/
 tdf_venv/
 __pycache__/
 *.pyc
+
+# Firmware build trees (also listed in each Sw/.gitignore)
+**/Sw/build/
+
+# Local secrets — commit only the *.example placeholders
+wifi_secrets.h
+aws_iot_config.h
+certs/claim_cert.pem
+certs/claim_key.pem
+certs/device_cert.pem
+certs/device_key.pem

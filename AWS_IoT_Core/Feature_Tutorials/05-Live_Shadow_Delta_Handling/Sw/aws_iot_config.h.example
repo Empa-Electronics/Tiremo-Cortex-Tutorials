@@ -1,0 +1,23 @@
+/******************************************************************************
+ * @file    aws_iot_config.h.example
+ * @brief   Copy to aws_iot_config.h and fill in your deployment values.
+ *
+ * aws_iot_config.h is gitignored because PRODUCT_SECRET may be sensitive.
+ * Same idea as wifi_secrets.h and as Cloud Messaging 03's device PEMs.
+ ******************************************************************************/
+
+#ifndef AWS_IOT_CONFIG_H
+#define AWS_IOT_CONFIG_H
+
+#define TIREMO_AWS_ENDPOINT            "xxxxxxxxxxxxxx-ats.iot.eu-west-1.amazonaws.com"
+#define TIREMO_AWS_TEMPLATE_NAME       "your-fleet-template"
+#define TIREMO_AWS_PRODUCT_IDENTIFIER  "your-product"
+#define TIREMO_AWS_PRODUCT_SECRET      "REPLACE_WITH_REAL_PRODUCT_SECRET"
+#define TIREMO_AWS_IS_GATEWAY          "false"
+
+/* Optional. Empty means the MQTT clientId ("<product>_<deviceId>").
+ * Set this if the fleet template names the Thing something else
+ * (for example the bare 12-hex MAC from tutorial 01). */
+#define TIREMO_AWS_THING_NAME          ""
+
+#endif /* AWS_IOT_CONFIG_H */
