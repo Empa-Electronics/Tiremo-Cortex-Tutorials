@@ -32,14 +32,9 @@ There's no dedicated battery-sense pin on this board — supply voltage is infer
 - [03-LIS2DE12_Accelerometer](../03-LIS2DE12_Accelerometer/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_battery.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/battery/Src/tiremo_battery.c)
-- [tiremo_hal_adc.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Hal/Src/tiremo_hal_adc.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

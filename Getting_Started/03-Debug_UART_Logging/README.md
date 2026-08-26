@@ -33,15 +33,9 @@ Every tutorial from here on will be debugged over a UART log, not a debugger bre
 - [02-SysTick_Timing](../02-SysTick_Timing/)
 - Toolchain and flashing set up per [Getting Started](../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_debug.h](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Common/Include/tiremo_debug.h)
-- [tiremo_debug.c](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Common/Src/tiremo_debug.c)
-- [README.md — Debug verbosity](../../referance_only/Tiremo-Secure-Iot-Sw/README.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

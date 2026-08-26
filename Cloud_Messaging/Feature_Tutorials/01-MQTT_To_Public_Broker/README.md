@@ -32,13 +32,9 @@ Before touching certificates, prove the ESP32's built-in MQTT client works at al
 - [ESP32 Connectivity](../../../ESP32_Connectivity/) — WiFi join working
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_esp32.h — Mqtt* function group](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/include/tiremo_esp32.h)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

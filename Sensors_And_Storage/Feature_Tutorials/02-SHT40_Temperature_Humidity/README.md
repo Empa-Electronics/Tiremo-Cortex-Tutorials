@@ -32,14 +32,9 @@ SHT40 is the first real sensor driver in the stack, and the simplest — a singl
 - [01-I2C_Bus_Bringup](../01-I2C_Bus_Bringup/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_sht40.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/sht40/Src/tiremo_sht40.c)
-- [SHADOW_README.md — sht40 fields](../../../referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

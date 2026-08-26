@@ -32,14 +32,9 @@ Every later tutorial — WiFi retries, MQTT polling, alarm debouncing — needs 
 - [01-Hello_Blink](../01-Hello_Blink/)
 - Toolchain and flashing set up per [Getting Started](../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_systick.c](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Common/Src/tiremo_systick.c)
-- [tiremo_app.c — the for(;;) run loop shape](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

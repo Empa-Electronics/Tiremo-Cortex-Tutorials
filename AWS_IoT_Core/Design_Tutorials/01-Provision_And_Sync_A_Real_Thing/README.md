@@ -32,14 +32,9 @@ This ties AWS IoT Core's feature tutorials into one coherent boot sequence, end 
 - All of AWS IoT Core / Feature Tutorials (01–05)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_app_connectivity.c — prvEstablishCloud/prvCloudFirstCheckup](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app_connectivity.c)
-- [tiremo_iot_checkup.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_checkup.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

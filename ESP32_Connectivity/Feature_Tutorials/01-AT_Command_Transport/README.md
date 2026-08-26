@@ -33,15 +33,9 @@ Every ESP32 feature from here on rides on this transport: power sequencing, a UA
 - [Getting_Started](../../../Getting_Started/) complete
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_esp32.h — Init/IsPresent/DisableEcho](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/include/tiremo_esp32.h)
-- [tiremo_esp32.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/src/tiremo_esp32.c)
-- [board_config.h — ESP32 UART/PWR pins](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Board/board_config.h)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

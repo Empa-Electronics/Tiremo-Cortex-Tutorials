@@ -32,14 +32,9 @@ The USER button is only used for one thing in the production firmware — a 10-s
 - [03-Debug_UART_Logging](../03-Debug_UART_Logging/)
 - Toolchain and flashing set up per [Getting Started](../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_button.c](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/button/Src/tiremo_button.c)
-- [tiremo_app_factory.c — the real consumer of this signal](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app_factory.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

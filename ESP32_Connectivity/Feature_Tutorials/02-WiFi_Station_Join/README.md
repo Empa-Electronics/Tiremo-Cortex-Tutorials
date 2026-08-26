@@ -32,14 +32,9 @@ The simplest possible WiFi connection: a hardcoded network, one join attempt, no
 - [01-AT_Command_Transport](../01-AT_Command_Transport/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_esp32.c — JoinAP/IsConnected](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/src/tiremo_esp32.c)
-- [CHANGELOG.md — Fixed: CWJAP/CIPSNTPTIME substring bug](../../../referance_only/Tiremo-Secure-Iot-Sw/CHANGELOG.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

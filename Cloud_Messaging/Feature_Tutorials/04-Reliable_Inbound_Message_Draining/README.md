@@ -32,14 +32,9 @@ A real bug from the reference firmware's history: polling `AT+MQTTCONN?` on ever
 - [03-MQTT_mTLS_To_AWS_IoT](../03-MQTT_mTLS_To_AWS_IoT/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_esp32.h — MqttSetHandler/MqttPoll](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/include/tiremo_esp32.h)
-- [CHANGELOG.md — Fixed: hot-path MqttIsConnected() dropping URCs](../../../referance_only/Tiremo-Secure-Iot-Sw/CHANGELOG.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

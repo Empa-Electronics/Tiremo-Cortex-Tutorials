@@ -32,14 +32,9 @@ Unlike SHT40, LIS2DE12 has real configuration surface — full-scale range and o
 - [02-SHT40_Temperature_Humidity](../02-SHT40_Temperature_Humidity/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_lis2de12.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/lis2de12/Src/tiremo_lis2de12.c)
-- [board_config.h — I2C address + SA0 note](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Board/board_config.h)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

@@ -32,15 +32,9 @@ This is the capstone: every driver, connectivity path, and cloud behavior built 
 - Every tutorial in this repository
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_app.c — ProbeAndInitialize/Run](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app.c)
-- [tiremo_iot_runtime.c — EventLoop_Service](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_runtime.c)
-- [README.md — Runtime](../../../referance_only/Tiremo-Secure-Iot-Sw/README.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

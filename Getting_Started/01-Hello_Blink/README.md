@@ -33,14 +33,9 @@ Before anything talks to WiFi or AWS, you need a build that flashes and a board 
 - None — first tutorial in this section
 - Toolchain and flashing set up per [Getting Started](../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [board_config.h — LED pin map](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Board/board_config.h)
-- [tiremo_hal_gpio.c](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Hal/Src/tiremo_hal_gpio.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

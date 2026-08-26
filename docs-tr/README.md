@@ -25,11 +25,9 @@ ESP32 tabanlı bir IoT sensör kartı. Tek radyo WiFi'dir (istasyon bağlantıs�
 BluFi BLE ile kurulum) ve AWS IoT Core'a, ESP32'nin kendi AT komut seti
 üzerinden karşılıklı TLS ile MQTT ile ulaşılır.
 
-Buradaki her eğitim, bu depoda referans olarak tutulan gerçek ve çalışan bir
-üretici yazılımının daha küçük, bağımsız bir dilimidir (aşağıdaki
-[Referans Uygulama](#referans-uygulama) bölümüne bakın) — böylece her adımda
-kendi çalışmanızı aynı özelliğin kanıtlanmış bir uygulamasıyla
-karşılaştırabilirsiniz.
+Buradaki her eğitim, tam bir üretici yazılımı derlemesinin daha küçük,
+bağımsız bir dilimidir — mevcut durum için aşağıdaki
+[Çözümler](#çözümler) bölümüne bakın.
 
 ## Nereden Başlamalı
 
@@ -53,10 +51,8 @@ Her konu iki tür eğitime ayrılır:
 
 ## Yardım Almak
 
-- Önce bir eğitimin **Reference Implementation** (Referans Uygulama)
-  bağlantılarına bakın — cevap genellikle
-  `referance_only/Tiremo-Secure-Iot-Sw/` içinde çalışan bir örnek kadar
-  yakındır.
+- Önce bir eğitimin **Solution** (Çözüm) bölümüne bakın — o an için bir
+  çözümün yazılıp yazılmadığını orada görürsünüz.
 - Bir eğitimle ilgili sorularınız veya sorunlarınız için bir
   [Issue](https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials/issues)
   açın.
@@ -320,14 +316,13 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 
-## Referans Uygulama
+## Çözümler
 
-[`referance_only/Tiremo-Secure-Iot-Sw/`](../referance_only/Tiremo-Secure-Iot-Sw/) bu müfredatın
-üzerine kurulduğu referans üretici yazılımıdır — aynı sensörler, aynı AWS IoT
-shadow/jobs/provisioning tasarımı. [`README.md`](../referance_only/Tiremo-Secure-Iot-Sw/README.md) ve
-[`SHADOW_README.md`](../referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md) dosyalarını AWS IoT Core
-eğitimlerinden önce baştan sona okumaya değer — oradaki neredeyse her alan
-adı ve konu bu müfredatla birebir eşleşir.
+Henüz hiçbir eğitimin yazılmış bir çözümü yok — bu depo şu an bir müfredat
+iskeleti (yapı, öğrenme hedefleri, adım taslakları), tamamlanmış bir kurs
+değil. Planımız, her eğitimin zamanla kendi `Sw/` klasöründe, `README.md`
+dosyasının hemen yanında bir çözüm barındırması; güncel durum için her
+eğitimin kendi **Solution** bölümüne bakın.
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 

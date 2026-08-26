@@ -33,15 +33,9 @@ This is the hardest local-sensor tutorial: burst-mode ADC clocked by Timer1, cap
 - [04-Battery_Voltage_ADC](../04-Battery_Voltage_ADC/); `CONFIG_HAL_DMAC` must be enabled in the vendor module config
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_mic_app.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/mic/Src/tiremo_mic_app.c)
-- [tiremo_mic_bsp.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/mic/Src/tiremo_mic_bsp.c)
-- [board_config.h — mic ADC/Timer1/PCU wiring](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Board/board_config.h)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

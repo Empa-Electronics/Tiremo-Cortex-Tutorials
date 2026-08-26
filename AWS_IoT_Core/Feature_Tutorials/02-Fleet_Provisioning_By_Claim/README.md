@@ -32,14 +32,9 @@ This replaces Cloud Messaging Tutorial 03's manually-created certificate with th
 - [01-Device_Identity_From_MAC](../01-Device_Identity_From_MAC/); an AWS IoT provisioning template and claim certificate
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_iot_provision.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_provision.c)
-- [Certs/tiremo_iot_certs_data.h.example](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Certs/tiremo_iot_certs_data.h.example)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

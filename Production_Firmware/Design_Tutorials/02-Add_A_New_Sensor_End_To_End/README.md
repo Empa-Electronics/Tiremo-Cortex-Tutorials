@@ -32,14 +32,9 @@ A stretch tutorial for extending this board beyond its stock sensor set. It walk
 - [01-Full_Event_Loop_Integration](../01-Full_Event_Loop_Integration/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [README.md — Design principles: swappable backends](../../../referance_only/Tiremo-Secure-Iot-Sw/README.md)
-- [Any existing driver as a template, e.g. tiremo_lis2de12.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/lis2de12/Src/tiremo_lis2de12.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

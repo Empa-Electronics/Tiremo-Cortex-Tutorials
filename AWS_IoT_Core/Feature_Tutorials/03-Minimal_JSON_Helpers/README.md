@@ -32,14 +32,9 @@ Shadow and jobs documents are JSON, but pulling in a general-purpose parser is o
 - [02-Fleet_Provisioning_By_Claim](../02-Fleet_Provisioning_By_Claim/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_iot_json.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_json.c)
-- [referance_json.json — referenced but gitignored; build your own sample from SHADOW_README.md](../../../referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

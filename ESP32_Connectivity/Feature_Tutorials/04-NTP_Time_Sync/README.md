@@ -32,14 +32,9 @@ Now that the board can join WiFi, get real wall-clock time and plug it into the 
 - [03-Connect_Retry_State_Machine](../03-Connect_Retry_State_Machine/), and [Software_Wall_Clock](../../../Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_esp32.c — SyncNtp](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/src/tiremo_esp32.c)
-- [tiremo_clock.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Common/Src/tiremo_clock.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

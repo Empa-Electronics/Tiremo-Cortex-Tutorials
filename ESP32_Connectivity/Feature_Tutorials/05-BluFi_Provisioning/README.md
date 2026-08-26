@@ -32,14 +32,9 @@ Hardcoding an SSID doesn't scale past one bench unit. BluFi lets a phone app pus
 - [04-NTP_Time_Sync](../04-NTP_Time_Sync/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_esp32.c — StartBlufiProvisioning/BlufiPoll/GetBlufiCredentials](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/src/tiremo_esp32.c)
-- [tiremo_app_connectivity.c — prvHarvestAndSaveBlufiWifi](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app_connectivity.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

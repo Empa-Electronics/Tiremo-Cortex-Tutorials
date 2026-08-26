@@ -32,14 +32,9 @@ The production firmware selects LED patterns from shadow state (Production Firmw
 - [04-Button_Read_And_Debounce](../04-Button_Read_And_Debounce/)
 - Toolchain and flashing set up per [Getting Started](../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_led.c](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Drivers/led/Src/tiremo_led.c)
-- [board_config.h — LED_COUNT / active-low](../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Board/board_config.h)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

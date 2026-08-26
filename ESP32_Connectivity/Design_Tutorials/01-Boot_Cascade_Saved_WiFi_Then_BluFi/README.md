@@ -32,14 +32,9 @@ This ties Tutorials 01–05 together into the board's real boot-time connection 
 - All of ESP32 Connectivity / Feature Tutorials (01–05)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_app_connectivity.c — TIREMO_APP_ConnectionSetup (WiFi + BluFi branches only; ignore the modem branch)](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app_connectivity.c)
-- [tiremo_net.h — connection-type dispatch, useful even with one backend](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_Net/Include/tiremo_net.h)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

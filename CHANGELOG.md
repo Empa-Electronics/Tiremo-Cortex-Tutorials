@@ -20,3 +20,11 @@ release.
   under `images/`.
 - Turkish translation of the top-level README (`docs-tr/README.md`), linked
   from a language switcher at the top of the English one.
+
+### Changed
+
+- Removed every doc reference to `referance_only/` (private, gitignored,
+  never shipped to a clone of this repo). Each tutorial's former
+  "Reference Implementation" section is now a "Solution" section, honestly
+  stating that no solution has been written yet; the eventual plan is for
+  each tutorial to carry its own local `Sw/` folder once one exists.

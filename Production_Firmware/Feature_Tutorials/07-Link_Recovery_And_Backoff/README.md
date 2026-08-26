@@ -33,13 +33,9 @@ Networks drop. This tutorial builds the resilience layer that notices an MQTT se
 - [06-Factory_Reset](../06-Factory_Reset/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_app_connectivity.c — TIREMO_APP_LinkRecover/ServiceLinkRecover](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_App/Src/tiremo_app_connectivity.c)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

@@ -32,14 +32,9 @@ AWS IoT Jobs let the cloud ask a fleet of devices to run a named operation and r
 - [03-Batched_Telemetry_Publisher](../03-Batched_Telemetry_Publisher/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_iot_runtime.c — prvHandleJobs/prvPublishJobHealthSucceeded](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_runtime.c)
-- [SHADOW_README.md — AWS IoT Jobs](../../../referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

@@ -43,9 +43,10 @@ Tutorials always list their Feature Tutorial prerequisites.
 
 ## Where do I check my work?
 
-Every tutorial's README has a **Reference Implementation** section pointing
-into [`referance_only/Tiremo-Secure-Iot-Sw/`](referance_only/Tiremo-Secure-Iot-Sw/) — the reference firmware this curriculum
-is built from. If your implementation diverges, that's where to compare.
+Right now: nowhere — no tutorial has a written solution yet. The plan is
+for each tutorial to eventually ship its own worked solution in a local
+`Sw/` folder next to its `README.md`; check that tutorial's own
+**Solution** section for current status.
 
 ## How do I contribute a tutorial?
 
@@ -53,7 +54,7 @@ Open a PR adding a numbered folder under the relevant topic (or under
 [Developer_Contributed](./Developer_Contributed) if it doesn't fit the
 numbered curriculum), with a `README.md` following the same structure as
 the existing tutorials: Introduction, You Will Learn, Prerequisites,
-Reference Implementation, Step Outline, Done When.
+Solution, Step Outline, Done When.
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 

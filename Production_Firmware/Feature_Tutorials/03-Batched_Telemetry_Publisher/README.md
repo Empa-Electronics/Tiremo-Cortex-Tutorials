@@ -33,14 +33,9 @@ Telemetry isn't a raw per-sample publish — it's an average over `batch_size` s
 - [02-Edge_Alarms_With_Hysteresis](../02-Edge_Alarms_With_Hysteresis/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_iot_runtime.c — prvServiceTelemetry/prvEffectiveReportIntervalMs](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_runtime.c)
-- [SHADOW_README.md — desired.reporting](../../../referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

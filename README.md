@@ -22,11 +22,8 @@ Cortex**, an ESP32-based IoT sensor board. WiFi (station join + BluFi BLE
 provisioning) is the only radio, and AWS IoT Core is reached over MQTT with
 mutual TLS through the ESP32's own AT command set.
 
-Every tutorial here is a smaller, standalone slice of a real, working
-firmware kept in this repo for reference (see
-[Reference Implementation](#reference-implementation) below) — so at any
-point you can check your work against a proven implementation of the same
-feature.
+Every tutorial here is a smaller, standalone slice of a complete firmware
+build — see [Solutions](#solutions) below for where things currently stand.
 
 ## Where to Start
 
@@ -49,8 +46,8 @@ Each topic splits into two kinds of tutorial:
 
 ## How to Get Help
 
-- Check a tutorial's **Reference Implementation** links first — the answer
-  is usually a working example away in `referance_only/Tiremo-Secure-Iot-Sw/`.
+- Check a tutorial's **Solution** section first — it says whether a worked
+  solution exists yet for that tutorial.
 - For questions or issues about a tutorial, open an
   [Issue](https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials/issues).
 
@@ -313,14 +310,13 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 </table>
 
 
-## Reference Implementation
+## Solutions
 
-[`referance_only/Tiremo-Secure-Iot-Sw/`](referance_only/Tiremo-Secure-Iot-Sw/) is the reference firmware
-this curriculum is built from — same sensors, same AWS IoT
-shadow/jobs/provisioning design. Its [`README.md`](referance_only/Tiremo-Secure-Iot-Sw/README.md) and
-[`SHADOW_README.md`](referance_only/Tiremo-Secure-Iot-Sw/SHADOW_README.md) are worth reading in full
-before AWS IoT Core — nearly every field name and topic used there
-matches this curriculum exactly.
+No tutorial has a written solution yet — this repository is currently a
+curriculum scaffold (structure, learning goals, step outlines), not a
+finished course. The plan is for each tutorial to eventually ship its own
+worked solution in a local `Sw/` folder next to its `README.md`; check that
+tutorial's own **Solution** section for current status.
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 

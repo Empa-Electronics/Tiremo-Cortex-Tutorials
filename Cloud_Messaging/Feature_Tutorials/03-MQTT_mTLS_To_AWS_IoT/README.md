@@ -33,14 +33,9 @@ With credentials writable (Tutorial 02) and MQTT working in the clear (Tutorial 
 - [02-mTLS_Credentials_In_Module_NVS](../02-mTLS_Credentials_In_Module_NVS/); an AWS IoT Core endpoint and one manually-created Thing certificate
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_iot_client.c](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_client.c)
-- [tiremo_esp32.h — MqttUserConfig/MqttSni/MqttConnect](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Platforms/Platform_esp32/include/tiremo_esp32.h)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 

@@ -32,14 +32,9 @@ This board doesn't implement OTA yet, but a job document that looks like one mus
 - [04-AWS_IoT_Jobs_Health_Check](../04-AWS_IoT_Jobs_Health_Check/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
-## Reference Implementation
+## Solution
 
-This tutorial is one slice of the reference firmware kept in this repo.
-Read these before or after attempting the steps below to check your
-approach:
-
-- [tiremo_iot_runtime.c — prvIsOtaJob](../../../referance_only/Tiremo-Secure-Iot-Sw/Tiremo_Lib/Tiremo_Core/Tiremo_IoT/Src/tiremo_iot_runtime.c)
-- [README.md — Design principles: Fail closed on OTA](../../../referance_only/Tiremo-Secure-Iot-Sw/README.md)
+No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
 
 ## Step Outline
 
