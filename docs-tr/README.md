@@ -83,11 +83,11 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             </td>
         </tr>
         <tr>
-            <td><a href="../Getting_Started/01-Hello_Blink/">Hello Blink</a></td>
-            <td><a href="../Getting_Started/02-SysTick_Timing/">SysTick Timing</a></td>
+            <td><a href="./Getting_Started/01-Hello_Blink/">Hello Blink</a></td>
+            <td><a href="./Getting_Started/02-SysTick_Timing/">SysTick Timing</a></td>
         </tr>
         <tr>
-            <td><a href="../Getting_Started/03-Debug_UART_Logging/">Debug UART Logging</a></td>
+            <td><a href="./Getting_Started/03-Debug_UART_Logging/">Debug UART Logging</a></td>
             <td><a href="../Getting_Started/04-Button_Read_And_Debounce/">Button Read & Debounce</a></td>
         </tr>
     </tbody>
@@ -325,11 +325,56 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 
 ## Çözümler
 
-Henüz hiçbir eğitimin yazılmış bir çözümü yok — bu depo şu an bir müfredat
-iskeleti (yapı, öğrenme hedefleri, adım taslakları), tamamlanmış bir kurs
-değil. Planımız, her eğitimin zamanla kendi `Sw/` klasöründe, `README.md`
-dosyasının hemen yanında bir çözüm barındırması; güncel durum için her
-eğitimin kendi **Solution** bölümüne bakın.
+Eğitimlerin çoğunun henüz yazılmış bir çözümü yok — bu depo hâlâ büyük
+ölçüde bir müfredat iskeleti (yapı, öğrenme hedefleri, adım anahatları),
+tamamlanmış bir kurs değil. Her eğitim, varsa kendi çalışan çözümünü,
+`README.md`'sinin hemen yanındaki yerel bir `Sw/` klasöründe sunar;
+güncel durum için o eğitimin kendi **Solution** (İngilizce) bölümüne
+bakın.
+
+Derlenebilir eğitimler, bu depoya tek kopya olarak eklenmiş tek bir ABOV
+satıcı SDK'sını paylaşır ([`Generation/`](../Generation/), ~107 MB — neden
+her eğitim için ayrı ayrı değil de paylaşılan tek kopya olduğu için o
+klasörün kendi notuna, satıcının BSD-3-Clause şartları için paketlenmiş
+`Document/LICENSE.md`'sine bakın), ve tek bir derleme/flaşlama CLI'ı
+paylaşırlar: [`tools/tdf.py`](../tools/tdf.py) ("Tiremo Development
+Framework" — ESP-IDF için `idf.py`'nin oynadığı ile aynı rol). Yalnızca
+ilk seferde:
+
+```sh
+./install.sh          # arm-none-eabi-gcc, cmake, ninja'yı ve pyserial'li bir tdf_venv/'i kontrol eder / kurmayı önerir
+source ./export.sh     # bu shell oturumu için tdf.py'yi PATH'e ekler ve tdf_venv/'i etkinleştirir (isteğe bağlı)
+```
+
+Ardından, herhangi bir eğitimin `Sw/` dizininden: `tdf.py build`,
+`tdf.py flash`, `tdf.py monitor` (kartı SWD üzerinden resetler, sonra
+UART log'unu seviyeye göre renk kodlu akıtır), `tdf.py clean`, `tdf.py
+clean-device` (bağlı kartın çip flash'ını topluca siler). `tdf.py
+build`/`flash`/`clean`/`clean-device` ince sarmalayıcılardır — kendi
+başlarına hiç OpenOCD ya da derleyici mantığı taşımazlar, her komut
+yalnızca o eğitimin `CMakeLists.txt`'indeki eşleşen `cmake --build build
+[--target ...]`'i çalıştırır, ve `tdf.py` kendi dosya konumundan depoyu
+bulur, bu yüzden `python tools/tdf.py build`, `export.sh` olsun ya da
+olmasın aynı şekilde çalışır. `monitor` tek istisna: canlı bir UART'ı
+okumak gerçek bir seri port gerektiriyor, ki CMake/OpenOCD'nin bu
+konuda hiçbir kavramı yok, bu yüzden o kısım `pyserial` kullanıyor —
+düz bir `pip install` yerine (çoğu güncel Python kurulumunda doğrudan
+başarısız olur — PEP 668) `install.sh` tarafından ayrı bir `tdf_venv/`
+içine kurulur, `export.sh` tarafından etkinleştirilir. cmd.exe,
+PowerShell, bash ya da zsh'de aynı şekilde çalışır; Windows'ta
+derlemek, flaşlamak ya da izlemek için Git Bash ya da WSL gerekmez
+(`install.sh`/`export.sh`'in kendisi bash'tir — Windows kullanıcıları
+bunları bir kez Git Bash/WSL'den çalıştırır, ya da araçları elle kurup
+doğrudan `python tools\tdf.py build`'e geçer). Tam hikaye, ve bu deponun
+neden elle yazılmış bir Makefile yerine CMake kullandığı için
+[01-Hello_Blink'in Çözüm bölümüne](../Getting_Started/01-Hello_Blink/README.md#solution)
+bakın.
+
+- [x] [Getting_Started/01-Hello_Blink](../Getting_Started/01-Hello_Blink/) — derlenir, bağlanır, gerçek bir ABOV A34G43A Starter Kit'e SWD üzerinden flaşlandı ve doğrulandı
+- [x] [Getting_Started/02-SysTick_Timing](../Getting_Started/02-SysTick_Timing/) — derlenir, bağlanır, gerçek bir ABOV A34G43A Starter Kit'e flaşlandı ve doğrulandı: iki LED de belirgin şekilde farklı hızlarda yanıp sönüyor
+- [x] [Getting_Started/03-Debug_UART_Logging](../Getting_Started/03-Debug_UART_Logging/) — derlenir, bağlanır (iki debug seviyesinde, farklı ikili boyutları doğrulandı), SWD üzerinden flaşlandı ve doğrulandı, ve — Tutorial 04'te eklenen `tdf.py monitor` ile — gerçek UART çıktısı da gerçekten doğrulandı
+- [x] [Getting_Started/04-Button_Read_And_Debounce](../Getting_Started/04-Button_Read_And_Debounce/) — derlenir, bağlanır, SWD üzerinden flaşlandı + doğrulandı; `tdf.py monitor`'ın önyükleme/LED log satırları gerçekten doğrulandı; buton-basma/debounce davranışının kendisi hâlâ bir insan parmağı gerektiriyor, henüz doğrulanmadı
+- [x] [Getting_Started/05-Ten_LED_Pattern_Driver](../Getting_Started/05-Ten_LED_Pattern_Driver/) — derlenir, bağlanır, SWD üzerinden flaşlandı + doğrulandı; `tdf.py monitor`, SOLID→BLINK→PULSE otomatik döngüsünü gerçekten doğruladı, tam olarak 8 sn'lik aralığında; on LED'in tamamının görünür şekilde kademeli olup olmadığı ve buton ile tetiklenen ilerlemenin çalışıp çalışmadığı hâlâ kartı gözle görmek ve bir insan parmağı gerektiriyor
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 

@@ -319,11 +319,54 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 
 ## Solutions
 
-No tutorial has a written solution yet — this repository is currently a
-curriculum scaffold (structure, learning goals, step outlines), not a
-finished course. The plan is for each tutorial to eventually ship its own
-worked solution in a local `Sw/` folder next to its `README.md`; check that
-tutorial's own **Solution** section for current status.
+Most tutorials don't have a written solution yet — this repository is
+still mostly a curriculum scaffold (structure, learning goals, step
+outlines), not a finished course. Each tutorial ships its own worked
+solution, when one exists, in a local `Sw/` folder next to its
+`README.md`; check that tutorial's own **Solution** section for current
+status.
+
+Buildable tutorials share one copy of the ABOV vendor SDK, checked into
+this repo once at [`Generation/`](Generation/) (~107 MB — see that
+folder's own note on why it's shared rather than duplicated per tutorial,
+and its bundled `Document/LICENSE.md` for the vendor's BSD-3-Clause
+terms), and share one build/flash CLI: [`tools/tdf.py`](tools/tdf.py)
+("Tiremo Development Framework" — the same role `idf.py` plays for
+ESP-IDF). First time only:
+
+```sh
+./install.sh          # checks for / offers to install arm-none-eabi-gcc, cmake, ninja, and a tdf_venv/ with pyserial
+source ./export.sh     # puts tdf.py on PATH and activates tdf_venv/ for this shell session (optional)
+```
+
+Then, from any tutorial's `Sw/` directory: `tdf.py build`, `tdf.py
+flash`, `tdf.py monitor` (reset the board over SWD, then stream the
+UART log color-coded by level), `tdf.py clean`, `tdf.py clean-device`
+(mass-erases the connected board's chip flash). `tdf.py build`/`flash`/
+`clean`/`clean-device` are thin wrappers — they own no OpenOCD or
+compiler logic themselves, every command just runs the matching `cmake
+--build build [--target ...]` in that tutorial's `CMakeLists.txt`, and
+`tdf.py` self-locates the repo from its own file path, so `python
+tools/tdf.py build` works identically with or without `export.sh`.
+`monitor` is the one exception: reading a live UART needs an actual
+serial port, which CMake/OpenOCD have no concept of, so that part uses
+`pyserial` — installed into a dedicated `tdf_venv/` by `install.sh`
+(not a plain `pip install`, which fails outright on most current Python
+installs — PEP 668) and activated by `export.sh`. Runs identically in
+cmd.exe, PowerShell, bash, or zsh; no Git Bash or WSL required on
+Windows to build, flash, or monitor (`install.sh`/`export.sh`
+themselves are bash, though — Windows users either run those once from
+Git Bash/WSL, or install the tools manually and skip straight to
+`python tools\tdf.py build`). See
+[01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
+for the full story, including why this repo is on CMake rather than a
+hand-written Makefile.
+
+- [x] [Getting_Started/01-Hello_Blink](Getting_Started/01-Hello_Blink/) — builds, links, flashed and verified on a real ABOV A34G43A Starter Kit over SWD
+- [x] [Getting_Started/02-SysTick_Timing](Getting_Started/02-SysTick_Timing/) — builds, links, flashed and confirmed on a real ABOV A34G43A Starter Kit: both LEDs blink at clearly different rates
+- [x] [Getting_Started/03-Debug_UART_Logging](Getting_Started/03-Debug_UART_Logging/) — builds, links (at two debug levels, verified different binary sizes), flashed and verified over SWD, and — via `tdf.py monitor`, added in Tutorial 04 — actual UART output genuinely confirmed too
+- [x] [Getting_Started/04-Button_Read_And_Debounce](Getting_Started/04-Button_Read_And_Debounce/) — builds, links, flashed + verified over SWD; `tdf.py monitor`'s boot/LED log lines confirmed for real; button-press/debounce behavior itself still needs a human finger, not yet confirmed
+- [x] [Getting_Started/05-Ten_LED_Pattern_Driver](Getting_Started/05-Ten_LED_Pattern_Driver/) — builds, links, flashed + verified over SWD; `tdf.py monitor` confirmed the SOLID→BLINK→PULSE auto-cycle for real, exactly on its 8 s interval; whether all ten LEDs are visibly staggered and button-triggered advance work still need eyes on the board and a human finger
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 

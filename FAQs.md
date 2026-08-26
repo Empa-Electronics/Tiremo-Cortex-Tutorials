@@ -43,10 +43,13 @@ Tutorials always list their Feature Tutorial prerequisites.
 
 ## Where do I check my work?
 
-Right now: nowhere — no tutorial has a written solution yet. The plan is
-for each tutorial to eventually ship its own worked solution in a local
-`Sw/` folder next to its `README.md`; check that tutorial's own
-**Solution** section for current status.
+Most tutorials: nowhere yet — no solution has been written for them. A
+few do have one, in a local `Sw/` folder next to that tutorial's
+`README.md` (e.g. [Getting_Started/01-Hello_Blink/Sw/](./Getting_Started/01-Hello_Blink/Sw/));
+check that tutorial's own **Solution** section for current status.
+Buildable solutions share one copy of the ABOV vendor SDK checked into
+this repo at [`Generation/`](./Generation/) — see that folder's README
+before trying to build one.
 
 ## How do I contribute a tutorial?
 
