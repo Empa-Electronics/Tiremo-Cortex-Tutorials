@@ -6,7 +6,7 @@
         <img alt="Tiremo Cortex" src="../../../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../../../images/banner.png" width="100%" height="16">
+      <img alt="" src="../../../images/banner.png" width="65%">
       <h1>I2C Bus Bring-up</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -46,6 +46,6 @@ No solution has been written for this tutorial yet — this repo is still a curr
 
 Both sensor addresses ACK on I2C2 probe, logged over UART.
 
-<p align="center"><img alt="" src="../../../images/banner.png" width="100%" height="16"></p>
+<p align="center"><img alt="" src="../../../images/banner.png" width="65%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

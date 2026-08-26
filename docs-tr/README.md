@@ -7,7 +7,7 @@
         <img alt="Tiremo Cortex" src="../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../images/banner.png" width="100%" height="16">
+      <img alt="" src="../images/banner.png" width="65%">
       <h1>Tiremo Cortex — Ayrıntılı Eğitimler</h1>
       <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
@@ -324,6 +324,6 @@ değil. Planımız, her eğitimin zamanla kendi `Sw/` klasöründe, `README.md`
 dosyasının hemen yanında bir çözüm barındırması; güncel durum için her
 eğitimin kendi **Solution** bölümüne bakın.
 
-<p align="center"><img alt="" src="../images/banner.png" width="100%" height="16"></p>
+<p align="center"><img alt="" src="../images/banner.png" width="65%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

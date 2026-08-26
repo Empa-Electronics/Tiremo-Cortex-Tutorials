@@ -6,7 +6,7 @@
         <img alt="Tiremo Cortex" src="../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../images/banner.png" width="100%" height="16">
+      <img alt="" src="../images/banner.png" width="65%">
       <h1>Getting Started</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -24,6 +24,6 @@ Start here. No experience with this codebase required — by the end of this sec
 * **[Button Read & Debounce](./04-Button_Read_And_Debounce/)**: Poll the USER button and print press/release/hold-duration events.
 * **[Ten-LED Pattern Driver](./05-Ten_LED_Pattern_Driver/)**: Drive all ten LEDs with solid/blink/pulse patterns as a standalone module.
 
-<p align="center"><img alt="" src="../images/banner.png" width="100%" height="16"></p>
+<p align="center"><img alt="" src="../images/banner.png" width="65%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

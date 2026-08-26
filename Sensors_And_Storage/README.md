@@ -6,7 +6,7 @@
         <img alt="Tiremo Cortex" src="../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../images/banner.png" width="100%" height="16">
+      <img alt="" src="../images/banner.png" width="65%">
       <h1>Sensors & Local Storage</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -22,6 +22,6 @@ Bring up every onboard sensor and driver — SHT40, LIS2DE12, battery, microphon
 
 - The [**Design Tutorials**](./Design_Tutorials/) combine several feature tutorials into one working subsystem.
 
-<p align="center"><img alt="" src="../images/banner.png" width="100%" height="16"></p>
+<p align="center"><img alt="" src="../images/banner.png" width="65%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

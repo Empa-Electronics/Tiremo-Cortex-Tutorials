@@ -6,7 +6,7 @@
         <img alt="Tiremo Cortex" src="../../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../../images/banner.png" width="100%" height="16">
+      <img alt="" src="../../images/banner.png" width="65%">
       <h1>AWS IoT Core Tutorials</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -29,6 +29,6 @@ Design tutorials combine several feature tutorials into one working subsystem, c
  </tr>
  </table>
 
-<p align="center"><img alt="" src="../../images/banner.png" width="100%" height="16"></p>
+<p align="center"><img alt="" src="../../images/banner.png" width="65%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

@@ -6,7 +6,7 @@
         <img alt="Tiremo Cortex" src="../../../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../../../images/banner.png" width="100%" height="16">
+      <img alt="" src="../../../images/banner.png" width="65%">
       <h1>Link Recovery & Backoff</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -47,6 +47,6 @@ No solution has been written for this tutorial yet — this repo is still a curr
 
 Killing the AP mid-session triggers a `connecting` LED mode and shadow update, followed by a successful reconnect once the AP returns — or a clean reboot if it doesn't return within N attempts.
 
-<p align="center"><img alt="" src="../../../images/banner.png" width="100%" height="16"></p>
+<p align="center"><img alt="" src="../../../images/banner.png" width="65%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
