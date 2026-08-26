@@ -3,10 +3,10 @@
     <td align="center">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="../images/tiremo_sub_brand_1_mono_white.png">
-        <img alt="Tiremo Cortex" src="../images/tiremo_sub_brand_1_mono_black.png" width="220">
+        <img alt="Tiremo Cortex" src="../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../images/banner.png" width="100%">
+      <img alt="" src="../images/banner.png" width="100%" height="16">
       <h1>Production Firmware</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -22,6 +22,6 @@ The behaviors that turn a working prototype into a fleet-ready device: shadow-dr
 
 - The [**Design Tutorials**](./Design_Tutorials/) combine several feature tutorials into one working subsystem.
 
-<p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
+<p align="center"><img alt="" src="../images/banner.png" width="100%" height="16"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

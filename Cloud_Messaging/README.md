@@ -3,10 +3,10 @@
     <td align="center">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="../images/tiremo_sub_brand_1_mono_white.png">
-        <img alt="Tiremo Cortex" src="../images/tiremo_sub_brand_1_mono_black.png" width="220">
+        <img alt="Tiremo Cortex" src="../images/tiremo_sub_brand_1_mono_black.png" width="260">
       </picture>
       <br>
-      <img alt="" src="../images/banner.png" width="100%">
+      <img alt="" src="../images/banner.png" width="100%" height="16">
       <h1>Cloud Messaging (MQTT & TLS)</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -20,6 +20,6 @@ Get MQTT working end to end: a public broker first with no TLS, then mutual-TLS 
 
 - The [**Feature Tutorials**](./Feature_Tutorials/) cover one concept each — a single driver, a single AT command sequence, a single cloud primitive.
 
-<p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
+<p align="center"><img alt="" src="../images/banner.png" width="100%" height="16"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
