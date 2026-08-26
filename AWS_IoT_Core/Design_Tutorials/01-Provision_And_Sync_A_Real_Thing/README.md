@@ -1,6 +1,12 @@
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="../../../images/tiremo_sub_brand_1_mono_white.png">
+        <img alt="Tiremo Cortex" src="../../../images/tiremo_sub_brand_1_mono_black.png" width="220">
+      </picture>
+      <br>
+      <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Provision and Sync a Real Thing</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -45,5 +51,7 @@ approach:
 ## Done When
 
 First boot provisions and syncs from a clean AWS account; every subsequent boot skips provisioning and syncs directly, using the same code path Tutorial 05 verified live.
+
+<p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>

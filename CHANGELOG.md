@@ -16,3 +16,7 @@ release.
 - Tutorial content is scaffolded (introduction, learning goals, prerequisites,
   reference-implementation links, step outline, done-when criteria) but not
   yet fully written up step by step — see each tutorial's `README.md`.
+- Tiremo Cortex logo (light/dark) and brand banner strip on every README,
+  under `images/`.
+- Turkish translation of the top-level README (`docs-tr/README.md`), linked
+  from a language switcher at the top of the English one.

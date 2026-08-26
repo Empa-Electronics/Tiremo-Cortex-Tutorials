@@ -1,6 +1,12 @@
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="../../../images/tiremo_sub_brand_1_mono_white.png">
+        <img alt="Tiremo Cortex" src="../../../images/tiremo_sub_brand_1_mono_black.png" width="220">
+      </picture>
+      <br>
+      <img alt="" src="../../../images/banner.png" width="100%">
       <h1>LIS2DE12 Accelerometer</h1>
       <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
     </td>
@@ -44,5 +50,7 @@ approach:
 ## Done When
 
 Tilting the board on each axis in turn shows ~1000 mg on that axis and near-zero on the others.
+
+<p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
