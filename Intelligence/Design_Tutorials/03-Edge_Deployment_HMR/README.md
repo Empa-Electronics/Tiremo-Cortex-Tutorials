@@ -214,19 +214,19 @@ See [`Tiremo_AI/API.md`](./Sw/Tiremo_AI/API.md).
 
 Start from the 128 Hz file only if you intend to decimate yourself. For the Edge window of 8, import **4 Hz** (2 s context) or **8 Hz** (1 s). Feature 02's import/Data Studio/version steps apply unchanged.
 
-![Data Studio on the HMR 8 Hz file](../../../figures/02_data_studio_labels.png)
+![Data Studio on the HMR 8 Hz file](../../figures/02_data_studio_labels.png)
 
 ### 2. Train with window 8
 
 Feature 03. Name the Training Record so the rate is obvious (`HMR-4Hz-w8`). If you train 128 Hz with window 8 by mistake, the matrix will look like noise; that is the 62.5 ms window failing, not "ANN is bad."
 
-![Start Training with window size 8](../../../figures/03_start_training.png)
+![Start Training with window size 8](../../figures/03_start_training.png)
 
 ### 3. Deploy Edge and open the package
 
 Feature 04. Download, or stay on [`Tiremo_AI/`](./Sw/Tiremo_AI/).
 
-![Edge tab: Core Type, Create Edge, Download](../../../figures/04_deploy_edge.png)
+![Edge tab: Core Type, Create Edge, Download](../../figures/04_deploy_edge.png)
 
 Generated files are marked `GENERATED FILE. Do not edit.` Include the makefile from a firmware `Makefile`:
 
@@ -258,7 +258,7 @@ Push samples into that buffer at **4 Hz or 8 Hz to match the CSV you trained**, 
 
 Data Explorer → Data Type **Inference** → that Solution. Solution **Activity** graph should move between the five labels when you repeat the gestures.
 
-![Solution Activity graph for the HMR Edge deployment](../../../figures/04_solution_activity.png)
+![Solution Activity graph for the HMR Edge deployment](../../figures/04_solution_activity.png)
 
 ## Done When
 

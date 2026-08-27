@@ -168,13 +168,19 @@ Veya beklemeyi atlayın ve o indirme olarak [`Tiremo_AI/`](../../../../Intellige
 
 Kendi indirgemenizi yapmayı düşünüyorsanız 128 Hz dosyadan başlayın. Edge penceresi 8 için **4 Hz** (2 s bağlam) veya **8 Hz** (1 s) içe aktarın. Feature 02'nin içe aktarma/Data Studio/sürüm adımları aynıdır.
 
+![HMR 8 Hz dosyasında Data Studio](../../../../Intelligence/figures/02_data_studio_labels.png)
+
 ### 2. Pencere 8 ile eğitin
 
 Feature 03. Training Record'a hızı açık eden bir ad verin (`HMR-4Hz-w8`). 128 Hz'i yanlışlıkla pencere 8 ile eğitirseniz matris gürültü gibi görünür; bu 62,5 ms pencerenin başarısızlığıdır, "ANN kötü" değil.
 
+![Pencere boyutu 8 ile Start Training](../../../../Intelligence/figures/03_start_training.png)
+
 ### 3. Edge dağıtın ve paketi açın
 
 Feature 04. İndirin veya [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/) üzerinde kalın.
+
+![Edge sekmesi: Core Type, Create Edge, Download](../../../../Intelligence/figures/04_deploy_edge.png)
 
 Üretilen dosyalar `GENERATED FILE. Do not edit.` işaretlidir. Bir üretici yazılım `Makefile`'ından makefile'ı dahil edin:
 
