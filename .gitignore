@@ -9,7 +9,8 @@ __pycache__/
 # Local secrets — commit only the *.example placeholders
 wifi_secrets.h
 aws_iot_config.h
-certs/claim_cert.pem
-certs/claim_key.pem
-certs/device_cert.pem
-certs/device_key.pem
+
+# Identity PEMs in any tutorial certs/ folder. Amazon Root CA 1
+# (root_ca.pem) is public and stays committed.
+**/certs/*.pem
+!**/certs/root_ca.pem

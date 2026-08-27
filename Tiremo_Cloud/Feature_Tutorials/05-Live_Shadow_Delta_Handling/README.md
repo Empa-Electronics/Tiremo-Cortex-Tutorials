@@ -164,9 +164,37 @@ claim exchange, repeated the boot GET / full report, then subscribed
 [INFO] shadow: ready thingName=<product>_30eda0806324 (live update/delta)
 ```
 
-In the Tiremo UI, edit the Thing's classic shadow `desired` (for
-example flip `led.on` or `reporting.enabled`) **twice** without
-resetting the board. Each edit should log:
+UART proves the board subscribed. The Tiremo UI is where an operator
+writes classic-shadow `desired` and checks the resulting `delta`.
+
+## Sending a shadow update in the Tiremo UI
+
+Send a command from **Device State Controller** (board must already be
+in the ready loop). Then open the device page and confirm `desired` /
+`reported` / `delta` on **Device Shadow State**.
+
+**1. Open State Controller** from the main menu.
+
+![Tiremo UI: State Controller in the main menu](../../figures/tiremo_ui_state_controller_menu.png)
+
+*Figure: Tiremo UI — click **State Controller** in the main menu.*
+
+**2. Send a command.** Click the paper-plane icon on a row (for example
+**LightOn**).
+
+![Tiremo UI: Device State Controller commands](../../figures/tiremo_ui_state_controller_commands.png)
+
+*Figure: Tiremo UI — send icon on a Device State Controller command.*
+
+**3. Target this device, then Send Command.** Target type **Device**,
+pick the product and this board's device identifier (12-hex MAC), then
+**Send Command**.
+
+![Tiremo UI: Send Device State Command](../../figures/tiremo_ui_send_state_command.png)
+
+*Figure: Tiremo UI — **Send Command** queues the desired update.*
+
+UART:
 
 ```text
 [INFO] shadow: delta ... bytes
@@ -175,7 +203,28 @@ resetting the board. Each edit should log:
 [INFO] shadow: update reported (... bytes, full desired echo)
 ```
 
-The console delta should clear after each report.
+**4. Open the device page.** Same identifier as tutorial 01 / 06.
+
+![Tiremo UI: device page Device Shadow State](../../figures/tiremo_ui_device_shadow_state.png)
+
+*Figure: Tiremo UI — device details, **Device Shadow State** in the
+middle.*
+
+**5. Confirm the delta.** When `desired` and `reported` disagree, the
+card shows a `delta` object with the unmatched keys. After this
+firmware echoes the full desired document as `reported`, that `delta`
+clears.
+
+![Tiremo UI: Device Shadow State delta](../../figures/tiremo_ui_device_shadow_delta.png)
+
+*Figure: Tiremo UI — **Device Shadow State** with `desired`, `reported`,
+and `delta` visible.*
+
+Send a second command without resetting the board. Each send should log
+another delta / apply / full report, and the console delta should clear
+after each report. This firmware applies `led.on` and `reporting.*`;
+other keys in the command document are merged and echoed so they do not
+stick in `delta`.
 
 ## Walkthrough
 

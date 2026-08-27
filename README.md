@@ -391,8 +391,8 @@ of a hand-written Makefile, and Windows-specific notes.
 - [x] [Tiremo_Cloud/02-Minimal_JSON_Helpers](Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/) — built (`.text` 16156), flashed; Find* + writer round-trip on a sample shadow (`reporting.enabled`, colon-in-string, sibling-key miss)
 - [x] [Tiremo_Cloud/04-Shadow_Get_Apply_Report](Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — built (`.text` 33764), flashed; boot GET → apply `reporting.enabled` / `led.on` → full desired echo as `reported` → second GET `no leftover delta`
 - [x] [Tiremo_Cloud/05-Live_Shadow_Delta_Handling](Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — built (`.text` 34928), flashed; boot GET/report then `subscribed update/delta`; flip `desired` in the console to apply live (no reboot)
-- [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — README scaffold only
-- [ ] [Tiremo_Cloud/07-Tiremo_Jobs](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — README scaffold only
+- [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — built (`.text` 37528); 05 ready loop + `pub/{product}/{device}/telemetry` / `alarm`; not yet flashed/verified on hardware
+- [ ] [Tiremo_Cloud/07-Tiremo_Jobs](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — built; 06 ready loop + jobs notify/start-next/health SUCCEEDED; not yet flashed/verified on hardware
 - [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — README scaffold only
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>

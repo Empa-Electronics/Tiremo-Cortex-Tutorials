@@ -1,0 +1,5 @@
+build/
+wifi_secrets.h
+aws_iot_config.h
+certs/claim_cert.pem
+certs/claim_key.pem

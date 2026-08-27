@@ -167,9 +167,36 @@ GET / tam report'unu tekrarladı, sonra `update/delta`'ya abone oldu:
 [INFO] shadow: ready thingName=<product>_30eda0806324 (live update/delta)
 ```
 
-Tiremo UI'da Thing'in klasik shadow `desired`'ını (örneğin `led.on`
-veya `reporting.enabled`) kartı sıfırlamadan **iki kez** düzenleyin.
-Her düzenleme şunu yazmalıdır:
+UART aboneliği kanıtlar. Tiremo UI klasik shadow `desired` yazar ve
+ortaya çıkan `delta`'yı gösterir.
+
+## Tiremo UI'da shadow güncellemesi gönderme
+
+**Device State Controller**'dan bir komut gönderin (kart hazır döngüde
+olmalı). Sonra cihaz sayfasında **Device Shadow State** içinde
+`desired` / `reported` / `delta` doğrulayın.
+
+**1. Ana menüden State Controller** açın.
+
+![Tiremo UI: ana menüde State Controller](../../../../Tiremo_Cloud/figures/tiremo_ui_state_controller_menu.png)
+
+*Şekil: Tiremo UI — ana menüden **State Controller**.*
+
+**2. Komutu gönderin.** Bir satırdaki kâğıt uçak simgesine tıklayın
+(örneğin **LightOn**).
+
+![Tiremo UI: Device State Controller komutları](../../../../Tiremo_Cloud/figures/tiremo_ui_state_controller_commands.png)
+
+*Şekil: Tiremo UI — Device State Controller komutunda gönder simgesi.*
+
+**3. Bu cihazı hedefleyin, Send Command.** Hedef tipi **Device**, ürün
+ve bu kartın cihaz tanımlayıcısı (12 hex MAC), sonra **Send Command**.
+
+![Tiremo UI: Send Device State Command](../../../../Tiremo_Cloud/figures/tiremo_ui_send_state_command.png)
+
+*Şekil: Tiremo UI — **Send Command** desired güncellemesini kuyruğa alır.*
+
+UART:
 
 ```text
 [INFO] shadow: delta ... bytes
@@ -178,7 +205,27 @@ Her düzenleme şunu yazmalıdır:
 [INFO] shadow: update reported (... bytes, full desired echo)
 ```
 
-Her rapordan sonra konsol delta'sı temizlenmelidir.
+**4. Cihaz sayfasını açın.** Eğitim 01 / 06 ile aynı tanımlayıcı.
+
+![Tiremo UI: cihaz sayfası Device Shadow State](../../../../Tiremo_Cloud/figures/tiremo_ui_device_shadow_state.png)
+
+*Şekil: Tiremo UI — cihaz ayrıntısı, ortada **Device Shadow State**.*
+
+**5. Delta'yı doğrulayın.** `desired` ve `reported` uyuşmazsa kart
+eşleşmeyen anahtarlarla bir `delta` nesnesi gösterir. Bu üretici
+yazılımı tam desired belgesini `reported` olarak yankılayınca `delta`
+temizlenir.
+
+![Tiremo UI: Device Shadow State delta](../../../../Tiremo_Cloud/figures/tiremo_ui_device_shadow_delta.png)
+
+*Şekil: Tiremo UI — **Device Shadow State** içinde `desired`, `reported`
+ve `delta` görünür.*
+
+Kartı sıfırlamadan ikinci bir komut gönderin. Her gönderim yeni bir
+delta / apply / tam report yazmalı; her rapordan sonra konsol delta'sı
+temizlenmeli. Bu üretici yazılımı `led.on` ve `reporting.*` uygular;
+komut belgesindeki diğer anahtarlar birleştirilip yankılanır, böylece
+`delta`'da kalmaz.
 
 ## Adım Adım
 
