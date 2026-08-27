@@ -37,10 +37,7 @@ No WiFi or cloud account needed for that section.
 From there, tutorials are organized by topic under [Tutorials](#tutorials),
 roughly in the order a real bring-up would tackle them: local sensors, then
 ESP32 WiFi, then cloud messaging, then Tiremo Cloud, then Intelligence
-(collect telemetry, train in the Tiremo UI, deploy a Solution), then
-the production behaviors (shadow-driven LEDs, alarms,
-telemetry, jobs, factory reset) that turn a working prototype into a
-fleet-ready device.
+(collect telemetry, train in the Tiremo UI, deploy a Solution).
 
 Each topic splits into two kinds of tutorial:
 
@@ -298,54 +295,6 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="./Intelligence/Feature_Tutorials/04-Solutions/">Solutions</a></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-<table border="0" width="100%">
-    <colgroup><col width="50%"><col width="50%"></colgroup>
-    <tbody>
-        <tr>
-            <td colspan="2" height="24" align="center">
-                <strong><a href="./Production_Firmware/">Production Firmware</a></strong>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" height="48">
-                The behaviors that turn a working prototype into a fleet-ready device: shadow-driven LEDs, edge alarms with hysteresis, batched telemetry, Tiremo Jobs, factory reset, and link recovery — culminating in the full capstone build.
-            </td>
-        </tr>
-        <tr>
-            <td height="24"><strong>Feature Tutorials</strong></td>
-            <td height="24"><strong>Design Tutorials</strong></td>
-        </tr>
-        <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/01-Shadow_Driven_LED_State_Machine/">Shadow-Driven LED State Machine</a></td>
-            <td><a href="./Production_Firmware/Design_Tutorials/01-Full_Event_Loop_Integration/">Full Event Loop Integration (Capstone)</a></td>
-        </tr>
-        <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/02-Edge_Alarms_With_Hysteresis/">Edge Alarms with Hysteresis</a></td>
-            <td><a href="./Production_Firmware/Design_Tutorials/02-Add_A_New_Sensor_End_To_End/">Add a New Sensor End-to-End</a></td>
-        </tr>
-        <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/03-Batched_Telemetry_Publisher/">Batched Telemetry Publisher</a></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/04-AWS_IoT_Jobs_Health_Check/">Tiremo Jobs — Health Check</a></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/05-Reject_Unsupported_Jobs/">Reject Unsupported Jobs (OTA Stub)</a></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/06-Factory_Reset/">Factory Reset</a></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/07-Link_Recovery_And_Backoff/">Link Recovery & Backoff</a></td>
             <td></td>
         </tr>
     </tbody>

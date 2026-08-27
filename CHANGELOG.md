@@ -59,9 +59,9 @@ release.
   `01-Provision_And_Sync_A_Real_Thing` scaffold.
 
 - Initial repository scaffold: `Getting_Started`, `Sensors_And_Storage`,
-  `ESP32_Connectivity`, `Cloud_Messaging`, `Tiremo_Cloud`,
-  `Production_Firmware`, and `Developer_Contributed`, each with a README and
-  numbered tutorial folders following the Feature/Design Tutorials split.
+  `ESP32_Connectivity`, `Cloud_Messaging`, `Tiremo_Cloud`, and
+  `Developer_Contributed`, each with a README and numbered tutorial folders
+  following the Feature/Design Tutorials split.
 - Tutorial content is scaffolded (introduction, learning goals, prerequisites,
   reference-implementation links, step outline, done-when criteria) but not
   yet fully written up step by step — see each tutorial's `README.md`.

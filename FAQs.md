@@ -32,7 +32,7 @@ the firmware stack, roughly in build order:
 - [ESP32 Connectivity](./ESP32_Connectivity): AT transport, WiFi join, retries, NTP, BluFi provisioning.
 - [Cloud Messaging](./Cloud_Messaging): MQTT, mTLS credentials, Tiremo Cloud connection, reliable polling.
 - [Tiremo Cloud](./Tiremo_Cloud): device identity, JSON helpers, fleet provisioning, device shadow. Platform docs: [docs.tiremo.ai](https://docs.tiremo.ai).
-- [Production Firmware](./Production_Firmware): shadow-driven LEDs, alarms, telemetry, jobs, factory reset, link recovery, and the full capstone build.
+- [Intelligence](./Intelligence): collect training data, Data Sources, Experiments, Solutions, and Edge deployment from the Tiremo UI.
 - [Developer Contributed](./Developer_Contributed): anything community-submitted that doesn't fit the numbered curriculum.
 
 ## What's the difference between a Feature Tutorial and a Design Tutorial?
