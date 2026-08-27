@@ -36,9 +36,11 @@ No WiFi or cloud account needed for that section.
 
 From there, tutorials are organized by topic under [Tutorials](#tutorials),
 roughly in the order a real bring-up would tackle them: local sensors, then
-ESP32 WiFi, then cloud messaging, then Tiremo Cloud, then the production
-behaviors (shadow-driven LEDs, alarms, telemetry, jobs, factory reset) that
-turn a working prototype into a fleet-ready device.
+ESP32 WiFi, then cloud messaging, then Tiremo Cloud, then Intelligence
+(collect telemetry, train in the Tiremo UI, deploy a Solution), then
+the production behaviors (shadow-driven LEDs, alarms,
+telemetry, jobs, factory reset) that turn a working prototype into a
+fleet-ready device.
 
 Each topic splits into two kinds of tutorial:
 
@@ -270,6 +272,42 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
+                <strong><a href="./Intelligence/">Intelligence</a></strong>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" height="48">
+                Collect telemetry in Data Explorer, turn it into a Data Source, train an Experiment, and deploy a Solution, including an on-device Edge package, from the Tiremo UI. Feature tutorials stay UI-only. Three design tutorials flash LIS2DE12 firmware: per-sample telemetry, a local 8-sample window, then HMR Edge inference.
+            </td>
+        </tr>
+        <tr>
+            <td height="24"><strong>Feature Tutorials</strong></td>
+            <td height="24"><strong>Design Tutorials</strong></td>
+        </tr>
+        <tr>
+            <td><a href="./Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/">Data Collection via Data Explorer</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/">Accelerometer Telemetry</a></td>
+        </tr>
+        <tr>
+            <td><a href="./Intelligence/Feature_Tutorials/02-Data_Sources/">Data Sources</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/02-Accelerometer_Windowing/">Accelerometer Windowing</a></td>
+        </tr>
+        <tr>
+            <td><a href="./Intelligence/Feature_Tutorials/03-Experiments/">Experiments</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/">HMR Gesture Classifier on the Edge</a></td>
+        </tr>
+        <tr>
+            <td><a href="./Intelligence/Feature_Tutorials/04-Solutions/">Solutions</a></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<table border="0" width="100%">
+    <colgroup><col width="50%"><col width="50%"></colgroup>
+    <tbody>
+        <tr>
+            <td colspan="2" height="24" align="center">
                 <strong><a href="./Production_Firmware/">Production Firmware</a></strong>
             </td>
         </tr>
@@ -394,6 +432,13 @@ of a hand-written Makefile, and Windows-specific notes.
 - [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — built (`.text` 37528); 05 ready loop + `pub/{product}/{device}/telemetry` / `alarm`; not yet flashed/verified on hardware
 - [ ] [Tiremo_Cloud/07-Tiremo_Jobs](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — built; 06 ready loop + jobs notify/start-next/health SUCCEEDED; not yet flashed/verified on hardware
 - [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — README scaffold only
+- [x] [Intelligence/01-Data_Collection_Via_Data_Explorer](Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/) — UI walkthrough written
+- [x] [Intelligence/02-Data_Sources](Intelligence/Feature_Tutorials/02-Data_Sources/) — UI walkthrough written
+- [x] [Intelligence/03-Experiments](Intelligence/Feature_Tutorials/03-Experiments/) — UI walkthrough written
+- [x] [Intelligence/04-Solutions](Intelligence/Feature_Tutorials/04-Solutions/) — UI walkthrough written
+- [x] [Intelligence/Design/01-Accelerometer_Telemetry](Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/) — `Sw/` publishes per-sample `acc_x`/`acc_y`/`acc_z` telemetry
+- [x] [Intelligence/Design/02-Accelerometer_Windowing](Intelligence/Design_Tutorials/02-Accelerometer_Windowing/) — `Sw/` UART tumbling 8×3 window
+- [x] [Intelligence/Design/03-HMR_Edge_Deployment](Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/) — end-to-end HMR case; `Datasets/`, `Tiremo_AI/`, and `Sw/` inference firmware
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 
