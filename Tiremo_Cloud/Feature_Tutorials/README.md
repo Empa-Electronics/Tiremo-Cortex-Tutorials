@@ -45,11 +45,11 @@ Feature tutorials cover one concept each — a single driver, a single AT comman
  </tr>
  <tr>
  <td align="center"><a href="./06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
- <td>Publish sensor telemetry and edge alarms on MQTT topics, separate from the shadow control loop. (Not implemented yet.)</td>
+ <td>Publish sensor telemetry and edge alarms on MQTT topics, separate from the shadow control loop.</td>
  </tr>
  <tr>
  <td align="center"><a href="./07-Tiremo_Jobs/">Tiremo Jobs</a></td>
- <td>Accept and complete a Tiremo Job over MQTT, with IN_PROGRESS / SUCCEEDED status. (Not implemented yet.)</td>
+ <td>Accept a health-check job over MQTT (`notify` → `start-next` → `update SUCCEEDED`). OTA-shaped jobs are REJECTED.</td>
  </tr>
  </table>
 

@@ -122,15 +122,15 @@ Gerçek PEM içeriği, bir C string literal'e elle yazmak için tam olarak
 sefil ve hataya açık türden bir şey — bir yanlış escape edilmiş yeni
 satır ve sertifika sessizce ayrıştırılmayı durdurur. Bu yüzden buradaki
 üç kimlik bilgisi gerçek dosyalar:
-[`Sw/certs/root_ca.pem`](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/root_ca.pem),
-[`client_cert.pem`](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/client_cert.pem),
-ve [`client_key.pem`](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/client_key.pem)
-— gerçek, yerel olarak üretilmiş, kendinden imzalı **test**
-sertifikaları (`openssl req -x509 -newkey rsa:2048 ...`), kendi konu
+[`Sw/certs/root_ca.pem`](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/root_ca.pem)
+commit edilir. `client_cert.pem` ve `client_key.pem` gitignore'ludur —
+[`.example` şablonlarını](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/)
+kopyalayıp yerel olarak üretilmiş, kendinden imzalı bir **test** çifti
+yapıştırın (`openssl req -x509 -newkey rsa:2048 ...`), kendi konu
 satırlarında (`CN=... TEST ... - not for real use`) böyle olarak açıkça
 etiketlenmiş. Güven konusunda hiçbir şey kanıtlamazlar; yalnızca bu
 eğitime yazacak, geri okuyacak ve karşılaştıracak gerçek PEM baytları
-vermek için varlar.
+vermek için varlar. [`certs/README.md`](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/README.md).
 
 [`cmake/embed_pem.cmake`](../../../../cmake/embed_pem.cmake) (depo
 kökü — gelecekteki herhangi bir eğitim bu ihtiyaç duyarsa yeniden

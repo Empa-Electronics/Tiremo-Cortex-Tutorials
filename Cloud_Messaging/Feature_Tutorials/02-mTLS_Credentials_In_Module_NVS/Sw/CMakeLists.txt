@@ -14,6 +14,15 @@ set(EMBED_PEM_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake/embed_pem.cma
 set(CERTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/certs)
 set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
+if(NOT EXISTS ${CERTS_DIR}/client_cert.pem OR NOT EXISTS ${CERTS_DIR}/client_key.pem)
+    message(FATAL_ERROR
+        "Missing test client credentials.\n"
+        "  cp certs/client_cert.pem.example certs/client_cert.pem\n"
+        "  cp certs/client_key.pem.example certs/client_key.pem\n"
+        "then paste a self-signed test certificate and key (openssl req -x509).\n"
+        "Those two files are gitignored; see certs/README.md.")
+endif()
+
 function(embed_pem name symbol)
     add_custom_command(
         OUTPUT ${GENERATED_DIR}/${name}.c

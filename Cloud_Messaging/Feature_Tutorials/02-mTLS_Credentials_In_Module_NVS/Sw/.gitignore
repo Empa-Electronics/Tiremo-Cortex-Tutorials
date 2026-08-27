@@ -1,1 +1,3 @@
 build/
+certs/client_cert.pem
+certs/client_key.pem

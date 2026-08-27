@@ -11,19 +11,29 @@ release.
 
 - Curriculum section `AWS_IoT_Core` is now [`Tiremo_Cloud`](Tiremo_Cloud/).
   Docs talk about Tiremo Cloud (`iot.tiremo.ai`), the Tiremo UI, and Tiremo
-  Jobs — not AWS IoT Core. The jobs scaffold folder is
-  [`07-Tiremo_Jobs`](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/).
+  Jobs — not AWS IoT Core. [`07-Tiremo_Jobs`](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/)
+  now has firmware (health-check `notify` → `start-next` → `SUCCEEDED`).
   Tutorials now link matching pages on
   [docs.tiremo.ai](https://docs.tiremo.ai) (provisioning, TLS SNI, Device
   State Controller, Jobs).
 
 ### Added
 
-- Tiremo Cloud scaffolds (README only, firmware not yet written):
-  feature tutorials
+- Tiremo Cloud feature tutorial
   [`06-Publishing_Alarms_And_Telemetry`](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/)
-  and [`07-Tiremo_Jobs`](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/),
-  plus design tutorial
+  now has firmware: 05's ready loop plus Tiremo Phase 3 data-plane
+  topics `pub/{product}/{device}/telemetry` (QoS 0) and
+  `pub/{product}/{device}/alarm` (QoS 1) with a USER-button demo
+  temperature and `TEMP_HIGH` hysteresis. Real SHT40 samples stay in
+  design tutorial 01.
+
+- Tiremo Cloud feature tutorial
+  [`07-Tiremo_Jobs`](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/)
+  now has firmware: 06's ready loop plus `jobs/notify` → `start-next` →
+  health-check `SUCCEEDED` (`1_<uuid>`) / OTA `REJECTED` (`2_<uuid>`).
+
+- Tiremo Cloud scaffolds (README only, firmware not yet written):
+  design tutorial
   [`01-Sensor_Telemetry_And_Shadow_Control`](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/)
   (sensor telemetry + shadow open/close demo). Removed the unused
   `01-Provision_And_Sync_A_Real_Thing` scaffold.

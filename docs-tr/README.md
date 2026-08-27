@@ -398,8 +398,8 @@ bakın.
 - [x] [Tiremo_Cloud/02-Minimal_JSON_Helpers](../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/) — derlendi (`.text` 16156), flaşlandı; Find* + yazıcı örnek shadow üzerinde gidiş-dönüş (`reporting.enabled`, string içinde iki nokta, kardeş anahtar yok)
 - [x] [Tiremo_Cloud/04-Shadow_Get_Apply_Report](../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — derlendi (`.text` 33764), flaşlandı; açılış GET → `reporting.enabled` / `led.on` uygula → tam desired yankısı `reported` → ikinci GET `no leftover delta`
 - [x] [Tiremo_Cloud/05-Live_Shadow_Delta_Handling](../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — derlendi (`.text` 34928), flaşlandı; açılış GET/report sonra `subscribed update/delta`; canlı uygulamak için konsolda `desired` değiştirin (sıfırlama yok)
-- [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — yalnızca README iskeleti
-- [ ] [Tiremo_Cloud/07-Tiremo_Jobs](../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — yalnızca README iskeleti
+- [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — üretici yazılımı yazıldı; henüz kartta doğrulanmadı
+- [ ] [Tiremo_Cloud/07-Tiremo_Jobs](../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — derlendi; 06 hazır döngüsü + jobs notify/start-next/health SUCCEEDED; henüz kartta doğrulanmadı
 - [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — yalnızca README iskeleti
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>

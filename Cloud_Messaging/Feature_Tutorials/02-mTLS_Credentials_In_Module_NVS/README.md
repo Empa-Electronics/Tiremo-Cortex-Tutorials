@@ -113,14 +113,14 @@ Real PEM content is exactly the kind of thing that's miserable and
 error-prone to hand-type into a C string literal — one wrong escaped
 newline and the certificate silently stops parsing. So the three
 credentials here are genuine files:
-[`Sw/certs/root_ca.pem`](./Sw/certs/root_ca.pem),
-[`client_cert.pem`](./Sw/certs/client_cert.pem), and
-[`client_key.pem`](./Sw/certs/client_key.pem) — real, locally
-generated, self-signed **test** certificates (`openssl req -x509
--newkey rsa:2048 ...`), clearly labeled as such in their own subject
-line (`CN=... TEST ... - not for real use`). They prove nothing about
+[`Sw/certs/root_ca.pem`](./Sw/certs/root_ca.pem) is committed.
+`client_cert.pem` and `client_key.pem` are gitignored — copy the
+[`.example` placeholders](./Sw/certs/) and paste a locally generated,
+self-signed **test** pair (`openssl req -x509 -newkey rsa:2048 ...`),
+clearly labeled as such in their own subject line
+(`CN=... TEST ... - not for real use`). They prove nothing about
 trust; they exist purely to give this tutorial real PEM bytes to write,
-read back, and compare.
+read back, and compare. See [`certs/README.md`](./Sw/certs/README.md).
 
 [`cmake/embed_pem.cmake`](../../../cmake/embed_pem.cmake) (repo root —
 reusable by any future tutorial that needs this) converts a `.pem` file
