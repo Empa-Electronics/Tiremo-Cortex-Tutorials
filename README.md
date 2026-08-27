@@ -277,7 +277,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Collect telemetry in Data Explorer, turn it into a Data Source, train an Experiment, and deploy a Solution, including an on-device Edge package, from the Tiremo UI. Feature tutorials stay UI-only. Three design tutorials flash LIS2DE12 firmware: per-sample telemetry, a local 8-sample window, then HMR Edge inference.
+                Collect training data (via Data Explorer or any path you prefer), turn it into a Data Source, train an Experiment, and deploy a Solution, including an on-device Edge package, from the Tiremo UI. Feature tutorials stay UI-only. Three design tutorials flash LIS2DE12 firmware: per-sample telemetry, a local 8-sample window, then HMR Edge inference.
             </td>
         </tr>
         <tr>
@@ -285,7 +285,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="./Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/">Data Collection via Data Explorer</a></td>
+            <td><a href="./Intelligence/Feature_Tutorials/01-Data_Collection/">Data Collection</a></td>
             <td><a href="./Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/">Accelerometer Telemetry</a></td>
         </tr>
         <tr>
@@ -432,7 +432,7 @@ of a hand-written Makefile, and Windows-specific notes.
 - [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — built (`.text` 37528); 05 ready loop + `pub/{product}/{device}/telemetry` / `alarm`; not yet flashed/verified on hardware
 - [ ] [Tiremo_Cloud/07-Tiremo_Jobs](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — built; 06 ready loop + jobs notify/start-next/health SUCCEEDED; not yet flashed/verified on hardware
 - [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — README scaffold only
-- [x] [Intelligence/01-Data_Collection_Via_Data_Explorer](Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/) — UI walkthrough written
+- [x] [Intelligence/01-Data_Collection](Intelligence/Feature_Tutorials/01-Data_Collection/) — UI walkthrough written
 - [x] [Intelligence/02-Data_Sources](Intelligence/Feature_Tutorials/02-Data_Sources/) — UI walkthrough written
 - [x] [Intelligence/03-Experiments](Intelligence/Feature_Tutorials/03-Experiments/) — UI walkthrough written
 - [x] [Intelligence/04-Solutions](Intelligence/Feature_Tutorials/04-Solutions/) — UI walkthrough written

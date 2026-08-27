@@ -15,7 +15,7 @@
 
 # Feature Tutorials
 
-Feature tutorials cover one Intelligence capability each: exporting from Data Explorer, creating a Data Source, running an Experiment, deploying a Solution. They teach the general objects and use cases in the Tiremo UI. Worked examples (for instance accelerometer keys for a motion-classification application) appear when the walkthrough needs a concrete file. Work through them in order; each one names its prerequisite. There is no `Sw/` firmware here.
+Feature tutorials cover one Intelligence capability each: collecting training data (via Data Explorer or any path you prefer), creating a Data Source, running an Experiment, deploying a Solution. They teach the general objects and use cases in the Tiremo UI. Worked examples (for instance accelerometer keys for a motion-classification application) appear when the walkthrough needs a concrete file. Work through them in order; each one names its prerequisite. There is no `Sw/` firmware here.
 
  <table style="width:100%">
  <tr>
@@ -23,8 +23,8 @@ Feature tutorials cover one Intelligence capability each: exporting from Data Ex
  <td width="65%" align="center"><b>Description</b>
  </tr>
  <tr>
- <td align="center"><a href="./01-Data_Collection_Via_Data_Explorer/">Data Collection via Data Explorer</a></td>
- <td>Query historical and live telemetry from a device, filter the keys you will use as features, and export a CSV you can label for training.</td>
+ <td align="center"><a href="./01-Data_Collection/">Data Collection</a></td>
+ <td>Collect a feature CSV for training — via Data Explorer or any method you prefer — then label it for the next tutorial.</td>
  </tr>
  <tr>
  <td align="center"><a href="./02-Data_Sources/">Data Sources</a></td>

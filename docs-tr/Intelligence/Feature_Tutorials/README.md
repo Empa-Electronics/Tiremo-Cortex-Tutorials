@@ -20,7 +20,7 @@
 
 # Feature Tutorials
 
-Feature tutorials her biri tek bir Intelligence yeteneğini ele alır: Data Explorer'dan dışa aktarma, bir Data Source oluşturma, bir Experiment çalıştırma, bir Solution dağıtma. Tiremo UI'daki genel nesneleri ve kullanım durumlarını öğretirler. İşlenmiş örnekler (örneğin bir hareket sınıflandırma uygulaması için ivmeölçer anahtarları) yürüyüşün somut bir dosyaya ihtiyaç duyduğu yerde görünür. Sırayla ilerleyin; her biri önkoşulunu adlandırır. Burada `Sw/` üretici yazılımı yoktur.
+Feature tutorials her biri tek bir Intelligence yeteneğini ele alır: eğitim verisi toplama (Data Explorer veya tercih ettiğiniz herhangi bir yol), bir Data Source oluşturma, bir Experiment çalıştırma, bir Solution dağıtma. Tiremo UI'daki genel nesneleri ve kullanım durumlarını öğretirler. İşlenmiş örnekler (örneğin bir hareket sınıflandırma uygulaması için ivmeölçer anahtarları) yürüyüşün somut bir dosyaya ihtiyaç duyduğu yerde görünür. Sırayla ilerleyin; her biri önkoşulunu adlandırır. Burada `Sw/` üretici yazılımı yoktur.
 
  <table style="width:100%">
  <tr>
@@ -28,8 +28,8 @@ Feature tutorials her biri tek bir Intelligence yeteneğini ele alır: Data Expl
  <td width="65%" align="center"><b>Açıklama</b>
  </tr>
  <tr>
- <td align="center"><a href="./01-Data_Collection_Via_Data_Explorer/">Data Collection via Data Explorer</a></td>
- <td>Bir cihazdan geçmiş ve canlı telemetri sorgulayın, öznitelik olarak kullanacağınız anahtarları süzün ve eğitim için etiketlenebilir bir CSV dışa aktarın.</td>
+ <td align="center"><a href="./01-Data_Collection/">Data Collection</a></td>
+ <td>Eğitim için bir öznitelik CSV'si toplayın — Data Explorer veya tercih ettiğiniz herhangi bir yöntemle — ardından sonraki eğitim için etiketleyin.</td>
  </tr>
  <tr>
  <td align="center"><a href="./02-Data_Sources/">Data Sources</a></td>

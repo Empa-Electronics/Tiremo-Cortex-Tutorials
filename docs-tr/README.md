@@ -281,7 +281,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Data Explorer'da telemetri toplayın, bir Data Source'a dönüştürün, bir Experiment eğitin ve bir Solution dağıtın, cihaz üzerindeki bir Edge paketi dahil, Tiremo UI'dan. Özellik eğitimleri yalnızca UI'dır. Üç tasarım eğitimi LIS2DE12 üretici yazılımı yükler: örnek başına telemetri, yerel 8 örnekli pencere, ardından HMR Edge çıkarımı.
+                Eğitim verisini toplayın (Data Explorer veya tercih ettiğiniz herhangi bir yol), bir Data Source'a dönüştürün, bir Experiment eğitin ve bir Solution dağıtın, cihaz üzerindeki bir Edge paketi dahil, Tiremo UI'dan. Özellik eğitimleri yalnızca UI'dır. Üç tasarım eğitimi LIS2DE12 üretici yazılımı yükler: örnek başına telemetri, yerel 8 örnekli pencere, ardından HMR Edge çıkarımı.
             </td>
         </tr>
         <tr>
@@ -289,7 +289,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="./Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/">Data Collection via Data Explorer</a></td>
+            <td><a href="./Intelligence/Feature_Tutorials/01-Data_Collection/">Data Collection</a></td>
             <td><a href="./Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/">Accelerometer Telemetry</a></td>
         </tr>
         <tr>
@@ -438,7 +438,7 @@ bakın.
 - [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — üretici yazılımı yazıldı; henüz kartta doğrulanmadı
 - [ ] [Tiremo_Cloud/07-Tiremo_Jobs](../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — derlendi; 06 hazır döngüsü + jobs notify/start-next/health SUCCEEDED; henüz kartta doğrulanmadı
 - [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — yalnızca README iskeleti
-- [x] [Intelligence/01-Data_Collection_Via_Data_Explorer](../Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/) — UI yürüyüşü yazıldı
+- [x] [Intelligence/01-Data_Collection](../Intelligence/Feature_Tutorials/01-Data_Collection/) — UI yürüyüşü yazıldı
 - [x] [Intelligence/02-Data_Sources](../Intelligence/Feature_Tutorials/02-Data_Sources/) — UI yürüyüşü yazıldı
 - [x] [Intelligence/03-Experiments](../Intelligence/Feature_Tutorials/03-Experiments/) — UI yürüyüşü yazıldı
 - [x] [Intelligence/04-Solutions](../Intelligence/Feature_Tutorials/04-Solutions/) — UI yürüyüşü yazıldı

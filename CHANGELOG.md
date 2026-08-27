@@ -20,7 +20,7 @@ release.
 ### Added
 
 - New curriculum section [`Intelligence/`](Intelligence/): four Feature
-  Tutorials (Data Explorer, Data Sources, Experiments, Solutions) that
+  Tutorials (Data Collection, Data Sources, Experiments, Solutions) that
   teach the Intelligence objects in the Tiremo UI, plus three design
   tutorials:
   [`01-Accelerometer_Telemetry`](Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/)

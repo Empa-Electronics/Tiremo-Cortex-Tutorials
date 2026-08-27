@@ -26,7 +26,7 @@
 
 **Data Source**, veri kümelerini, analizlerini ve bir Experiment'in eğitmesine izin verilen dondurulmuş **sürümleri** sahiplenen Intelligence nesnesidir. Bir tane oluşturmak **görev** ve **tür** için tek yönlü bir seçimdir; bunlar sonra değiştirilemez, bu yüzden bu eğitim çekmeceyi geçiştirmek değil, onları bilinçli seçmek üzerinedir.
 
-[01](../../../../Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/) CSV'sini (veya elinizdeki herhangi bir etiketli dosyayı) içe aktaracak, **Data Studio**'dan geçirecek ve bir sürüm oluşturacaksınız. Aşağıdaki ekranlar ve örnek başlık işlenmiş örnek olarak HMR hareket kümesini kullanır; aynı ekranlar diğer öznitelik sütunlarına ve sınıf adlarına uygulanır.
+[01](../../../../Intelligence/Feature_Tutorials/01-Data_Collection/) CSV'sini (veya elinizdeki herhangi bir etiketli dosyayı) içe aktaracak, **Data Studio**'dan geçirecek ve bir sürüm oluşturacaksınız. Aşağıdaki ekranlar ve örnek başlık işlenmiş örnek olarak HMR hareket kümesini kullanır; aynı ekranlar diğer öznitelik sütunlarına ve sınıf adlarına uygulanır.
 
 ## Neler Öğreneceksiniz
 
@@ -37,7 +37,7 @@
 
 ## Ön Koşullar
 
-- [01-Data_Collection_Via_Data_Explorer](../../../../Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/) *veya* [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) gibi hazır bir dosya (HMR örneği)
+- [01-Data_Collection](../../../../Intelligence/Feature_Tutorials/01-Data_Collection/) *veya* [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) gibi hazır bir dosya (HMR örneği)
 - Data Source oluşturma izni olan Tiremo UI
 
 ## Görev ve Türü Anlamak

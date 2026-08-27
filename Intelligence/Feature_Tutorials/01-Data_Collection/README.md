@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Intelligence/Feature_Tutorials/01-Data_Collection/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -8,23 +8,23 @@
       </picture>
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
-      <h1>Data Collection via Data Explorer</h1>
+      <h1>Data Collection</h1>
       <sub>Tiremo Cortex Tutorials: ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
 
-# Data Collection via Data Explorer
+# Data Collection
 
 ***Board: Tiremo Cortex (ESP32) · Section: Intelligence / Feature Tutorials · Difficulty: Easy***
 
 ## Introduction
 
-Intelligence cannot invent a training set. A Thing already on Tiremo Cloud publishes samples as **telemetry**. **Data Explorer** is where you prove those samples arrived, filter them down to the keys you will use as features, and export a CSV. That export is the raw material for [02-Data_Sources](../02-Data_Sources/).
+Intelligence cannot invent a training set. You need a labeled (or labelable) CSV of features before [02-Data_Sources](../02-Data_Sources/). How you collect that file is up to you: **Data Explorer** in the Tiremo UI, a local UART/SD log, an offline tool, or any other path you prefer. What matters is ending up with numeric feature columns you can label for training.
 
-Data Explorer lives in the main sidebar, not under **Intelligence**. It queries historical telemetry, alarms, and inference, plus a live MQTT tail, for one product/device over a date range of at most 30 days.
+This tutorial walks the **Data Explorer** path because it is built into Tiremo Cloud: a Thing already on the product publishes samples as **telemetry**, and Data Explorer is where you prove those samples arrived, filter them to the keys you will use as features, and export a CSV. Data Explorer lives in the main sidebar, not under **Intelligence**. It queries historical telemetry, alarms, and inference, plus a live MQTT tail, for one product/device over a date range of at most 30 days.
 
-The walkthrough below uses a motion-classification capture as a concrete example (`acc_x`, `acc_y`, `acc_z`). The same filters and export apply to any telemetry keys a Cortex (or other Thing) publishes.
+The walkthrough below uses a motion-classification capture as a concrete example (`acc_x`, `acc_y`, `acc_z`). The same filters and export apply to any telemetry keys a Cortex (or other Thing) publishes. If you already have a suitable CSV from another method, skip to [02-Data_Sources](../02-Data_Sources/).
 
 ## You Will Learn
 
@@ -39,7 +39,7 @@ The walkthrough below uses a motion-classification capture as a concrete example
 - Optional, for the motion example: [Sensors & Local Storage / 03 LIS2DE12 Accelerometer](../../../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/) so you know what the samples mean
 - The Tiremo UI at [`iot.tiremo.ai`](https://iot.tiremo.ai)
 
-If you cannot recapture live data, skip the physical session and use the labeled files shipped with [Design Tutorial 03](../../Design_Tutorials/03-HMR_Edge_Deployment/), then come back here when a device is publishing.
+If you cannot recapture live data, skip the physical session and use the labeled files shipped with [Design Tutorial 03](../../Design_Tutorials/03-Edge_Deployment_HMR/), then come back here when a device is publishing.
 
 ## Understanding a Collection Session
 

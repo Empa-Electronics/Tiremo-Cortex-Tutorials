@@ -33,7 +33,7 @@ flowchart LR
     I --> J["Tiremo_AI/ on the MCU"]
 ```
 
-- The [**Feature Tutorials**](./Feature_Tutorials/) cover one Intelligence object each: Data Explorer, Data Sources, Experiments, Solutions. Worked examples (for instance accelerometer keys for motion classification) appear in the details, not as the only purpose of the object.
+- The [**Feature Tutorials**](./Feature_Tutorials/) cover one Intelligence capability each: Data Collection (Data Explorer or any preferred method), Data Sources, Experiments, Solutions. Worked examples (for instance accelerometer keys for motion classification) appear in the details, not as the only purpose of the object.
 - The [**Design Tutorials**](./Design_Tutorials/) combine those objects into one shipped HMR case and flash three LIS2DE12 firmwares.
 
 UI screenshots live in [`figures/`](./figures/). Design-tutorial captures (gestures, UART inference) live next to [`03-Edge_Deployment_HMR/figures/`](./Design_Tutorials/03-Edge_Deployment_HMR/figures/).

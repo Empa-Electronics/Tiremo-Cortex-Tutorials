@@ -22,7 +22,7 @@
 
 A **Data Source** is the Intelligence object that owns datasets, their analysis, and the frozen **versions** an Experiment is allowed to train on. Creating one is a one-way choice of **task** and **type**; those cannot be changed later, so this tutorial is about picking them on purpose, not clicking through the drawer.
 
-You will import a CSV from [01-Data_Collection_Via_Data_Explorer](../01-Data_Collection_Via_Data_Explorer/) (or any labeled file you already have), run it through **Data Studio**, and create a version. The screenshots and sample header below use the HMR motion set as a worked example; the same screens apply to other feature columns and class names.
+You will import a CSV from [01-Data_Collection](../01-Data_Collection/) (or any labeled file you already have), run it through **Data Studio**, and create a version. The screenshots and sample header below use the HMR motion set as a worked example; the same screens apply to other feature columns and class names.
 
 ## You Will Learn
 
@@ -33,7 +33,7 @@ You will import a CSV from [01-Data_Collection_Via_Data_Explorer](../01-Data_Col
 
 ## Prerequisites
 
-- [01-Data_Collection_Via_Data_Explorer](../01-Data_Collection_Via_Data_Explorer/) *or* a ready file such as [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../Design_Tutorials/03-HMR_Edge_Deployment/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) (the HMR example)
+- [01-Data_Collection](../01-Data_Collection/) *or* a ready file such as [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../Design_Tutorials/03-Edge_Deployment_HMR/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) (the HMR example)
 - Tiremo UI at [`iot.tiremo.ai`](https://iot.tiremo.ai), permission to create Data Sources
 
 ## Understanding Task and Type

@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a href="../../../../Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/README.md">English</a> | <a>Türkçe</a></p>
+<p class="sphinxhide" align="right"><a href="../../../../Intelligence/Feature_Tutorials/01-Data_Collection/README.md">English</a> | <a>Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -8,27 +8,27 @@
       </picture>
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
-      <h1>Data Collection via Data Explorer</h1>
+      <h1>Data Collection</h1>
       <sub>Tiremo Cortex Eğitimleri: ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
 
-# Data Collection via Data Explorer
+# Data Collection
 
 ***Kart: Tiremo Cortex (ESP32) · Bölüm: Intelligence / Feature Tutorials · Zorluk: Kolay***
 
-> Bu sayfa [İngilizce orijinalinin](../../../../Intelligence/Feature_Tutorials/01-Data_Collection_Via_Data_Explorer/README.md)
+> Bu sayfa [İngilizce orijinalinin](../../../../Intelligence/Feature_Tutorials/01-Data_Collection/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır; içerik
 > farklılaşırsa İngilizce sürüm esas alınır.
 
 ## Giriş
 
-Intelligence bir eğitim kümesi uyduramaz. Tiremo Cloud'a bağlı bir Thing örnekleri **telemetry** olarak yayınlar. **Data Explorer** bu örneklerin geldiğini kanıtladığınız, öznitelik olarak kullanacağınız anahtarlara indirdiğiniz ve CSV dışa aktardığınız yerdir. O dışa aktarma, [02-Data_Sources](../../../../Intelligence/Feature_Tutorials/02-Data_Sources/) için ham maddedir.
+Intelligence bir eğitim kümesi uyduramaz. [02-Data_Sources](../../../../Intelligence/Feature_Tutorials/02-Data_Sources/) öncesinde etiketli (veya etiketlenebilir) bir öznitelik CSV'sine ihtiyacınız vardır. Bu dosyayı nasıl topladığınız size kalmıştır: Tiremo UI'daki **Data Explorer**, yerel bir UART/SD günlüğü, çevrimdışı bir araç veya tercih ettiğiniz başka herhangi bir yol. Önemli olan, eğitim için etiketlenebilecek sayısal öznitelik sütunlarıyla bitirmektir.
 
-Data Explorer ana kenar çubuğundadır, **Intelligence** altında değil. Tek bir ürün/cihaz için en fazla 30 günlük aralıkta geçmiş telemetri, alarm ve çıkarımı, artı canlı bir MQTT kuyruğu, sorgular.
+Bu eğitim **Data Explorer** yolunu yürür çünkü Tiremo Cloud'a gömülüdür: ürüne bağlı bir Thing örnekleri **telemetry** olarak yayınlar; Data Explorer bu örneklerin geldiğini kanıtladığınız, öznitelik anahtarlarına indirdiğiniz ve CSV dışa aktardığınız yerdir. Data Explorer ana kenar çubuğundadır, **Intelligence** altında değil. Tek bir ürün/cihaz için en fazla 30 günlük aralıkta geçmiş telemetri, alarm ve çıkarımı, artı canlı bir MQTT kuyruğu, sorgular.
 
-Aşağıdaki yürüyüş somut örnek olarak bir hareket sınıflandırma yakalaması kullanır (`acc_x`, `acc_y`, `acc_z`). Aynı süzgeçler ve dışa aktarma, bir Cortex'in (veya başka bir Thing'in) yayınladığı herhangi bir telemetri anahtarına uygulanır.
+Aşağıdaki yürüyüş somut örnek olarak bir hareket sınıflandırma yakalaması kullanır (`acc_x`, `acc_y`, `acc_z`). Aynı süzgeçler ve dışa aktarma, bir Cortex'in (veya başka bir Thing'in) yayınladığı herhangi bir telemetri anahtarına uygulanır. Başka bir yöntemle uygun bir CSV'niz zaten varsa [02-Data_Sources](../../../../Intelligence/Feature_Tutorials/02-Data_Sources/) ile devam edin.
 
 ## Neler Öğreneceksiniz
 
@@ -43,7 +43,7 @@ Aşağıdaki yürüyüş somut örnek olarak bir hareket sınıflandırma yakala
 - İsteğe bağlı, hareket örneği için: örneklerin ne anlama geldiği için [Sensors & Local Storage / 03 LIS2DE12](../../../../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/)
 - [`iot.tiremo.ai`](https://iot.tiremo.ai) adresindeki Tiremo UI
 
-Canlı yeniden yakalayamıyorsanız fiziksel oturumu atlayın ve [Design Tutorial 03](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/) ile gelen etiketli dosyaları kullanın; cihaz yayınlamaya başlayınca buraya dönün.
+Canlı yeniden yakalayamıyorsanız fiziksel oturumu atlayın ve [Design Tutorial 03](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/) ile gelen etiketli dosyaları kullanın; cihaz yayınlamaya başlayınca buraya dönün.
 
 ## Bir Toplama Oturumunu Anlamak
 
