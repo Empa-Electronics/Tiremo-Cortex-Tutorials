@@ -1,0 +1,23 @@
+/******************************************************************************
+ * @file    aws_iot_config.h.example
+ * @brief   Copy to aws_iot_config.h and fill in your deployment values.
+ *
+ * Copy product identifier and product secret from the Tiremo UI
+ * (see tutorial 03 README figures). aws_iot_config.h is gitignored.
+ ******************************************************************************/
+
+#ifndef AWS_IOT_CONFIG_H
+#define AWS_IOT_CONFIG_H
+
+#define TIREMO_AWS_ENDPOINT            "iot.tiremo.ai"
+#define TIREMO_AWS_TEMPLATE_NAME       "tiremo-default"  /* Tiremo Cloud default */
+#define TIREMO_AWS_PRODUCT_IDENTIFIER  "your-product"
+#define TIREMO_AWS_PRODUCT_SECRET      "REPLACE_WITH_REAL_PRODUCT_SECRET"
+#define TIREMO_AWS_IS_GATEWAY          "false"
+
+/* Optional. Empty means the MQTT clientId ("<product>_<deviceId>").
+ * Set this if the fleet template names the Thing something else
+ * (for example the bare 12-hex MAC from tutorial 01). */
+#define TIREMO_AWS_THING_NAME          ""
+
+#endif /* AWS_IOT_CONFIG_H */
