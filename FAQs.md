@@ -8,7 +8,7 @@
       <br>
       <img alt="" src="images/banner.png" width="100%">
       <h1>Frequently Asked Questions</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -18,6 +18,7 @@
 
 - [How are the tutorials organized?](#how-are-the-tutorials-organized)
 - [What's the difference between a Feature Tutorial and a Design Tutorial?](#whats-the-difference-between-a-feature-tutorial-and-a-design-tutorial)
+- [Where is the Tiremo Cloud platform documentation?](#where-is-the-tiremo-cloud-platform-documentation)
 - [Where do I check my work?](#where-do-i-check-my-work)
 - [How do I contribute a tutorial?](#how-do-i-contribute-a-tutorial)
 
@@ -29,8 +30,8 @@ the firmware stack, roughly in build order:
 - [Getting Started](./Getting_Started): toolchain, first blink, UART logging, button, LED patterns — no networking.
 - [Sensors & Local Storage](./Sensors_And_Storage): SHT40, LIS2DE12, battery, microphone, flash config, software clock.
 - [ESP32 Connectivity](./ESP32_Connectivity): AT transport, WiFi join, retries, NTP, BluFi provisioning.
-- [Cloud Messaging](./Cloud_Messaging): MQTT, mTLS credentials, AWS IoT Core connection, reliable polling.
-- [AWS IoT Core](./AWS_IoT_Core): device identity, JSON helpers, fleet provisioning, device shadow.
+- [Cloud Messaging](./Cloud_Messaging): MQTT, mTLS credentials, Tiremo Cloud connection, reliable polling.
+- [Tiremo Cloud](./Tiremo_Cloud): device identity, JSON helpers, fleet provisioning, device shadow. Platform docs: [docs.tiremo.ai](https://docs.tiremo.ai).
 - [Production Firmware](./Production_Firmware): shadow-driven LEDs, alarms, telemetry, jobs, factory reset, link recovery, and the full capstone build.
 - [Developer Contributed](./Developer_Contributed): anything community-submitted that doesn't fit the numbered curriculum.
 
@@ -40,6 +41,19 @@ A Feature Tutorial teaches one concept in isolation — one driver, one AT
 command sequence, one cloud primitive. A Design Tutorial combines several
 already-completed Feature Tutorials into one working subsystem. Design
 Tutorials always list their Feature Tutorial prerequisites.
+
+## Where is the Tiremo Cloud platform documentation?
+
+Firmware walkthroughs in this repo; platform concepts on
+[docs.tiremo.ai](https://docs.tiremo.ai):
+
+- [Introduction](https://docs.tiremo.ai/) and [architecture & data flow](https://docs.tiremo.ai/introduction/phase-1)
+- [Device provisioning](https://docs.tiremo.ai/device-provisioning/getting-started) (claim/bootstrap certs, fleet provisioning, [TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni))
+- [Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction) (classic Device Shadow)
+- [Tiremo Jobs](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction)
+- [Developer Guide](https://docs.tiremo.ai/developer-guide), [PoC guide](https://docs.tiremo.ai/poc-guide), [FAQ](https://docs.tiremo.ai/faq)
+
+Each [Tiremo Cloud](./Tiremo_Cloud/) tutorial links the pages that match it.
 
 ## Where do I check my work?
 

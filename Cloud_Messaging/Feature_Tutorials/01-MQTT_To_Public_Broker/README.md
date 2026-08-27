@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>MQTT to a Public Broker</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -23,7 +23,9 @@
 
 Before touching certificates, prove the ESP32's built-in MQTT client
 works at all — connect to a public test broker in the clear, publish a
-message, and subscribe to hear it echoed back.
+message, and subscribe to hear it echoed back. Mutual TLS to
+[`iot.tiremo.ai`](https://iot.tiremo.ai) is tutorial 03 — see
+[TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni).
 
 ## You Will Learn
 

@@ -8,14 +8,14 @@
       </picture>
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
-      <h1>MQTT mTLS to AWS IoT Core</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <h1>MQTT mTLS to Tiremo Cloud</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
 
 
-# MQTT mTLS to AWS IoT Core
+# MQTT mTLS to Tiremo Cloud
 
 ***Board: Tiremo Cortex (ESP32) · Section: Cloud Messaging (MQTT & TLS) / Feature Tutorials · Difficulty: Hard***
 
@@ -23,10 +23,10 @@
 
 With credentials writable (Tutorial 02) and MQTT working in the clear
 (Tutorial 01), combine them: load a certificate you created by hand for
-a real AWS IoT Thing onto the module, and get a genuine mutual-TLS MQTT
-session up against a real AWS IoT Core endpoint. This tutorial stops at
+a real Thing onto the module, and get a genuine mutual-TLS MQTT
+session up against a real Tiremo Cloud endpoint. This tutorial stops at
 a successful `AT+MQTTCONN` — no provisioning, no publish/subscribe yet
-(that's later `AWS_IoT_Core` curriculum) — because getting the handshake
+(that's later `Tiremo_Cloud` curriculum) — because getting the handshake
 itself right is the genuinely hard part of this whole section.
 
 ## You Will Learn
@@ -34,15 +34,21 @@ itself right is the genuinely hard part of this whole section.
 - TLS scheme 5 (verify server cert, present client cert) via `MQTTUSERCFG`
 - Why `AT+MQTTSNI` matters for a custom domain endpoint sitting behind SNI routing
 - Why scheme 5's `AT+MQTTCONN` requires the module to have synced real time over SNTP first
-- Manually creating one AWS IoT Thing + certificate for bench testing, before AWS IoT Core automates it
+- Manually creating one Thing + certificate for bench testing, before Tiremo Cloud automates it
 - Keeping a real device private key out of a public git repo without breaking the build for other tutorials
 
 ## Prerequisites
 
 - [02-mTLS_Credentials_In_Module_NVS](../02-mTLS_Credentials_In_Module_NVS/) — the credential-slot driver this tutorial loads real credentials through
-- An AWS IoT Core endpoint and one manually-created Thing certificate — see **Understanding the `certs/` Folder** below for exactly what to fetch and where it goes
+- An Tiremo Cloud endpoint and one manually-created Thing certificate — see **Understanding the `certs/` Folder** below for exactly what to fetch and where it goes
 - `wifi_secrets.h` in this `Sw/` (gitignored), same pattern as every other Cloud Messaging / ESP32 Connectivity tutorial
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Platform documentation
+
+- Endpoint and first mTLS session: [first connection](https://docs.tiremo.ai/device-provisioning/third-phase)
+- Why `AT+MQTTSNI` is required on `iot.tiremo.ai`: [TLS SNI Requirement](https://docs.tiremo.ai/device-provisioning/tls-sni)
+- Claim/bootstrap certs and fleet provisioning (next section): [device provisioning](https://docs.tiremo.ai/device-provisioning/getting-started)
 
 ## Understanding the Connect Sequence
 
@@ -52,7 +58,7 @@ use whatever [Tutorial 02](../02-mTLS_Credentials_In_Module_NVS/)'s
 `TIREMO_ESP32_CredWrite()` last stored in the `mqtt_cert`/`mqtt_key`/
 `mqtt_ca` slots. `AT+MQTTSNI` sets the TLS SNI hostname — required for
 a custom domain endpoint that may sit behind shared TLS-terminating
-infrastructure; without it, the TLS handshake can complete against
+infrastructure ([TLS SNI Requirement](https://docs.tiremo.ai/device-provisioning/tls-sni)); without it, the TLS handshake can complete against
 whatever the SNI-less default routes to, while the connection never
 actually reaches the intended backend. Order matters: `MQTTUSERCFG` →
 `MQTTSNI` → `MQTTCONN`, with no `AT+MQTTCONNCFG` in between (that
@@ -71,10 +77,10 @@ Three files, three very different sensitivity levels:
 
 | File | Committed? | What it is |
 |---|---|---|
-| [`certs/root_ca.pem`](./Sw/certs/root_ca.pem) | Yes | **Amazon Root CA 1** — genuinely public, identical for every AWS account, fetched straight from `https://www.amazontrust.com/repository/AmazonRootCA1.pem`. Verifies AWS IoT's server certificate. |
+| [`certs/root_ca.pem`](./Sw/certs/root_ca.pem) | Yes | **Amazon Root CA 1** — genuinely public, identical for every Tiremo Cloud tenant, fetched straight from `https://www.amazontrust.com/repository/AmazonRootCA1.pem`. Verifies Tiremo Cloud's server certificate. |
 | `certs/device_cert.pem.example` / `device_key.pem.example` | Yes | Placeholders showing the format. |
-| `certs/device_cert.pem` | **No** (gitignored) | Your AWS IoT Thing's own certificate, downloaded from the AWS console when you created it. |
-| `certs/device_key.pem` | **No** (gitignored) | Your AWS IoT Thing's own private key, downloaded at the same time — AWS only shows it once. Whoever has this file can connect to your AWS account as this device. |
+| `certs/device_cert.pem` | **No** (gitignored) | Your Thing's own certificate, downloaded from the Tiremo UI when you created it. |
+| `certs/device_key.pem` | **No** (gitignored) | Your Thing's own private key, downloaded at the same time — AWS only shows it once. Whoever has this file can connect to your Tiremo Cloud account as this device. |
 
 This mirrors how `wifi_secrets.h` is already handled everywhere else in
 this repo: a gitignored real file, a committed `.example` template.
@@ -85,7 +91,7 @@ before building — see [`certs/README.md`](./Sw/certs/README.md).
 Root CA aside: this custom domain's server certificate happens to chain
 `iot.tiremo.ai` → `Amazon RSA 2048 M04` → `Amazon Root CA 1`, checked
 directly with `openssl s_client -showcerts` before assuming it — the
-same root AWS IoT's standard endpoints use, not a separate one just
+same root Tiremo Cloud's standard endpoints use, not a separate one just
 because it's a custom domain. That won't necessarily be true for every
 custom domain (a domain owner can configure ACM with a different
 certificate entirely); check yours the same way rather than assuming.
@@ -178,11 +184,11 @@ adds: `TIREMO_ESP32_MqttUserConfigMtls()` (scheme 5) and
 
 This build does **not** subscribe or publish — it proves the mTLS
 handshake itself, deliberately, since that's the genuinely hard part of
-this whole section. Pub/sub against a real AWS topic is later
-`AWS_IoT_Core` curriculum; this tutorial's own original "publish to a
+this whole section. Pub/sub against Tiremo Cloud topic is later
+`Tiremo_Cloud` curriculum; this tutorial's own original "publish to a
 test topic" step was intentionally not attempted this round.
 
-**Genuinely verified, for real, against a real AWS IoT Core endpoint:**
+**Genuinely verified, for real, against a real Tiremo Cloud endpoint:**
 `tdf.py build` compiles and links clean (`.text` 21648 bytes). `tdf.py
 flash` completed a full program-and-verify cycle over SWD (`**
 Verified OK **`). `tdf.py monitor` then showed, straight from the real
@@ -207,7 +213,7 @@ not just this driver's interpretation of a bare `OK`:
 ```
 
 `+MQTTCONNECTED` with scheme `5` and the real endpoint echoed back —
-a genuine mutual-TLS session against AWS IoT Core, not a local loopback
+a genuine mutual-TLS session against Tiremo Cloud, not a local loopback
 or a lucky `OK` match.
 
 ## Walkthrough
@@ -266,12 +272,12 @@ See **Solution** above for what's actually confirmed on real hardware.
 
 ## Done When
 
-A successful `AT+MQTTCONN` mutual-TLS session against a real AWS IoT
+A successful `AT+MQTTCONN` mutual-TLS session against Tiremo Cloud IoT
 Core endpoint, confirmed by the module's own `+MQTTCONNECTED` response
 — genuinely verified above. This tutorial's original "publish to a
-test topic, confirm receipt in the AWS console" step was deliberately
+test topic, confirm receipt in the Tiremo UI" step was deliberately
 not attempted this round (see **Solution**); that's covered once this
-curriculum reaches real pub/sub against AWS IoT Core.
+curriculum reaches real pub/sub against Tiremo Cloud.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

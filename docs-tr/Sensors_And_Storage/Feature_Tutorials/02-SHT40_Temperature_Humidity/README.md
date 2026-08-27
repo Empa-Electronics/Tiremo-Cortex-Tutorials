@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
       <h1>SHT40 Temperature / Humidity</h1>
-      <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
+      <sub>Tiremo Cortex Eğitimleri — ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
@@ -28,7 +28,7 @@
 
 SHT40, yığındaki ilk gerçek sensör sürücüsüdür ve en basit olanıdır —
 tek bir I2C işlem dizisi hem sıcaklığı hem nemi döndürür. Daha sonra
-gölge şemasının (AWS IoT Core) `unit` ve `offset` ile ayarlayacağı
+gölge şemasının (Tiremo Cloud) `unit` ve `offset` ile ayarlayacağı
 sensör de budur. Eğitim 01, çipin I2C2 üzerinde `0x44`'te ACK ettiğini
 zaten kanıtladı; bu eğitim o adresteki asıl SHT4x protokolünü öğretir.
 

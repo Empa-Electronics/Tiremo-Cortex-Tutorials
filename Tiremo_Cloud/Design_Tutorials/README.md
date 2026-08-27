@@ -7,8 +7,8 @@
       </picture>
       <br>
       <img alt="" src="../../images/banner.png" width="100%">
-      <h1>AWS IoT Core Tutorials</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <h1>Tiremo Cloud Tutorials</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -16,7 +16,7 @@
 
 # Design Tutorials
 
-Design tutorials combine several feature tutorials into one working subsystem, closer to what actually ships.
+Design tutorials combine several feature tutorials into one working subsystem, closer to what actually ships. Platform concepts: [docs.tiremo.ai](https://docs.tiremo.ai).
 
  <table style="width:100%">
  <tr>

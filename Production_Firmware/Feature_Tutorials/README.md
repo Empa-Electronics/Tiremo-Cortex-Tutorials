@@ -8,7 +8,7 @@
       <br>
       <img alt="" src="../../images/banner.png" width="100%">
       <h1>Production Firmware Tutorials</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -36,7 +36,7 @@ Feature tutorials cover one concept each — a single driver, a single AT comman
  <td>Publish averaged sensor batches on a shadow-configurable interval, with retries and adaptive polling.</td>
  </tr>
  <tr>
- <td align="center"><a href="./04-AWS_IoT_Jobs_Health_Check/">AWS IoT Jobs — Health Check</a></td>
+ <td align="center"><a href="./04-AWS_IoT_Jobs_Health_Check/">Tiremo Jobs — Health Check</a></td>
  <td>Handle jobs/notify → start-next → UpdateJobExecution SUCCEEDED with statusDetails.</td>
  </tr>
  <tr>

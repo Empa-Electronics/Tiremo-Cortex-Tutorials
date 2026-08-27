@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Shadow Get + Apply + Report</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -17,7 +17,7 @@
 
 # Shadow Get + Apply + Report
 
-***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Feature Tutorials · Difficulty: Hard***
+***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Hard***
 
 ## Introduction
 
@@ -25,9 +25,9 @@
 unique issued identity in the ESP32's NVS. This tutorial is the first
 time that identity talks application MQTT: on boot it fetches the classic
 Device Shadow, applies known fields locally, and publishes
-`state.reported` so AWS can drop the delta.
+`state.reported` so Tiremo Cloud can drop the delta.
 
-The trap is reporting only the key that changed. AWS computes delta as
+The trap is reporting only the key that changed. Tiremo Cloud computes delta as
 *desired minus reported*. If desired is a nested object
 (`reporting`, `led`, `note`) and reported is just `{"reporting":{"enabled":true}}`,
 the leftover siblings stay in delta forever. The firmware echoes the
@@ -43,22 +43,22 @@ Here the loop is one-shot: get, apply, report, confirm, then idle.
 ```mermaid
 sequenceDiagram
     participant Board as Tiremo Cortex
-    participant AWS as AWS IoT Core
+    participant Cloud as Tiremo Cloud
 
     Note over Board: issued mqtt_cert / mqtt_key from tutorial 03
-    Board->>AWS: subscribe get/accepted, get/rejected,<br/>update/accepted, update/rejected
+    Board->>Cloud: subscribe get/accepted, get/rejected,<br/>update/accepted, update/rejected
     Note over Board: no update/delta
-    Board->>AWS: publish shadow/get
+    Board->>Cloud: publish shadow/get
     alt document exists
-        AWS-->>Board: get/accepted with state.desired
+        Cloud-->>Board: get/accepted with state.desired
     else never created
-        AWS-->>Board: get/rejected 404
+        Cloud-->>Board: get/rejected 404
     end
     Note over Board: apply reporting.enabled, intervalS, led.on
-    Board->>AWS: publish shadow/update<br/>state.reported = full desired
-    AWS-->>Board: update/accepted
-    Board->>AWS: publish shadow/get again
-    AWS-->>Board: get/accepted with no state.delta
+    Board->>Cloud: publish shadow/update<br/>state.reported = full desired
+    Cloud-->>Board: update/accepted
+    Board->>Cloud: publish shadow/get again
+    Cloud-->>Board: get/accepted with no state.delta
 ```
 
 ```mermaid
@@ -97,8 +97,16 @@ flowchart TD
 
 - [03-Fleet_Provisioning_By_Claim](../03-Fleet_Provisioning_By_Claim/) — a unique issued identity, not the shared claim cert. After 03 the marker `tiremo` / `provisioned` already matches this board; this firmware skips the claim exchange.
 - [02-Minimal_JSON_Helpers](../02-Minimal_JSON_Helpers/) — `FindObject` / `FindBool` / `FindUint` plus the writer
-- The same gitignored files as 03 in this `Sw/`: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem` (needed only if the board is factory-fresh or you factory-reset)
+- The same gitignored files as 03 in this `Sw/`: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem` (needed only if the board is factory-fresh or you factory-reset). Copy claim PEMs, product identifier, and product secret from the Tiremo UI as in [tutorial 03](../03-Fleet_Provisioning_By_Claim/#getting-credentials-from-the-tiremo-ui).
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Platform documentation
+
+Classic Device Shadow (get / apply / report, leftover delta) is
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)
+and [device firmware integration](https://docs.tiremo.ai/device-state-controller/device-integration).
+The issued identity this boot path uses comes from
+[fleet provisioning](https://docs.tiremo.ai/device-provisioning/getting-started).
 
 ## Understanding Thing Name vs Client ID
 
@@ -137,7 +145,7 @@ A realistic desired document (same shape tutorial 02 already parsed):
 Apply reads `reporting.enabled`, `reporting.intervalS`, and `led.on`.
 Report does **not** rebuild those three keys. It copies the entire
 desired object — `note` included — into `state.reported` with
-`TIREMO_JsonWriter_Raw`. AWS then sees desired == reported and omits
+`TIREMO_JsonWriter_Raw`. Tiremo Cloud then sees desired == reported and omits
 `state.delta` on the next get.
 
 If there is no desired (empty shadow or first-ever 404), the firmware
@@ -190,7 +198,7 @@ defaults and the next boot sees `get/accepted`. Live UART after that:
 [INFO] shadow: ready thingName=<product>_30eda0806324 (no live delta; that is tutorial 05)
 ```
 
-To force a richer desired path: in the AWS console, edit the Thing's
+To force a richer desired path: in the Tiremo UI, edit the Thing's
 classic shadow desired to the sample object above, reset the board, and
 confirm `desired N bytes` then `no leftover delta`. The console delta
 should be empty after the report.

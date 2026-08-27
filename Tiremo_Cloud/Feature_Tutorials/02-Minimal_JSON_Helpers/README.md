@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Minimal JSON Helpers</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -17,13 +17,13 @@
 
 # Minimal JSON Helpers
 
-***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Feature Tutorials · Difficulty: Medium***
+***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Medium***
 
 ## Introduction
 
-Shadow documents, fleet-provisioning replies, and Jobs payloads are JSON. A general-purpose parser (cJSON, jsmn) would work and would also cost heap, recursion, and a dependency the rest of this MCU firmware does not need. This tutorial builds the four find helpers and the writer that later AWS IoT Core tutorials actually call — scoped to known, bounded document shapes.
+Shadow documents, fleet-provisioning replies, and Jobs payloads are JSON. A general-purpose parser (cJSON, jsmn) would work and would also cost heap, recursion, and a dependency the rest of this MCU firmware does not need. This tutorial builds the four find helpers and the writer that later Tiremo Cloud tutorials actually call — scoped to known, bounded document shapes.
 
-This `Sw/` does **not** talk to the ESP32 or to AWS. The tests run against a fixed sample shadow in flash and log pass/fail on UART0.
+This `Sw/` does **not** talk to the ESP32 or to Tiremo Cloud. The tests run against a fixed sample shadow in flash and log pass/fail on UART0.
 
 ## You Will Learn
 
@@ -34,10 +34,18 @@ This `Sw/` does **not** talk to the ESP32 or to AWS. The tests run against a fix
 
 ## Prerequisites
 
-- [01-Device_Identity_From_MAC](../01-Device_Identity_From_MAC/) conceptually (AWS IoT Core has started); this `Sw/` only needs debug UART from [Getting Started](../../../Getting_Started/)
+- [01-Device_Identity_From_MAC](../01-Device_Identity_From_MAC/) conceptually (Tiremo Cloud has started); this `Sw/` only needs debug UART from [Getting Started](../../../Getting_Started/)
 - Toolchain and flashing set up per Getting Started
 
 Fleet provisioning is [03](../03-Fleet_Provisioning_By_Claim/). It comes after this because `CreateKeysAndCertificate` replies are JSON too.
+
+## Platform documentation
+
+The documents these helpers parse are specified on the platform side:
+[fleet provisioning](https://docs.tiremo.ai/device-provisioning/second-phase),
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)
+(classic Device Shadow), and
+[Tiremo Jobs](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction).
 
 ## Understanding scan-at-this-depth
 

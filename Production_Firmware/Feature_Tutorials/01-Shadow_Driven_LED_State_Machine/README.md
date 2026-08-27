@@ -8,7 +8,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Shadow-Driven LED State Machine</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -29,7 +29,7 @@ Getting_Started Tutorial 05 built the pattern engine. This tutorial adds the sel
 
 ## Prerequisites
 
-- [AWS IoT Core](../../../AWS_IoT_Core/) complete
+- [Tiremo Cloud](../../../Tiremo_Cloud/) complete
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
 ## Solution
@@ -40,7 +40,7 @@ No solution has been written for this tutorial yet — this repo is still a curr
 
 1. Implement mode selection: off (if disabled) > alert > low_battery > connecting > normal
 2. Drive the Getting_Started pattern engine from the selected mode
-3. Publish `current_mode` in shadow reported and confirm it updates live in the AWS console as state changes
+3. Publish `current_mode` in shadow reported and confirm it updates live in the Tiremo UI as state changes
 
 ## Done When
 

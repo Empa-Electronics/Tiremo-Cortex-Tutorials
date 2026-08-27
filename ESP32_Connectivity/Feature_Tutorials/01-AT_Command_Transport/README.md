@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>AT Command Transport</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>

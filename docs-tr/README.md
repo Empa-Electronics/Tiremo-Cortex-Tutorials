@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../images/banner.png" width="100%">
       <h1>Tiremo Cortex — Ayrıntılı Eğitimler</h1>
-      <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
+      <sub>Tiremo Cortex Eğitimleri — ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
@@ -22,8 +22,10 @@
 
 Bu depo, **Tiremo Cortex** için üretici yazılımının adım adım inşa edilmiş halidir:
 ESP32 tabanlı bir IoT sensör kartı. Tek radyo WiFi'dir (istasyon bağlantısı +
-BluFi BLE ile kurulum) ve AWS IoT Core'a, ESP32'nin kendi AT komut seti
-üzerinden karşılıklı TLS ile MQTT ile ulaşılır.
+BluFi BLE ile kurulum). Kart **Tiremo Cloud**'a [`iot.tiremo.ai`](https://iot.tiremo.ai) üzerinde,
+ESP32'nin kendi AT komut seti üzerinden karşılıklı TLS ile MQTT ile bağlanmak
+üzere tasarlanmıştır. Operatörler **Tiremo UI** kullanır. Platform kavramları
+(kurulum, Device Shadow, işler, telemetri) [Tiremo belgelendirmesinde](https://docs.tiremo.ai)dir.
 
 Buradaki her eğitim, tam bir üretici yazılımı derlemesinin daha küçük,
 bağımsız bir dilimidir — mevcut durum için aşağıdaki
@@ -37,7 +39,7 @@ on LED'lik bankayı sürün. Bu bölüm için WiFi veya bulut hesabı gerekmez.
 
 Oradan sonra eğitimler [Eğitimler](#eğitimler) altında konuya göre
 düzenlenmiştir, kabaca gerçek bir devreye almanın izleyeceği sırayla: önce
-yerel sensörler, sonra ESP32 WiFi, sonra bulut mesajlaşma, sonra AWS IoT Core,
+yerel sensörler, sonra ESP32 WiFi, sonra bulut mesajlaşma, sonra Tiremo Cloud,
 sonra çalışan bir prototipi filoya hazır bir cihaza dönüştüren üretim
 davranışları (shadow tabanlı LED'ler, alarmlar, telemetri, işler, fabrika
 sıfırlama).
@@ -53,6 +55,9 @@ Her konu iki tür eğitime ayrılır:
 
 - Önce bir eğitimin **Solution** (Çözüm) bölümüne bakın — o an için bir
   çözümün yazılıp yazılmadığını orada görürsünüz.
+- Bulut platformu (MQTT, filo kurulumu, Device Shadow, işler) için
+  [Tiremo belgelendirmesi](https://docs.tiremo.ai) — her
+  [Tiremo Cloud](../Tiremo_Cloud/) eğitimi eşleşen sayfaları bağlar.
 - Bir eğitimle ilgili sorularınız veya sorunlarınız için bir
   [Issue](https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials/issues)
   açın.
@@ -195,7 +200,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                MQTT'yi baştan sona çalışır hale getirin: önce TLS'siz genel bir broker, sonra ESP32'nin kendi NVS'sinde tutulan karşılıklı TLS kimlik bilgileri, sonra gerçek bir AWS IoT Core oturumu.
+                MQTT'yi baştan sona çalışır hale getirin: önce TLS'siz genel bir broker, sonra ESP32'nin kendi NVS'sinde tutulan karşılıklı TLS kimlik bilgileri, sonra gerçek bir Tiremo Cloud oturumu.
             </td>
         </tr>
         <tr>
@@ -211,7 +216,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to AWS IoT Core</a></td>
+            <td><a href="../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to Tiremo Cloud</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -222,12 +227,12 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../AWS_IoT_Core/">AWS IoT Core</a></strong>
+                <strong><a href="../Tiremo_Cloud/">Tiremo Cloud</a></strong>
             </td>
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Cihaz kimliği, bu üretici yazılımının tam bir ayrıştırma kütüphanesi yerine kullandığı minimal JSON yardımcıları, iddia sertifikası ile filo kurulumu, cihaz shadow kontrol döngüsü, telemetri ve alarmlar ve AWS IoT Jobs.
+                Cihaz kimliği, bu üretici yazılımının tam bir ayrıştırma kütüphanesi yerine kullandığı minimal JSON yardımcıları, iddia sertifikası ile filo kurulumu, cihaz shadow kontrol döngüsü, telemetri ve alarmlar ve Tiremo Jobs.
             </td>
         </tr>
         <tr>
@@ -235,31 +240,31 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
-            <td><a href="../AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
+            <td><a href="../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/">AWS Jobs</a></td>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/">Tiremo Jobs</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -275,7 +280,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Çalışan bir prototipi filoya hazır bir cihaza dönüştüren davranışlar: shadow tabanlı LED'ler, histerezisli kenar alarmları, gruplanmış telemetri, AWS IoT Jobs, fabrika sıfırlama ve bağlantı kurtarma — hepsi tam kapsamlı bir yapı ile taçlanır.
+                Çalışan bir prototipi filoya hazır bir cihaza dönüştüren davranışlar: shadow tabanlı LED'ler, histerezisli kenar alarmları, gruplanmış telemetri, Tiremo Jobs, fabrika sıfırlama ve bağlantı kurtarma — hepsi tam kapsamlı bir yapı ile taçlanır.
             </td>
         </tr>
         <tr>
@@ -295,7 +300,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/04-AWS_IoT_Jobs_Health_Check/">AWS IoT Jobs — Health Check</a></td>
+            <td><a href="../Production_Firmware/Feature_Tutorials/04-AWS_IoT_Jobs_Health_Check/">Tiremo Jobs — Health Check</a></td>
             <td></td>
         </tr>
         <tr>
@@ -387,15 +392,15 @@ bakın.
 - [x] [ESP32_Connectivity/05-BluFi_Provisioning](../ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/) — derlendi (`.text` 21156), flaşlandı; `Tiremo-Cortex` olarak `AT+BLUFI=1` reklamı doğrulandı; EspBluFi Configure insan adımıdır
 - [x] [Cloud_Messaging/01-MQTT_To_Public_Broker](../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/) — derlendi (`.text` 17268), flaşlandı, SWD üzerinden doğrulandı; tam yayınlama/abonelik gidiş-dönüşü (string + binary-safe) canlı doğrulandı, ve aynı genel broker'da ayrı bir `mqttx` CLI abonesiyle bağımsız olarak çapraz kontrol edildi
 - [x] [Cloud_Messaging/02-mTLS_Credentials_In_Module_NVS](../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/) — derlendi (`.text` 21140), flaşlandı, SWD üzerinden doğrulandı; üç gerçek (kendinden imzalı test) PEM kimlik bilgisi slotunun hepsi için yazma/geri-okuma/silme bayt-bayt canlı doğrulandı, doğru `mqtt_*` SYSMFG namespace'ine karşı (eğitimin kendi "Gerçek Bir Hata" notuna bakın)
-- [x] [Cloud_Messaging/03-MQTT_mTLS_To_AWS_IoT](../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — derlendi (`.text` 21648), flaşlandı, SWD üzerinden doğrulandı; gerçek bir AWS IoT Core uç noktasına karşı gerçek bir karşılıklı-TLS `+MQTTCONNECTED`, bağlantı sırasından önce SNTP zaman senkronizasyonuyla; yalnızca bağlantı, henüz publish/subscribe yok
+- [x] [Cloud_Messaging/03-MQTT_mTLS_To_AWS_IoT](../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — derlendi (`.text` 21648), flaşlandı, SWD üzerinden doğrulandı; Tiremo Cloud (`iot.tiremo.ai`) uç noktasına karşı gerçek bir karşılıklı-TLS `+MQTTCONNECTED`, bağlantı sırasından önce SNTP zaman senkronizasyonuyla; yalnızca bağlantı, henüz publish/subscribe yok
 - [x] [ESP32_Connectivity/Design/01-Boot_Cascade_Saved_WiFi_Then_BluFi](../ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/) — derlendi (`.text` 25196), flaşlandı; EspBluFi kurulumu `CS01` yazdı, sonraki reset BluFi'siz `nvs` yolundan NTP ile açıldı
-- [x] [AWS_IoT_Core/01-Device_Identity_From_MAC](../AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/) — derlendi (`.text` 15060), flaşlandı; `CIPSTAMAC?` → `deviceId 30eda0806324`, heartbeat yeniden okuma değişmedi
-- [x] [AWS_IoT_Core/02-Minimal_JSON_Helpers](../AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/) — derlendi (`.text` 16156), flaşlandı; Find* + yazıcı örnek shadow üzerinde gidiş-dönüş (`reporting.enabled`, string içinde iki nokta, kardeş anahtar yok)
-- [x] [AWS_IoT_Core/04-Shadow_Get_Apply_Report](../AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — derlendi (`.text` 33764), flaşlandı; açılış GET → `reporting.enabled` / `led.on` uygula → tam desired yankısı `reported` → ikinci GET `no leftover delta`
-- [x] [AWS_IoT_Core/05-Live_Shadow_Delta_Handling](../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — derlendi (`.text` 34928), flaşlandı; açılış GET/report sonra `subscribed update/delta`; canlı uygulamak için konsolda `desired` değiştirin (sıfırlama yok)
-- [ ] [AWS_IoT_Core/06-Publishing_Alarms_And_Telemetry](../AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — yalnızca README iskeleti
-- [ ] [AWS_IoT_Core/07-AWS_Jobs](../AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/) — yalnızca README iskeleti
-- [ ] [AWS_IoT_Core/Design/01-Sensor_Telemetry_And_Shadow_Control](../AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — yalnızca README iskeleti
+- [x] [Tiremo_Cloud/01-Device_Identity_From_MAC](../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/) — derlendi (`.text` 15060), flaşlandı; `CIPSTAMAC?` → `deviceId 30eda0806324`, heartbeat yeniden okuma değişmedi
+- [x] [Tiremo_Cloud/02-Minimal_JSON_Helpers](../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/) — derlendi (`.text` 16156), flaşlandı; Find* + yazıcı örnek shadow üzerinde gidiş-dönüş (`reporting.enabled`, string içinde iki nokta, kardeş anahtar yok)
+- [x] [Tiremo_Cloud/04-Shadow_Get_Apply_Report](../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — derlendi (`.text` 33764), flaşlandı; açılış GET → `reporting.enabled` / `led.on` uygula → tam desired yankısı `reported` → ikinci GET `no leftover delta`
+- [x] [Tiremo_Cloud/05-Live_Shadow_Delta_Handling](../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — derlendi (`.text` 34928), flaşlandı; açılış GET/report sonra `subscribed update/delta`; canlı uygulamak için konsolda `desired` değiştirin (sıfırlama yok)
+- [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — yalnızca README iskeleti
+- [ ] [Tiremo_Cloud/07-Tiremo_Jobs](../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — yalnızca README iskeleti
+- [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — yalnızca README iskeleti
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 

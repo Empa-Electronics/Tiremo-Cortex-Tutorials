@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
       <h1>NTP Time Sync</h1>
-      <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
+      <sub>Tiremo Cortex Eğitimleri — ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
@@ -25,7 +25,7 @@
 
 ## Giriş
 
-Eğitim 07'nin yazılım saati yalnızca RAM'dedir ve eşlenmemiş başlar. Bu eğitim eksik girdidir: eğitim 03 join yolu IPv4 aldıktan sonra ESP32'de SNTP açılır, `CIPSNTPTIME` asctime Unix epoch'a çevrilir, `TIREMO_Clock_SetEpoch()` çağrılır. Sonraki her MQTT zaman damgası buna bağlıdır.
+Eğitim 07'nin yazılım saati yalnızca RAM'dedir ve eşlenmemiş başlar. Bu eğitim eksik girdidir: eğitim 03 join yolu IPv4 aldıktan sonra ESP32'de SNTP açılır, `CIPSNTPTIME` asctime Unix epoch'a çevrilir, `TIREMO_Clock_SetEpoch()` çağrılır. Sonraki her MQTT zaman damgası buna bağlıdır. Tiremo Cloud scheme-5 MQTT, `AT+MQTTCONN` öncesi gerçek bir saat de ister — bkz. [TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni) ve [ilk bağlantı](https://docs.tiremo.ai/device-provisioning/third-phase).
 
 BluFi eğitim 05'tir. Buraya eklemeyin.
 

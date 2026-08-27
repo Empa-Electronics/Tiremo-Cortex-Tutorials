@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="images/banner.png" width="100%">
       <h1>Tiremo Cortex — In-Depth Tutorials</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -19,8 +19,11 @@
 
 This repository is a step-by-step build-up of firmware for the **Tiremo
 Cortex**, an ESP32-based IoT sensor board. WiFi (station join + BluFi BLE
-provisioning) is the only radio, and AWS IoT Core is reached over MQTT with
-mutual TLS through the ESP32's own AT command set.
+provisioning) is the only radio. The board is built to connect to
+**Tiremo Cloud** at [`iot.tiremo.ai`](https://iot.tiremo.ai) over MQTT with mutual TLS through the
+ESP32's own AT command set. Operators use the **Tiremo UI**. Platform
+concepts (provisioning, Device Shadow, jobs, telemetry) are in the
+[Tiremo documentation](https://docs.tiremo.ai).
 
 Every tutorial here is a smaller, standalone slice of a complete firmware
 build — see [Solutions](#solutions) below for where things currently stand.
@@ -33,7 +36,7 @@ No WiFi or cloud account needed for that section.
 
 From there, tutorials are organized by topic under [Tutorials](#tutorials),
 roughly in the order a real bring-up would tackle them: local sensors, then
-ESP32 WiFi, then cloud messaging, then AWS IoT Core, then the production
+ESP32 WiFi, then cloud messaging, then Tiremo Cloud, then the production
 behaviors (shadow-driven LEDs, alarms, telemetry, jobs, factory reset) that
 turn a working prototype into a fleet-ready device.
 
@@ -48,6 +51,9 @@ Each topic splits into two kinds of tutorial:
 
 - Check a tutorial's **Solution** section first — it says whether a worked
   solution exists yet for that tutorial.
+- For the cloud platform (MQTT, fleet provisioning, Device Shadow, jobs),
+  start at the [Tiremo documentation](https://docs.tiremo.ai) — each
+  [Tiremo Cloud](./Tiremo_Cloud/) tutorial links the matching pages.
 - For questions or issues about a tutorial, open an
   [Issue](https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials/issues).
 
@@ -189,7 +195,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Get MQTT working end to end: a public broker first with no TLS, then mutual-TLS credentials staged in the ESP32's own NVS, then a real AWS IoT Core session.
+                Get MQTT working end to end: a public broker first with no TLS, then mutual-TLS credentials staged in the ESP32's own NVS, then a real Tiremo Cloud session.
             </td>
         </tr>
         <tr>
@@ -205,7 +211,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td></td>
         </tr>
         <tr>
-            <td><a href="./Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to AWS IoT Core</a></td>
+            <td><a href="./Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to Tiremo Cloud</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -216,12 +222,12 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="./AWS_IoT_Core/">AWS IoT Core</a></strong>
+                <strong><a href="./Tiremo_Cloud/">Tiremo Cloud</a></strong>
             </td>
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Device identity, the minimal JSON helpers this firmware relies on instead of a full parser library, fleet provisioning by claim certificate, the device shadow control loop, telemetry and alarms, and AWS IoT Jobs.
+                Device identity, the minimal JSON helpers this firmware relies on instead of a full parser library, fleet provisioning by claim certificate, the device shadow control loop, telemetry and alarms, and Tiremo Jobs.
             </td>
         </tr>
         <tr>
@@ -229,31 +235,31 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
-            <td><a href="./AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
+            <td><a href="./Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="./AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/">AWS Jobs</a></td>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/">Tiremo Jobs</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -269,7 +275,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                The behaviors that turn a working prototype into a fleet-ready device: shadow-driven LEDs, edge alarms with hysteresis, batched telemetry, AWS IoT Jobs, factory reset, and link recovery — culminating in the full capstone build.
+                The behaviors that turn a working prototype into a fleet-ready device: shadow-driven LEDs, edge alarms with hysteresis, batched telemetry, Tiremo Jobs, factory reset, and link recovery — culminating in the full capstone build.
             </td>
         </tr>
         <tr>
@@ -289,7 +295,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td></td>
         </tr>
         <tr>
-            <td><a href="./Production_Firmware/Feature_Tutorials/04-AWS_IoT_Jobs_Health_Check/">AWS IoT Jobs — Health Check</a></td>
+            <td><a href="./Production_Firmware/Feature_Tutorials/04-AWS_IoT_Jobs_Health_Check/">Tiremo Jobs — Health Check</a></td>
             <td></td>
         </tr>
         <tr>
@@ -379,15 +385,15 @@ of a hand-written Makefile, and Windows-specific notes.
 - [x] [ESP32_Connectivity/05-BluFi_Provisioning](ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/) — built (`.text` 21156), flashed; `AT+BLUFI=1` advertising `Tiremo-Cortex` confirmed; EspBluFi Configure is a human step
 - [x] [Cloud_Messaging/01-MQTT_To_Public_Broker](Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/) — built (`.text` 17268), flashed, verified over SWD; full publish/subscribe round trip (string + binary-safe) confirmed live, and independently cross-checked with a separate `mqttx` CLI subscriber on the same public broker
 - [x] [Cloud_Messaging/02-mTLS_Credentials_In_Module_NVS](Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/) — built (`.text` 21140), flashed, verified over SWD; write/read-back/erase round-trips byte-for-byte confirmed live for all three real (self-signed test) PEM credential slots against the correct `mqtt_*` SYSMFG namespace (see the tutorial's own "A Real Bug" note)
-- [x] [Cloud_Messaging/03-MQTT_mTLS_To_AWS_IoT](Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — built (`.text` 21648), flashed, verified over SWD; genuine mutual-TLS `+MQTTCONNECTED` against a real AWS IoT Core endpoint, with SNTP time sync ahead of the connect sequence; connect only, no publish/subscribe yet
+- [x] [Cloud_Messaging/03-MQTT_mTLS_To_AWS_IoT](Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — built (`.text` 21648), flashed, verified over SWD; genuine mutual-TLS `+MQTTCONNECTED` against a real Tiremo Cloud endpoint, with SNTP time sync ahead of the connect sequence; connect only, no publish/subscribe yet
 - [x] [ESP32_Connectivity/Design/01-Boot_Cascade_Saved_WiFi_Then_BluFi](ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/) — built (`.text` 25196), flashed; EspBluFi provisioned → `CS01` saved → next reset came up on the `nvs` path with NTP, no BluFi step
-- [x] [AWS_IoT_Core/01-Device_Identity_From_MAC](AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/) — built (`.text` 15060), flashed; `CIPSTAMAC?` → `deviceId 30eda0806324`, heartbeat re-read unchanged
-- [x] [AWS_IoT_Core/02-Minimal_JSON_Helpers](AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/) — built (`.text` 16156), flashed; Find* + writer round-trip on a sample shadow (`reporting.enabled`, colon-in-string, sibling-key miss)
-- [x] [AWS_IoT_Core/04-Shadow_Get_Apply_Report](AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — built (`.text` 33764), flashed; boot GET → apply `reporting.enabled` / `led.on` → full desired echo as `reported` → second GET `no leftover delta`
-- [x] [AWS_IoT_Core/05-Live_Shadow_Delta_Handling](AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — built (`.text` 34928), flashed; boot GET/report then `subscribed update/delta`; flip `desired` in the console to apply live (no reboot)
-- [ ] [AWS_IoT_Core/06-Publishing_Alarms_And_Telemetry](AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — README scaffold only
-- [ ] [AWS_IoT_Core/07-AWS_Jobs](AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/) — README scaffold only
-- [ ] [AWS_IoT_Core/Design/01-Sensor_Telemetry_And_Shadow_Control](AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — README scaffold only
+- [x] [Tiremo_Cloud/01-Device_Identity_From_MAC](Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/) — built (`.text` 15060), flashed; `CIPSTAMAC?` → `deviceId 30eda0806324`, heartbeat re-read unchanged
+- [x] [Tiremo_Cloud/02-Minimal_JSON_Helpers](Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/) — built (`.text` 16156), flashed; Find* + writer round-trip on a sample shadow (`reporting.enabled`, colon-in-string, sibling-key miss)
+- [x] [Tiremo_Cloud/04-Shadow_Get_Apply_Report](Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — built (`.text` 33764), flashed; boot GET → apply `reporting.enabled` / `led.on` → full desired echo as `reported` → second GET `no leftover delta`
+- [x] [Tiremo_Cloud/05-Live_Shadow_Delta_Handling](Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — built (`.text` 34928), flashed; boot GET/report then `subscribed update/delta`; flip `desired` in the console to apply live (no reboot)
+- [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — README scaffold only
+- [ ] [Tiremo_Cloud/07-Tiremo_Jobs](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — README scaffold only
+- [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — README scaffold only
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 

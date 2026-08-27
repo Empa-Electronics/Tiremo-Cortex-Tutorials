@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -8,20 +8,20 @@
       </picture>
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
-      <h1>AWS Jobs</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <h1>Tiremo Jobs</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
 
 
-# AWS Jobs
+# Tiremo Jobs
 
-***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Feature Tutorials · Difficulty: Hard***
+***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Hard***
 
 ## Introduction
 
-AWS IoT Jobs is how a fleet queues work onto a Thing: a JSON document
+Tiremo Jobs is how a fleet queues work onto a Thing: a JSON document
 arrives on `$aws/things/<thingName>/jobs/...`, the device reports
 `IN_PROGRESS` / `SUCCEEDED` / `FAILED`, and the next job is offered.
 Unlike shadow, a job is a one-shot execution with a status, not a
@@ -34,7 +34,7 @@ scaffold; firmware and a worked walkthrough come next.
 
 - The Jobs MQTT topic family (`notify-next`, `start-next`, `update`)
 - Why a job must not be treated as another shadow delta
-- Reporting execution status so the AWS console shows a finished job
+- Reporting execution status so the Tiremo UI shows a finished job
 
 ## Prerequisites
 
@@ -43,6 +43,16 @@ scaffold; firmware and a worked walkthrough come next.
 - [06-Publishing_Alarms_And_Telemetry](../06-Publishing_Alarms_And_Telemetry/)
   recommended so the ready loop already publishes without blocking
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Platform documentation
+
+- [Introduction to Tiremo Jobs](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction)
+- [Job templates and target selection](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-1-definition)
+- [Job creation](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-2-creation)
+- [Execution monitoring](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-3-monitoring)
+
+Do not mix Jobs MQTT with classic shadow topics — see
+[device firmware integration](https://docs.tiremo.ai/device-state-controller/device-integration).
 
 ## Solution
 
@@ -57,8 +67,8 @@ No solution has been written for this tutorial yet.
 
 ## Done When
 
-A job created in the AWS console is accepted on the board, executed once,
-and marked succeeded in the console with matching UART.
+A job created in the Tiremo UI is accepted on the board, executed once,
+and marked succeeded in the Tiremo UI with matching UART.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

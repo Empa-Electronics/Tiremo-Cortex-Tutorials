@@ -53,6 +53,7 @@ static bool prvPemLooksReal(const unsigned char *pPem, size_t length)
     }
     return (strstr((const char *)pPem, "REPLACE_WITH_REAL") == NULL) &&
            (strstr((const char *)pPem, "Copy your AWS") == NULL) &&
+           (strstr((const char *)pPem, "Copy your Tiremo Cloud") == NULL) &&
            (strstr((const char *)pPem, "Copy the claim") == NULL);
 }
 
@@ -186,7 +187,7 @@ static bool prvWaitAccepted(const char *pAccepted,
 
         if (strcmp(topic, pRejected) == 0)
         {
-            TIREMO_LOG_ERROR("provision: AWS rejected request: %s", s_chunk);
+            TIREMO_LOG_ERROR("provision: cloud rejected request: %s", s_chunk);
             return false;
         }
         if (strcmp(topic, pAccepted) != 0)

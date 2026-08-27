@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a href="../../../../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md">English</a> | <a>Türkçe</a></p>
+<p class="sphinxhide" align="right"><a href="../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md">English</a> | <a>Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
       <h1>Live Shadow Delta Handling</h1>
-      <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
+      <sub>Tiremo Cortex Eğitimleri — ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
@@ -17,17 +17,17 @@
 
 # Live Shadow Delta Handling
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: AWS IoT Core / Feature Tutorials · Zorluk: Zor***
+***Kart: Tiremo Cortex (ESP32) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Zor***
 
-> Bu sayfa [İngilizce orijinalinin](../../../../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md)
+> Bu sayfa [İngilizce orijinalinin](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır; içerik farklılaşırsa
 > İngilizce sürüm esas alınır.
 
 ## Giriş
 
-[Eğitim 04](../../../../AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/)
+[Eğitim 04](../../../../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/)
 desired durumu bir kez, açılışta uygular. Gerçek bir kontrol düzlemi
-cihaz zaten çalışırken `desired`'ı değiştirir. AWS o zaman farkı
+cihaz zaten çalışırken `desired`'ı değiştirir. Tiremo Cloud o zaman farkı
 `$aws/things/<thingName>/shadow/update/delta` üzerinde yayınlar. Bu
 eğitim 04'ün açılış GET / apply / report'unu korur, sonra o duran
 aboneliği ekler ve her gelen delta'yı sıfırlama olmadan uygular.
@@ -35,7 +35,7 @@ aboneliği ekler ve her gelen delta'yı sıfırlama olmadan uygular.
 04'ün dersi hâlâ geçerlidir. Bir delta belgesi yalnızca farklı olan
 anahtarları içerir. Yalnızca onları raporlamak — veya yalnızca
 `reporting` ve `led` yeniden kurmak — diğer desired kardeşlerini
-(`note`, iç içe ekstralar, …) delta'da sonsuza kadar bırakır. AWS her
+(`note`, iç içe ekstralar, …) delta'da sonsuza kadar bırakır. Tiremo Cloud her
 raporda `update/delta`'yı yeniden yayınlar ve UART fırtına yapar. Canlı
 yol bilinen alanları günlük için üzerine yazar, dilimi son tam desired
 nesnesine birleştirir ve o nesnenin tamamını `reported` olarak yankılar.
@@ -45,15 +45,15 @@ nesnesine birleştirir ve o nesnenin tamamını `reported` olarak yankılar.
 ```mermaid
 sequenceDiagram
     participant Board as Tiremo Cortex
-    participant AWS as AWS IoT Core
+    participant Cloud as Tiremo Cloud
 
     Note over Board: eğitim 04 açılış GET / apply / tam report
-    Board->>AWS: update/delta abone
-    Note over AWS: operatör desired düzenler (sıfırlama yok)
-    AWS-->>Board: update/delta (yalnızca değişen anahtarlar)
+    Board->>Cloud: update/delta abone
+    Note over Cloud: operatör desired düzenler (sıfırlama yok)
+    Cloud-->>Board: update/delta (yalnızca değişen anahtarlar)
     Note over Board: üzerine yaz + son desired ile birleştir
-    Board->>AWS: shadow/update state.reported = tam desired yankısı
-    AWS-->>Board: update/accepted (delta temizlenir)
+    Board->>Cloud: shadow/update state.reported = tam desired yankısı
+    Cloud-->>Board: update/accepted (delta temizlenir)
 ```
 
 ```mermaid
@@ -85,9 +85,16 @@ flowchart TD
 
 ## Önkoşullar
 
-- [04-Shadow_Get_Apply_Report](../../../../AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — açılış GET / apply / tam report, Thing adı, iddia/verilen kimlik
-- 04 ile aynı gitignore'lu dosyalar bu `Sw/` içinde: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem`
+- [04-Shadow_Get_Apply_Report](../../../../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — açılış GET / apply / tam report, Thing adı, iddia/verilen kimlik
+- 04 ile aynı gitignore'lu dosyalar bu `Sw/` içinde: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem`. İddia PEM'leri, ürün kimliği ve ürün sırrını Tiremo UI'dan kopyalayın — [03 eğitimi](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/#tiremo-uidan-kimlik-bilgileri).
 - [Getting Started](../../../../Getting_Started/) ile kurulu araç zinciri ve flaş
+
+## Platform belgelendirmesi
+
+Canlı `update/delta`,
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)
+([cihaz entegrasyonu](https://docs.tiremo.ai/device-state-controller/device-integration))
+üretici yazılımı yoludur. Operatörler desired'ı Tiremo UI'da değiştirir; bu eğitim yeniden başlatmadan uygular.
 
 ## `update/delta`'yı Anlamak
 
@@ -105,7 +112,7 @@ Yalnızca LED değiştiğinde klasik shadow delta'sı şöyle görünür:
 
 Buradaki `state` get/accepted zarfı **değildir**. İç içe `desired` yoktur.
 O dilimi `reported` olarak `JsonWriter_Raw`'a vermek
-`{"led":{"on":true}}` yayınlar ve AWS `reporting`'i delta'da tutar.
+`{"led":{"on":true}}` yayınlar ve Tiremo Cloud `reporting`'i delta'da tutar.
 
 Yalnızca üç bilinen anahtarı yeniden kurmak aynı hatadır. Fırtına
 günlüğündeki açılış desired'ı 19 bayttı (`{"led":{"on":false}}`); canlı
@@ -128,7 +135,7 @@ MQTT istemci kimliği (`<product>_<deviceId>`).
 
 ## Çözüm
 
-[`Sw/`](../../../../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/)
+[`Sw/`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/)
 gerçek, derlenebilir bir uygulamaya sahip. Eğitim 04'te kullandığınız
 gitignore'lu dosyaları kopyalayın:
 
@@ -160,7 +167,7 @@ GET / tam report'unu tekrarladı, sonra `update/delta`'ya abone oldu:
 [INFO] shadow: ready thingName=<product>_30eda0806324 (live update/delta)
 ```
 
-AWS konsolunda Thing'in klasik shadow `desired`'ını (örneğin `led.on`
+Tiremo UI'da Thing'in klasik shadow `desired`'ını (örneğin `led.on`
 veya `reporting.enabled`) kartı sıfırlamadan **iki kez** düzenleyin.
 Her düzenleme şunu yazmalıdır:
 
@@ -175,13 +182,13 @@ Her rapordan sonra konsol delta'sı temizlenmelidir.
 
 ## Adım Adım
 
-1. [`prv_user_code.c`](../../../../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Src/prv_user_code.c) — 04'ün kimlik / WiFi / SNTP / kurulum-veya-atla / açılış GET'i, sonra hazır döngüde `TIREMO_Shadow_Poll()`.
-2. [`tiremo_shadow.c`](../../../../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Src/tiremo_shadow.c) — 04'ten açılış değişimi; `update/delta`'ya yalnızca o başarılı olduktan sonra abone; `Poll` her delta'yı son desired nesnesine birleştirir ve yankılar.
-3. [`tiremo_shadow.h`](../../../../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Include/tiremo_shadow.h) — `GetApplyReport` ve `Poll`.
+1. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Src/prv_user_code.c) — 04'ün kimlik / WiFi / SNTP / kurulum-veya-atla / açılış GET'i, sonra hazır döngüde `TIREMO_Shadow_Poll()`.
+2. [`tiremo_shadow.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Src/tiremo_shadow.c) — 04'ten açılış değişimi; `update/delta`'ya yalnızca o başarılı olduktan sonra abone; `Poll` her delta'yı son desired nesnesine birleştirir ve yankılar.
+3. [`tiremo_shadow.h`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Include/tiremo_shadow.h) — `GetApplyReport` ve `Poll`.
 
 ## Bitti Sayılınca
 
-Kart hazır döngüsünde otururken AWS konsolunda bir desired alanını
+Kart hazır döngüsünde otururken Tiremo UI'da bir desired alanını
 açıp kapatmak, sıfırlama olmadan, bir MQTT yoklama döngüsü içinde
 uygulanan günlüğü değiştirir ve yayınlanan reported nesnesi değişmeyen
 kardeşleri hâlâ içerir, böylece konsol delta'sı temizlenir. Açılış

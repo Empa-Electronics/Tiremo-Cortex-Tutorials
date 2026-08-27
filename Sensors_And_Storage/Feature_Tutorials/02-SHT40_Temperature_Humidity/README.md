@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>SHT40 Temperature / Humidity</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -21,7 +21,7 @@
 
 ## Introduction
 
-SHT40 is the first real sensor driver in the stack, and the simplest — a single I2C transaction sequence returns both temperature and humidity. It's also the sensor the shadow schema (AWS IoT Core) will later tune via `unit` and `offset`. Tutorial 01 already proved the chip ACKs at `0x44` on I2C2; this one teaches the actual SHT4x protocol on that address.
+SHT40 is the first real sensor driver in the stack, and the simplest — a single I2C transaction sequence returns both temperature and humidity. It's also the sensor the shadow schema (Tiremo Cloud) will later tune via `unit` and `offset`. Tutorial 01 already proved the chip ACKs at `0x44` on I2C2; this one teaches the actual SHT4x protocol on that address.
 
 ## You Will Learn
 

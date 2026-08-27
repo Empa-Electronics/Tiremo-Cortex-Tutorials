@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>NTP Time Sync</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -21,7 +21,10 @@
 
 ## Introduction
 
-Tutorial 07's software clock is RAM-only and starts unsynced. This tutorial is the missing input: after the tutorial 03 join path has an IPv4 address, enable SNTP on the ESP32, parse `CIPSNTPTIME` asctime into a Unix epoch, and call `TIREMO_Clock_SetEpoch()`. Every later MQTT timestamp depends on that.
+Tutorial 07's software clock is RAM-only and starts unsynced. This tutorial is the missing input: after the tutorial 03 join path has an IPv4 address, enable SNTP on the ESP32, parse `CIPSNTPTIME` asctime into a Unix epoch, and call `TIREMO_Clock_SetEpoch()`. Every later MQTT timestamp depends on that. Tiremo Cloud scheme-5 MQTT also
+requires a real clock before `AT+MQTTCONN` — see
+[TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni) and
+[first connection](https://docs.tiremo.ai/device-provisioning/third-phase).
 
 BluFi stays tutorial 05. Do not add it here.
 

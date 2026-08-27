@@ -8,7 +8,7 @@
       <br>
       <img alt="" src="../images/banner.png" width="100%">
       <h1>Production Firmware</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -16,7 +16,9 @@
 
 # Production Firmware
 
-The behaviors that turn a working prototype into a fleet-ready device: shadow-driven LEDs, edge alarms with hysteresis, batched telemetry, AWS IoT Jobs, factory reset, and link recovery — culminating in the full capstone build.
+The behaviors that turn a working prototype into a fleet-ready device: shadow-driven LEDs, edge alarms with hysteresis, batched telemetry, Tiremo Jobs, factory reset, and link recovery — culminating in the full capstone build.
+
+Platform docs for the cloud pieces: [Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction), [Jobs](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction), [docs.tiremo.ai](https://docs.tiremo.ai).
 
 - The [**Feature Tutorials**](./Feature_Tutorials/) cover one concept each — a single driver, a single AT command sequence, a single cloud primitive.
 

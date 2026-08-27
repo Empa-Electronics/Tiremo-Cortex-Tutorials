@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Live Shadow Delta Handling</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -17,13 +17,13 @@
 
 # Live Shadow Delta Handling
 
-***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Feature Tutorials · Difficulty: Hard***
+***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Hard***
 
 ## Introduction
 
 [Tutorial 04](../04-Shadow_Get_Apply_Report/) applies desired state once,
 at boot. A real control plane changes `desired` while the device is
-already running. AWS then publishes the difference on
+already running. Tiremo Cloud then publishes the difference on
 `$aws/things/<thingName>/shadow/update/delta`. This tutorial keeps 04's
 boot GET / apply / report, then adds that standing subscription and
 applies each inbound delta with no reboot.
@@ -31,7 +31,7 @@ applies each inbound delta with no reboot.
 The 04 lesson still holds. A delta document only contains the keys that
 differ. Reporting just those keys — or rebuilding only `reporting` and
 `led` — leaves every other desired sibling (`note`, nested extras, …)
-in delta forever. AWS then republishes `update/delta` on every report
+in delta forever. Tiremo Cloud then republishes `update/delta` on every report
 and the UART storms. The live path overlays known fields for the log,
 merges the slice into the last full desired object, and echoes that
 whole object as `reported`.
@@ -41,15 +41,15 @@ whole object as `reported`.
 ```mermaid
 sequenceDiagram
     participant Board as Tiremo Cortex
-    participant AWS as AWS IoT Core
+    participant Cloud as Tiremo Cloud
 
     Note over Board: tutorial 04 boot GET / apply / full report
-    Board->>AWS: subscribe update/delta
-    Note over AWS: operator edits desired (no reboot)
-    AWS-->>Board: update/delta (changed keys only)
+    Board->>Cloud: subscribe update/delta
+    Note over Cloud: operator edits desired (no reboot)
+    Cloud-->>Board: update/delta (changed keys only)
     Note over Board: overlay + merge into last desired
-    Board->>AWS: shadow/update state.reported = full desired echo
-    AWS-->>Board: update/accepted (delta clears)
+    Board->>Cloud: shadow/update state.reported = full desired echo
+    Cloud-->>Board: update/accepted (delta clears)
 ```
 
 ```mermaid
@@ -82,8 +82,16 @@ flowchart TD
 ## Prerequisites
 
 - [04-Shadow_Get_Apply_Report](../04-Shadow_Get_Apply_Report/) — boot GET / apply / full report, Thing name, claim/issued identity
-- The same gitignored files as 04 in this `Sw/`: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem`
+- The same gitignored files as 04 in this `Sw/`: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem`. Copy claim PEMs, product identifier, and product secret from the Tiremo UI as in [tutorial 03](../03-Fleet_Provisioning_By_Claim/#getting-credentials-from-the-tiremo-ui).
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Platform documentation
+
+Live `update/delta` is the firmware path in
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)
+([why delta matters](https://docs.tiremo.ai/device-state-controller/introduction),
+[device integration](https://docs.tiremo.ai/device-state-controller/device-integration)).
+Operators change desired in the Tiremo UI; this tutorial applies it without reboot.
 
 ## Understanding `update/delta`
 
@@ -101,7 +109,7 @@ A classic-shadow delta looks like this when only the LED changed:
 
 `state` here is **not** the get/accepted envelope. There is no nested
 `desired`. Feeding that slice to `JsonWriter_Raw` as `reported` would
-publish `{"led":{"on":true}}` and AWS would keep `reporting` in delta.
+publish `{"led":{"on":true}}` and Tiremo Cloud would keep `reporting` in delta.
 
 Rebuilding only the three known keys is the same bug. Boot desired in
 the storm log was 19 bytes (`{"led":{"on":false}}`); the live path then
@@ -156,7 +164,7 @@ claim exchange, repeated the boot GET / full report, then subscribed
 [INFO] shadow: ready thingName=<product>_30eda0806324 (live update/delta)
 ```
 
-In the AWS console, edit the Thing's classic shadow `desired` (for
+In the Tiremo UI, edit the Thing's classic shadow `desired` (for
 example flip `led.on` or `reporting.enabled`) **twice** without
 resetting the board. Each edit should log:
 
@@ -182,7 +190,7 @@ The console delta should clear after each report.
 
 ## Done When
 
-Toggling a desired field in the AWS console while the board is sitting
+Toggling a desired field in the Tiremo UI while the board is sitting
 in the ready loop changes the applied log within one MQTT poll cycle,
 with no reboot. The published reported object is a full echo of desired
 (extra keys included) so the console delta clears and does not storm.

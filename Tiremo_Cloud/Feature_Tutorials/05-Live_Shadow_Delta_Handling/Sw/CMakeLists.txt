@@ -21,7 +21,7 @@ if(NOT EXISTS ${CERTS_DIR}/claim_cert.pem OR NOT EXISTS ${CERTS_DIR}/claim_key.p
         "Missing claim credentials.\n"
         "  cp certs/claim_cert.pem.example certs/claim_cert.pem\n"
         "  cp certs/claim_key.pem.example certs/claim_key.pem\n"
-        "then paste the real AWS IoT claim certificate and private key. "
+        "then paste the real Tiremo Cloud claim certificate and private key. "
         "Those two files are gitignored; see certs/README.md.")
 endif()
 

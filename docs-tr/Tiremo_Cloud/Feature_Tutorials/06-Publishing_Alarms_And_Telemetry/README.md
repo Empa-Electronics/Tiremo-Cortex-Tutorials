@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a href="../../../../AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/README.md">English</a> | <a>Türkçe</a></p>
+<p class="sphinxhide" align="right"><a href="../../../../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/README.md">English</a> | <a>Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
       <h1>Publishing Alarms and Telemetry</h1>
-      <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
+      <sub>Tiremo Cortex Eğitimleri — ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
@@ -17,16 +17,16 @@
 
 # Publishing Alarms and Telemetry
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: AWS IoT Core / Feature Tutorials · Zorluk: Zor***
+***Kart: Tiremo Cortex (ESP32) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Zor***
 
-> Bu sayfa [İngilizce orijinalinin](../../../../AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/README.md)
+> Bu sayfa [İngilizce orijinalinin](../../../../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır; içerik farklılaşırsa
 > İngilizce sürüm esas alınır.
 
 ## Giriş
 
 Shadow kontrol düzlemidir. Telemetri ve alarmlar veri düzlemidir: cihaz
-örnekleri ve kenarda yükselen olayları AWS'nin yönlendirebileceği MQTT
+örnekleri ve kenarda yükselen olayları Tiremo Cloud'un yönlendirebileceği MQTT
 konularında yayınlar; bu akış shadow belgesine doldurulmaz.
 
 Bu eğitim **henüz uygulanmadı**. Klasörler ve bu README iskelettir;
@@ -40,9 +40,18 @@ Bu eğitim **henüz uygulanmadı**. Klasörler ve bu README iskelettir;
 
 ## Önkoşullar
 
-- [05-Live_Shadow_Delta_Handling](../../../../AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/)
-- [02-Minimal_JSON_Helpers](../../../../AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/)
+- [05-Live_Shadow_Delta_Handling](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/)
+- [02-Minimal_JSON_Helpers](../../../../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/)
 - [Getting Started](../../../Getting_Started/) ile araç zinciri
+
+## Platform belgelendirmesi
+
+Telemetri veri düzlemidir, shadow kontrol döngüsü değildir. Bkz.
+[mimari ve veri akışı](https://docs.tiremo.ai/introduction/phase-1)
+ve [düşük hızlı telemetri](https://docs.tiremo.ai/use-cases/scenario-low-rate-telemetry)
+senaryosu. Shadow
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)
+olarak kalır.
 
 ## Çözüm
 

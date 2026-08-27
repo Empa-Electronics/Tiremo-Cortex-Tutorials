@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Sensor Telemetry and Shadow Control</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -17,11 +17,11 @@
 
 # Sensor Telemetry and Shadow Control
 
-***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Design Tutorials · Difficulty: Hard***
+***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Design Tutorials · Difficulty: Hard***
 
 ## Introduction
 
-This is the first AWS IoT **demo** that looks like a product: onboard
+This is the first Tiremo Cloud **demo** that looks like a product: onboard
 sensors are sampled and published as telemetry, while a cloud operator
 opens and closes an output (LED / actuator) through classic Device Shadow
 desired/delta — without rebooting.
@@ -49,6 +49,12 @@ scaffold; firmware and a worked walkthrough come next.
 - SHT40 (and related) bring-up from [Sensors & Local Storage](../../../Sensors_And_Storage/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
+## Platform documentation
+
+- Shadow open/close: [Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction), [device integration](https://docs.tiremo.ai/device-state-controller/device-integration)
+- Telemetry: [architecture & data flow](https://docs.tiremo.ai/introduction/phase-1), [low-rate telemetry](https://docs.tiremo.ai/use-cases/scenario-low-rate-telemetry)
+- Identity and certs: [device provisioning](https://docs.tiremo.ai/device-provisioning/getting-started)
+
 ## Solution
 
 No solution has been written for this tutorial yet.
@@ -59,7 +65,7 @@ No solution has been written for this tutorial yet.
 2. Apply live shadow so `led.on` (open/close) and `reporting.intervalS` take
    effect immediately
 3. Sample the environmental sensors on that interval and publish telemetry
-4. Confirm the AWS console: shadow toggles the output; MQTT test client
+4. Confirm the Tiremo UI: shadow toggles the output; MQTT test client
    sees samples; delta still clears
 
 ## Done When

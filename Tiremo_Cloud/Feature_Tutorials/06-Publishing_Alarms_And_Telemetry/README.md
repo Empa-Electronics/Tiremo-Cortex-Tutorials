@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Publishing Alarms and Telemetry</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -17,12 +17,12 @@
 
 # Publishing Alarms and Telemetry
 
-***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Feature Tutorials · Difficulty: Hard***
+***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Hard***
 
 ## Introduction
 
 Shadow is the control plane. Telemetry and alarms are the data plane: the
-device publishes sensor samples and edge-raised events on MQTT topics AWS
+device publishes sensor samples and edge-raised events on MQTT topics Tiremo Cloud
 can route, store, or alert on, without stuffing that stream into the
 shadow document.
 
@@ -42,6 +42,14 @@ scaffold; firmware and a worked walkthrough come next.
   session, Thing name, standing subscriptions
 - [02-Minimal_JSON_Helpers](../02-Minimal_JSON_Helpers/) — bounded JSON write
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Platform documentation
+
+Telemetry is the data plane, not the shadow control loop. See
+[architecture & data flow](https://docs.tiremo.ai/introduction/phase-1)
+and the [low-rate telemetry](https://docs.tiremo.ai/use-cases/scenario-low-rate-telemetry)
+use case. Shadow remains
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction).
 
 ## Solution
 

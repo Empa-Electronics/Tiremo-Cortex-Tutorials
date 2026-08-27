@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    tiremo_esp32.h
  * @brief   ESP32 AT-command transport: WiFi join, plain-TCP MQTT, mTLS
- *          credential storage, and a real AWS IoT Core connection.
+ *          credential storage, and a real Tiremo Cloud connection.
  *
  * Power sequencing, an interrupt-driven RX ring, and an expect/timeout
  * command primitive, plus station-mode join (CWMODE / CWJAP / CWSTATE),

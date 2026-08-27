@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Device Identity from MAC</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -17,13 +17,13 @@
 
 # Device Identity from MAC
 
-***Board: Tiremo Cortex (ESP32) · Section: AWS IoT Core / Feature Tutorials · Difficulty: Medium***
+***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Medium***
 
 ## Introduction
 
 Fleet provisioning and shadow topics both need a stable per-device name. Hardcoding `"tiremo-cortex-01"` works for one bench unit and fails the moment a second board shares the firmware. The ESP32 already has a unique 48-bit station MAC; this tutorial reads it with `AT+CIPSTAMAC?` and turns it into a 12-digit lowercase hex `deviceId` that later tutorials can use as a Thing name and MQTT client ID.
 
-This `Sw/` does **not** join WiFi or talk to AWS. Identity is a hardware property, not a cloud session.
+This `Sw/` does **not** join WiFi or talk to Tiremo Cloud. Identity is a hardware property, not a cloud session.
 
 ## You Will Learn
 
@@ -38,6 +38,13 @@ This `Sw/` does **not** join WiFi or talk to AWS. Identity is a hardware propert
 - `tdf.py monitor` to watch the ID (see [Getting_Started/04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution) for setup)
 
 Cloud Messaging is the previous *section* in the curriculum. You do not need an MQTT broker for this tutorial.
+
+## Platform documentation
+
+The name this tutorial produces is what later tutorials send as
+`deviceIdentifier` during [fleet provisioning](https://docs.tiremo.ai/device-provisioning/getting-started)
+and as the Thing name on shadow topics
+([Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)).
 
 ## Understanding station MAC vs a serial number you invent
 
@@ -59,7 +66,7 @@ The six bytes then become a canonical ID:
 | Colon MAC (log only) | `30:ed:a0:80:63:24` | Humans |
 | `deviceId` | `30eda0806324` | Thing name / MQTT client ID later |
 
-Lowercase, no `0x`, no colons. AWS IoT Thing names are case-sensitive; picking one canonical spelling here means fleet-provisioning templates and shadow topics never disagree.
+Lowercase, no `0x`, no colons. Thing names are case-sensitive; picking one canonical spelling here means fleet-provisioning templates and shadow topics never disagree.
 
 `TIREMO_Identity_FromEui()` lives in [`tiremo_identity.c`](./Sw/Common/Src/tiremo_identity.c) so tutorial 02 can reuse the same string without copying a formatter. The driver only ever returns raw bytes.
 

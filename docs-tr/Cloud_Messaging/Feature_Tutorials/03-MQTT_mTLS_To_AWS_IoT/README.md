@@ -8,14 +8,14 @@
       </picture>
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
-      <h1>AWS IoT Core'a MQTT mTLS</h1>
+      <h1>Tiremo Cloud'a MQTT mTLS</h1>
       <sub>Tiremo Cortex Tutorials — İlk yanıp sönmeden filo hazır bir cihaza, ESP32 + AWS IoT donanım yazılımı</sub>
     </td>
   </tr>
 </table>
 
 
-# AWS IoT Core'a MQTT mTLS
+# Tiremo Cloud'a MQTT mTLS
 
 ***Kart: Tiremo Cortex (ESP32) · Bölüm: Cloud Messaging (MQTT & TLS) / Feature Tutorials · Zorluk: Zor***
 
@@ -23,11 +23,11 @@
 
 Kimlik bilgileri yazılabilir hale geldiğine (Tutorial 02) ve MQTT açık
 metinde çalıştığına göre (Tutorial 01), ikisini birleştirin: gerçek bir
-AWS IoT Thing için elle oluşturduğunuz bir sertifikayı modüle yükleyin
-ve gerçek bir AWS IoT Core uç noktasına karşı gerçek bir karşılıklı-TLS
+Thing için elle oluşturduğunuz bir sertifikayı modüle yükleyin
+ve Tiremo Cloud (`iot.tiremo.ai`) uç noktasına karşı gerçek bir karşılıklı-TLS
 MQTT oturumu kurun. Bu eğitim başarılı bir `AT+MQTTCONN`'da duruyor —
 henüz provizyon yok, henüz publish/subscribe yok (bunlar daha sonraki
-`AWS_IoT_Core` müfredatında) — çünkü el sıkışmanın kendisini doğru
+`Tiremo_Cloud` müfredatında) — çünkü el sıkışmanın kendisini doğru
 yapmak, bu bölümün tamamının gerçekten zor kısmı.
 
 ## Neler Öğreneceksiniz
@@ -35,15 +35,21 @@ yapmak, bu bölümün tamamının gerçekten zor kısmı.
 - `MQTTUSERCFG` üzerinden TLS scheme 5 (sunucu sertifikasını doğrula, istemci sertifikası sun)
 - SNI yönlendirmesi arkasında oturan özel domain uç noktaları için `AT+MQTTSNI` neden önemli
 - Scheme 5'in `AT+MQTTCONN`'unun, modülün önce gerçek zamanı SNTP üzerinden senkronize etmesini neden gerektirdiği
-- Bench testi için elle bir AWS IoT Thing + sertifika oluşturma, AWS IoT Core bunu otomatikleştirmeden önce
+- Bench testi için elle bir Thing + sertifika oluşturma, Tiremo Cloud bunu otomatikleştirmeden önce
 - Diğer eğitimlerin build'ini bozmadan gerçek bir cihaz özel anahtarını public bir git deposunun dışında tutmak
 
 ## Ön Koşullar
 
 - [02-mTLS_Credentials_In_Module_NVS](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/) — bu eğitimin gerçek kimlik bilgilerini üzerinden yüklediği credential-slot sürücüsü
-- Bir AWS IoT Core uç noktası ve elle oluşturulmuş bir Thing sertifikası — tam olarak neyi nereden alacağınız için aşağıdaki **`certs/` Klasörünü Anlamak (Gerçek ve Gitignore'lu)**'a bakın
+- Bir Tiremo Cloud uç noktası ve elle oluşturulmuş bir Thing sertifikası — tam olarak neyi nereden alacağınız için aşağıdaki **`certs/` Klasörünü Anlamak (Gerçek ve Gitignore'lu)**'a bakın
 - Bu `Sw/` içinde `wifi_secrets.h` (gitignore'lu), diğer tüm Cloud Messaging / ESP32 Connectivity eğitimleriyle aynı desen
 - [Getting Started](../../../../Getting_Started/)'a göre kurulmuş araç zinciri ve flashleme
+
+## Platform belgelendirmesi
+
+- Uç nokta ve ilk mTLS oturumu: [ilk bağlantı](https://docs.tiremo.ai/device-provisioning/third-phase)
+- `iot.tiremo.ai` üzerinde `AT+MQTTSNI`: [TLS SNI gereksinimi](https://docs.tiremo.ai/device-provisioning/tls-sni)
+- İddia/bootstrap sertifikaları ve filo kurulumu (sonraki bölüm): [cihaz kurulumu](https://docs.tiremo.ai/device-provisioning/getting-started)
 
 ## Bağlantı Sırasını Anlamak
 
@@ -53,7 +59,8 @@ ve `cert_key_ID`/`CA_ID`'nin ikisi de `0`, modülün TLS motoruna
 `TIREMO_ESP32_CredWrite()`'ının en son `mqtt_cert`/`mqtt_key`/`mqtt_ca`
 slotlarına ne yazdıysa onu kullanmasını söyler. `AT+MQTTSNI`, TLS SNI
 hostname'ini ayarlar — paylaşılan TLS-sonlandıran altyapının arkasında
-oturabilecek özel bir domain uç noktası için gerekli; onsuz, TLS el
+oturabilecek özel bir domain uç noktası için gerekli
+([TLS SNI gereksinimi](https://docs.tiremo.ai/device-provisioning/tls-sni)); onsuz, TLS el
 sıkışması SNI'siz varsayılanın yönlendirdiği her neyse ona karşı
 tamamlanabilirken, bağlantı asıl hedeflenen backend'e hiç ulaşmaz. Sıra
 önemli: `MQTTUSERCFG` → `MQTTSNI` → `MQTTCONN`, arada `AT+MQTTCONNCFG`
@@ -72,10 +79,10 @@ TIREMO_ESP32_MqttConnect(MQTT_ENDPOINT, 8883, ...);/* AT+MQTTCONN=0,"<host>",888
 
 | Dosya | Commit'lendi mi? | Ne olduğu |
 |---|---|---|
-| [`certs/root_ca.pem`](../../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/Sw/certs/root_ca.pem) | Evet | **Amazon Root CA 1** — gerçekten public, her AWS hesabı için aynı, doğrudan `https://www.amazontrust.com/repository/AmazonRootCA1.pem`'den alındı. AWS IoT'nin sunucu sertifikasını doğrular. |
+| [`certs/root_ca.pem`](../../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/Sw/certs/root_ca.pem) | Evet | **Amazon Root CA 1** — gerçekten public, her Tiremo Cloud hesabı için aynı, doğrudan `https://www.amazontrust.com/repository/AmazonRootCA1.pem`'den alındı. AWS IoT'nin sunucu sertifikasını doğrular. |
 | `certs/device_cert.pem.example` / `device_key.pem.example` | Evet | Formatı gösteren yer tutucular. |
-| `certs/device_cert.pem` | **Hayır** (gitignore'lu) | Sizin AWS IoT Thing'inizin kendi sertifikası, onu oluşturduğunuzda AWS konsolundan indirilir. |
-| `certs/device_key.pem` | **Hayır** (gitignore'lu) | Sizin AWS IoT Thing'inizin kendi özel anahtarı, aynı anda indirilir — AWS bunu yalnızca bir kez gösterir. Bu dosyaya sahip olan herkes AWS hesabınıza bu cihaz olarak bağlanabilir. |
+| `certs/device_cert.pem` | **Hayır** (gitignore'lu) | Sizin Thing'inizin kendi sertifikası, onu oluşturduğunuzda Tiremo UI'dan indirilir. |
+| `certs/device_key.pem` | **Hayır** (gitignore'lu) | Sizin Thing'inizin kendi özel anahtarı, aynı anda indirilir — AWS bunu yalnızca bir kez gösterir. Bu dosyaya sahip olan herkes Tiremo Cloud hesabınıza bu cihaz olarak bağlanabilir. |
 
 Bu, `wifi_secrets.h`'ın bu depoda her yerde zaten nasıl ele alındığını
 yansıtıyor: gitignore'lu gerçek bir dosya, commit'lenmiş bir `.example`
@@ -190,10 +197,10 @@ fonksiyon: `TIREMO_ESP32_MqttUserConfigMtls()` (scheme 5) ve
 Bu build **subscribe veya publish yapmıyor** — bilinçli olarak yalnızca
 mTLS el sıkışmasının kendisini kanıtlıyor, çünkü bu bölümün tamamının
 gerçekten zor kısmı bu. Gerçek bir AWS konusuna karşı pub/sub daha
-sonraki `AWS_IoT_Core` müfredatında; bu eğitimin kendi orijinal "test
+sonraki `Tiremo_Cloud` müfredatında; bu eğitimin kendi orijinal "test
 konusuna publish et" adımı bu turda bilinçli olarak denenmedi.
 
-**Gerçek bir AWS IoT Core uç noktasına karşı, gerçekten doğrulandı:**
+**Gerçek bir Tiremo Cloud uç noktasına karşı, gerçekten doğrulandı:**
 `tdf.py build` temiz şekilde derlenip bağlanıyor (`.text` 21648 bayt).
 `tdf.py flash`, SWD üzerinden tam bir programlama-ve-doğrulama
 döngüsünü tamamladı (`** Verified OK **`). `tdf.py monitor` ardından,
@@ -283,7 +290,7 @@ bakın.
 Modülün kendi `+MQTTCONNECTED` yanıtıyla doğrulanan, gerçek bir AWS
 IoT Core uç noktasına karşı başarılı bir `AT+MQTTCONN` karşılıklı-TLS
 oturumu — yukarıda gerçekten doğrulandı. Bu eğitimin orijinal "test
-konusuna publish et, AWS konsolunda alımı doğrula" adımı bu turda
+konusuna publish et, Tiremo UI'da alımı doğrula" adımı bu turda
 bilinçli olarak denenmedi (bkz. **Çözüm**); bu, müfredat gerçek AWS IoT
 Core pub/sub'ına ulaştığında ele alınacak.
 

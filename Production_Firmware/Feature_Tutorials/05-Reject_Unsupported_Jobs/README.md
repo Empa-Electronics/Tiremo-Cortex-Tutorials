@@ -8,7 +8,7 @@
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
       <h1>Reject Unsupported Jobs (OTA Stub)</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -31,6 +31,14 @@ This board doesn't implement OTA yet, but a job document that looks like one mus
 
 - [04-AWS_IoT_Jobs_Health_Check](../04-AWS_IoT_Jobs_Health_Check/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
+
+## Platform documentation
+
+Rejecting an unsupported document is still a Jobs execution update — see
+[Tiremo Jobs](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction)
+and [execution monitoring](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-3-monitoring).
+OTA-shaped jobs relate to the
+[firmware repository](https://docs.tiremo.ai/developer-guide/firmware-repository/firmware-repository-introduction).
 
 ## Solution
 

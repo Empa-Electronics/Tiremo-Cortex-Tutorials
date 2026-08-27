@@ -4,14 +4,16 @@ Same layout as [Cloud Messaging 03](../../../../../Cloud_Messaging/Feature_Tutor
 
 | File | Committed? | What it is |
 |---|---|---|
-| `root_ca.pem` | Yes | Amazon Root CA 1 — public, identical for every AWS account, fetched from `https://www.amazontrust.com/repository/AmazonRootCA1.pem`. Verifies AWS IoT's server certificate. |
+| `root_ca.pem` | Yes | Amazon Root CA 1 — public, identical for every Tiremo Cloud tenant, fetched from `https://www.amazontrust.com/repository/AmazonRootCA1.pem`. Verifies Tiremo Cloud's server certificate. |
 | `claim_cert.pem.example` / `claim_key.pem.example` | Yes | Placeholders showing the format. |
 | `claim_cert.pem` | **No** (gitignored) | The shared claim certificate attached to the restricted fleet-provisioning policy. |
 | `claim_key.pem` | **No** (gitignored) | The claim certificate's private key. Never share this or paste it anywhere public. |
 
 Copy the two `.example` files to `claim_cert.pem` and `claim_key.pem`
 in this same folder and fill in the real claim certificate and key
-before building. See the tutorial's own `README.md` for the full walkthrough.
+before building. See the tutorial's own `README.md` for the full walkthrough
+and [tutorial 03](../../03-Fleet_Provisioning_By_Claim/#getting-credentials-from-the-tiremo-ui)
+(platform: [Phase 1](https://docs.tiremo.ai/device-provisioning/first-phase)).
 
 After [tutorial 03](../../03-Fleet_Provisioning_By_Claim/) the issued
 identity already lives in the ESP32's `mqtt_cert` / `mqtt_key` slots.
@@ -20,5 +22,5 @@ a 10 s USER factory reset) can claim again before the shadow exchange.
 
 Do **not** copy Cloud Messaging 03's `device_cert.pem` / `device_key.pem`
 here — those are a hand-made Thing identity. The claim certificate is a
-different AWS object, with a policy that is only allowed to call
+different platform object, with a policy that is only allowed to call
 CreateKeysAndCertificate / RegisterThing.

@@ -8,7 +8,7 @@
       <br>
       <img alt="" src="../../images/banner.png" width="100%">
       <h1>Cloud Messaging (MQTT & TLS) Tutorials</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
@@ -16,7 +16,7 @@
 
 # Feature Tutorials
 
-Feature tutorials cover one concept each — a single driver, a single AT command sequence, a single cloud primitive. Work through them in order; each one names its prerequisite.
+Feature tutorials cover one concept each — a single driver, a single AT command sequence, a single cloud primitive. Work through them in order; each one names its prerequisite. Tutorial 03 talks to [`iot.tiremo.ai`](https://iot.tiremo.ai) — see [TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni) and [first connection](https://docs.tiremo.ai/device-provisioning/third-phase).
 
  <table style="width:100%">
  <tr>
@@ -32,8 +32,8 @@ Feature tutorials cover one concept each — a single driver, a single AT comman
  <td>Write Root CA / client cert / client key into the ESP32's SYSMFG slots.</td>
  </tr>
  <tr>
- <td align="center"><a href="./03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to AWS IoT Core</a></td>
- <td>Connect to a real AWS IoT endpoint using a manually-issued device certificate — no fleet provisioning yet.</td>
+ <td align="center"><a href="./03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to Tiremo Cloud</a></td>
+ <td>Connect to Tiremo Cloud IoT endpoint using a manually-issued device certificate — no fleet provisioning yet.</td>
  </tr>
  </table>
 

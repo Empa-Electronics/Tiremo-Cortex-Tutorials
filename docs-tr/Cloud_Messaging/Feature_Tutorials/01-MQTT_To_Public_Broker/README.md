@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
       <h1>MQTT to a Public Broker</h1>
-      <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
+      <sub>Tiremo Cortex Eğitimleri — ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
@@ -29,7 +29,8 @@
 Sertifikalara dokunmadan önce, ESP32'nin yerleşik MQTT istemcisinin
 gerçekten çalıştığını kanıtlayın — açık metinde bir genel test broker'ına
 bağlanın, bir mesaj yayınlayın, ve o mesajın geri yankılandığını duymak
-için abone olun.
+için abone olun. [`iot.tiremo.ai`](https://iot.tiremo.ai) karşılıklı TLS
+eğitim 03'tür — bkz. [TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni).
 
 ## Neler Öğreneceksiniz
 

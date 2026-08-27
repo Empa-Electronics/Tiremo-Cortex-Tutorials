@@ -7,19 +7,29 @@ release.
 
 ## [Unreleased]
 
+### Changed
+
+- Curriculum section `AWS_IoT_Core` is now [`Tiremo_Cloud`](Tiremo_Cloud/).
+  Docs talk about Tiremo Cloud (`iot.tiremo.ai`), the Tiremo UI, and Tiremo
+  Jobs — not AWS IoT Core. The jobs scaffold folder is
+  [`07-Tiremo_Jobs`](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/).
+  Tutorials now link matching pages on
+  [docs.tiremo.ai](https://docs.tiremo.ai) (provisioning, TLS SNI, Device
+  State Controller, Jobs).
+
 ### Added
 
-- AWS IoT Core scaffolds (README only, firmware not yet written):
+- Tiremo Cloud scaffolds (README only, firmware not yet written):
   feature tutorials
-  [`06-Publishing_Alarms_And_Telemetry`](AWS_IoT_Core/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/)
-  and [`07-AWS_Jobs`](AWS_IoT_Core/Feature_Tutorials/07-AWS_Jobs/),
+  [`06-Publishing_Alarms_And_Telemetry`](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/)
+  and [`07-Tiremo_Jobs`](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/),
   plus design tutorial
-  [`01-Sensor_Telemetry_And_Shadow_Control`](AWS_IoT_Core/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/)
+  [`01-Sensor_Telemetry_And_Shadow_Control`](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/)
   (sensor telemetry + shadow open/close demo). Removed the unused
   `01-Provision_And_Sync_A_Real_Thing` scaffold.
 
 - Initial repository scaffold: `Getting_Started`, `Sensors_And_Storage`,
-  `ESP32_Connectivity`, `Cloud_Messaging`, `AWS_IoT_Core`,
+  `ESP32_Connectivity`, `Cloud_Messaging`, `Tiremo_Cloud`,
   `Production_Firmware`, and `Developer_Contributed`, each with a README and
   numbered tutorial folders following the Feature/Design Tutorials split.
 - Tutorial content is scaffolded (introduction, learning goals, prerequisites,
@@ -397,7 +407,7 @@ release.
   `mqtt_ca`/`mqtt_cert`/`mqtt_key`; re-verified clean on real hardware
   after the fix (`.text` 21140 bytes, all three slots re-confirmed).
 - `Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/Sw/`: a
-  genuine mutual-TLS MQTT connection to a real AWS IoT Core endpoint.
+  genuine mutual-TLS MQTT connection to a real Tiremo Cloud endpoint.
   Driver built on Tutorial 01's WiFi+MQTT base, with Tutorial 02's
   credential-slot functions and ESP32 Connectivity Tutorial 04's SNTP
   functions folded in, plus two new functions:
@@ -414,28 +424,28 @@ release.
   `.example` templates, matching the existing `wifi_secrets.h` pattern
   -- a real device private key is never committed. Connect only in
   this pass, deliberately -- no subscribe/publish yet (later
-  `AWS_IoT_Core` curriculum). Genuinely verified against a real AWS
+  `Tiremo_Cloud` curriculum). Genuinely verified against Tiremo Cloud
   IoT Core endpoint: built clean (`.text` 21648 bytes), flashed and
   OpenOCD-verified over SWD, and a real
   `+MQTTCONNECTED:0,5,"<endpoint>","8883","",0` from the module itself
   confirmed live over `tdf.py monitor`. Full walkthrough + Turkish
   translation written alongside it.
-- `AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/`:
-  first AWS IoT Core solution. Station MAC via `AT+CIPSTAMAC?`
+- `Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/`:
+  first Tiremo Cloud solution. Station MAC via `AT+CIPSTAMAC?`
   (`GetHwEui` matches terminating `OK`, then parses
   `"aa:bb:cc:dd:ee:ff"`), 12-hex lowercase `deviceId` with no
   separators (`TIREMO_Identity_FromEui`). No WiFi join, no AWS
   session — identity is a hardware property. Built (`.text` 15060),
   flashed; `30:ed:a0:80:63:24` → `30eda0806324`, heartbeat re-read
   unchanged. English + Turkish walkthroughs.
-- `AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/Sw/`:
+- `Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/Sw/`:
   `FindObject` / `FindBool` / `FindUint` / `FindString` and a nested
   `JsonWriter`, no ESP32 and no AWS. Scan-at-current-depth only;
   strings with colons are skipped so they cannot look like keys.
   Built (`.text` 16156), flashed; sample shadow parsed, reported
   object written and re-parsed (`round-trip ok`). English + Turkish
   walkthroughs.
-- `AWS_IoT_Core/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/`:
+- `Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/`:
   fleet provisioning by claim. `certs/` matches Cloud Messaging 03:
   Amazon Root CA 1 committed, `claim_cert.pem` / `claim_key.pem`
   gitignored with instructional `.example` templates; CMake will not
@@ -451,7 +461,7 @@ release.
   English + Turkish walkthroughs. Hardware create/register round-trip
   waits on the reader's own claim certificate and template (gitignored,
   not shipped).
-- `AWS_IoT_Core/Feature_Tutorials/04-Shadow_Get_Apply_Report/Sw/`:
+- `Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/Sw/`:
   boot-time Device Shadow get / apply / report on top of tutorial 03's
   issued identity. Subscribes to get/accepted and get/rejected (not
   `update/delta` — that is tutorial 05), applies `reporting.enabled` /
@@ -462,13 +472,13 @@ release.
   Thing as the MQTT client ID. Built (`.text` 33764), flashed; live
   AWS get/accepted, full-echo report, second get `no leftover delta`.
   English + Turkish walkthroughs.
-- `AWS_IoT_Core/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/`:
+- `Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/`:
   standing `shadow/update/delta` on top of tutorial 04's boot GET /
   apply / report. Subscribes to delta only after the boot echo so a
   wait for get/accepted cannot consume and drop it. Each inbound delta
   overlays known fields onto the last applied state and publishes the
   full applied object (not the delta slice) so unchanged siblings do
-  not stay in AWS's delta. Ready loop polls MQTT so the 10 s USER
+  not stay in Tiremo Cloud's delta. Ready loop polls MQTT so the 10 s USER
   factory-reset still runs. Built (`.text` 34928), flashed; boot GET /
   full report then `subscribed update/delta`.   Live console toggles are
   the reader's step. A leftover-desired storm (report rebuilt only
@@ -478,7 +488,7 @@ release.
 
 ### Changed
 
-- AWS IoT Core feature order: **Minimal JSON Helpers is now 02**, Fleet
+- Tiremo Cloud feature order: **Minimal JSON Helpers is now 02**, Fleet
   Provisioning by Claim is 03. JSON is used by provisioning replies and
   by shadow, so it no longer sits after fleet. Shadow (04) and live
   delta (05) keep their numbers. Tables, FAQs, and prerequisites

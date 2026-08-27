@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a href="../../../../AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/README.md">English</a> | <a>Türkçe</a></p>
+<p class="sphinxhide" align="right"><a href="../../../../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/README.md">English</a> | <a>Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -9,7 +9,7 @@
       <br>
       <img alt="" src="../../../../images/banner.png" width="100%">
       <h1>Minimal JSON Helpers</h1>
-      <sub>Tiremo Cortex Eğitimleri — ESP32 + AWS IoT üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
+      <sub>Tiremo Cortex Eğitimleri — ESP32 + Tiremo Cloud üretici yazılımı, ilk LED yanıp sönmesinden filoya hazır bir cihaza</sub>
     </td>
   </tr>
 </table>
@@ -17,17 +17,17 @@
 
 # Minimal JSON Helpers
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: AWS IoT Core / Feature Tutorials · Zorluk: Orta***
+***Kart: Tiremo Cortex (ESP32) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Orta***
 
-> Bu sayfa [İngilizce orijinalinin](../../../../AWS_IoT_Core/Feature_Tutorials/02-Minimal_JSON_Helpers/README.md)
+> Bu sayfa [İngilizce orijinalinin](../../../../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır; içerik farklılaşırsa
 > İngilizce sürüm esas alınır.
 
 ## Giriş
 
-Shadow belgeleri, filo kurulumu yanıtları ve Jobs yükleri JSON'dur. Genel amaçlı bir ayrıştırıcı (cJSON, jsmn) işe yarar ve bu MCU firmware'inin ihtiyaç duymadığı yığın, özyineleme ve bağımlılık da getirir. Bu eğitim, sonraki AWS IoT Core eğitimlerinin gerçekten çağırdığı dört find yardımcısını ve yazıcıyı kurar — bilinen, sınırlı belge şekillerine göre kapsamlanır.
+Shadow belgeleri, filo kurulumu yanıtları ve Jobs yükleri JSON'dur. Genel amaçlı bir ayrıştırıcı (cJSON, jsmn) işe yarar ve bu MCU firmware'inin ihtiyaç duymadığı yığın, özyineleme ve bağımlılık da getirir. Bu eğitim, sonraki Tiremo Cloud eğitimlerinin gerçekten çağırdığı dört find yardımcısını ve yazıcıyı kurar — bilinen, sınırlı belge şekillerine göre kapsamlanır.
 
-Bu `Sw/` ESP32 veya AWS ile **konuşmaz**. Testler flash'taki sabit bir örnek shadow üzerinde çalışır ve UART0'da geçti/kaldı basar.
+Bu `Sw/` ESP32 veya Tiremo Cloud ile **konuşmaz**. Testler flash'taki sabit bir örnek shadow üzerinde çalışır ve UART0'da geçti/kaldı basar.
 
 ## Neler Öğreneceksiniz
 
@@ -38,10 +38,18 @@ Bu `Sw/` ESP32 veya AWS ile **konuşmaz**. Testler flash'taki sabit bir örnek s
 
 ## Önkoşullar
 
-- Kavramsal olarak [01-Device_Identity_From_MAC](../../../../AWS_IoT_Core/Feature_Tutorials/01-Device_Identity_From_MAC/); bu `Sw/` yalnızca [Getting Started](../../../../Getting_Started/) debug UART'ını ister
+- Kavramsal olarak [01-Device_Identity_From_MAC](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/); bu `Sw/` yalnızca [Getting Started](../../../../Getting_Started/) debug UART'ını ister
 - Toolchain ve flaş Getting Started'a göre
 
-Filo kurulumu [03](../../../../AWS_IoT_Core/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/)'tür. `CreateKeysAndCertificate` yanıtları da JSON olduğu için bundan sonra gelir.
+Filo kurulumu [03](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/)'tür. `CreateKeysAndCertificate` yanıtları da JSON olduğu için bundan sonra gelir.
+
+## Platform belgelendirmesi
+
+Bu yardımcıların ayrıştırdığı belgeler platform tarafında tanımlanır:
+[filo kurulumu](https://docs.tiremo.ai/device-provisioning/second-phase),
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)
+(klasik Device Shadow) ve
+[Tiremo Jobs](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction).
 
 ## Bu-derinlik taramasını anlamak
 

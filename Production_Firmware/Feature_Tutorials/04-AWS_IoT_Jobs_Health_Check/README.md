@@ -7,20 +7,20 @@
       </picture>
       <br>
       <img alt="" src="../../../images/banner.png" width="100%">
-      <h1>AWS IoT Jobs — Health Check</h1>
-      <sub>Tiremo Cortex Tutorials — ESP32 + AWS IoT firmware, from first blink to a fleet-ready device</sub>
+      <h1>Tiremo Jobs — Health Check</h1>
+      <sub>Tiremo Cortex Tutorials — ESP32 + Tiremo Cloud firmware, from first blink to a fleet-ready device</sub>
     </td>
   </tr>
 </table>
 
 
-# AWS IoT Jobs — Health Check
+# Tiremo Jobs — Health Check
 
 ***Board: Tiremo Cortex (ESP32) · Section: Production Firmware / Feature Tutorials · Difficulty: Hard***
 
 ## Introduction
 
-AWS IoT Jobs let the cloud ask a fleet of devices to run a named operation and report back. This tutorial implements the simplest kind — a health check — end to end: notification, claiming, and completion.
+Tiremo Jobs let the cloud ask a fleet of devices to run a named operation and report back. This tutorial implements the simplest kind — a health check — end to end: notification, claiming, and completion.
 
 ## You Will Learn
 
@@ -32,6 +32,14 @@ AWS IoT Jobs let the cloud ask a fleet of devices to run a named operation and r
 - [03-Batched_Telemetry_Publisher](../03-Batched_Telemetry_Publisher/)
 - Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
 
+## Platform documentation
+
+[Introduction to Tiremo Jobs](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction),
+[job templates](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-1-definition)
+(`HEALTH_CHECK`),
+[job creation](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-2-creation),
+[execution monitoring](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-3-monitoring).
+
 ## Solution
 
 No solution has been written for this tutorial yet — this repo is still a curriculum scaffold, not a finished course.
@@ -40,11 +48,11 @@ No solution has been written for this tutorial yet — this repo is still a curr
 
 1. Subscribe to `jobs/notify` and `jobs/notify-next`
 2. On notification, call `start-next`, then `UpdateJobExecution` with status `SUCCEEDED` and `statusDetails` (firmware version, connectivity, uptime)
-3. Create a health-check job execution in the AWS console and confirm it reaches `SUCCEEDED` with the expected detail fields
+3. Create a health-check job execution in the Tiremo UI and confirm it reaches `SUCCEEDED` with the expected detail fields
 
 ## Done When
 
-A job created in the AWS console reaches `SUCCEEDED` with `firmware_version`, `connectivity`, `mqtt`, and `uptime_s` populated in `statusDetails`.
+A job created in the Tiremo UI reaches `SUCCEEDED` with `firmware_version`, `connectivity`, `mqtt`, and `uptime_s` populated in `statusDetails`.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 
