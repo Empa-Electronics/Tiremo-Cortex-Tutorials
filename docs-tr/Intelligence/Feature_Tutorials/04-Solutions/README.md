@@ -118,7 +118,7 @@ Girdi tamponunu eğittiğiniz sırada ve birimlerde ardışık örnekler olarak 
 
 ## Bittiğinde
 
-Bir Edge satırı **Ready**, bir zip'iniz var (veya paketlenmiş `Tiremo_AI/`'yi incelediniz) ve Data Explorer o Solution için **Inference**'a yöneltilebilir. HMR vakası için `tiremo_ai_run`'ı Cortex döngüsüne koymak [Design Tutorial 03](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/)'dir.
+Bir Edge satırı **Ready**, bir zip'iniz var (veya paketlenmiş `Tiremo_AI/`'yi incelediniz) ve Data Explorer o Solution için **Inference**'a yöneltilebilir. HMR vakası için `tiremo_ai_run`'ı Cortex döngüsüne koymak [Design Tutorial 03](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/)'dir.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 

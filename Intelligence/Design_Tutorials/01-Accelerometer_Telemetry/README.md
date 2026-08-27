@@ -28,7 +28,7 @@ After the same Tiremo Cloud session as feature tutorial 05 (WiFi, SNTP, fleet pr
 
 Topic: `pub/<product_id>/<device_id>/telemetry` (QoS 0). Values are milli-g. Data Explorer CSV columns become `data.acc_x` / `data.acc_y` / `data.acc_z`.
 
-Full walkthrough (labels, Data Explorer, screenshots) comes after this firmware exists. For the HMR case that consumes a later windowed model, see [03-HMR_Edge_Deployment](../03-HMR_Edge_Deployment/).
+Full walkthrough (labels, Data Explorer, screenshots) comes after this firmware exists. For the HMR case that consumes a later windowed model, see [03-Edge_Deployment_HMR](../03-Edge_Deployment_HMR/).
 
 ## Build and flash
 

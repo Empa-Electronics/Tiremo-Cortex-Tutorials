@@ -20,7 +20,7 @@
 
 ## What this binary does
 
-No network. After the design-tutorial boot banner, the firmware configures the LIS2DE12 for ±2 g / 10 Hz, samples every **125 ms**, and fills a tumbling window of **8 samples × 3 axes** (`float[24]`, milli-g, interleaved xyz). When the window is full it dumps the 24 values over UART and starts the next window. Same layout the Edge model in [03](../03-HMR_Edge_Deployment/) expects; this binary does not call `tiremo_ai_run`.
+No network. After the design-tutorial boot banner, the firmware configures the LIS2DE12 for ±2 g / 10 Hz, samples every **125 ms**, and fills a tumbling window of **8 samples × 3 axes** (`float[24]`, milli-g, interleaved xyz). When the window is full it dumps the 24 values over UART and starts the next window. Same layout the Edge model in [03](../03-Edge_Deployment_HMR/) expects; this binary does not call `tiremo_ai_run`.
 
 ## Build and flash
 

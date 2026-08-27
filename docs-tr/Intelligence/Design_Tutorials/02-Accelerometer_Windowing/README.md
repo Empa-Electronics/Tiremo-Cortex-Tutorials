@@ -23,7 +23,7 @@
 
 ## Bu ikili ne yapar
 
-Ağ yok. Tasarım eğitimi önyükleme afişinden sonra LIS2DE12 ±2 g / 10 Hz yapılandırılır, her **125 ms** örneklenir ve **8 örnek × 3 eksen** (`float[24]`, milli-g, xyz serpiştirilmiş) yuvarlanan pencere doldurulur. Pencere dolunca 24 değer UART'tan dökülür ve sonraki pencere başlar. [03](../03-HMR_Edge_Deployment/) Edge modelinin beklediği düzen; bu ikili `tiremo_ai_run` çağırmaz.
+Ağ yok. Tasarım eğitimi önyükleme afişinden sonra LIS2DE12 ±2 g / 10 Hz yapılandırılır, her **125 ms** örneklenir ve **8 örnek × 3 eksen** (`float[24]`, milli-g, xyz serpiştirilmiş) yuvarlanan pencere doldurulur. Pencere dolunca 24 değer UART'tan dökülür ve sonraki pencere başlar. [03](../03-Edge_Deployment_HMR/) Edge modelinin beklediği düzen; bu ikili `tiremo_ai_run` çağırmaz.
 
 ## Derleme ve yükleme
 

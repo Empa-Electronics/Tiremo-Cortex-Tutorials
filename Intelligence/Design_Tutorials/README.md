@@ -31,8 +31,8 @@ Design tutorials take the Intelligence objects from the Feature Tutorials and co
  <td>Same sensor and pace; tumbling 8×3 milli-g buffer dumped over UART. No cloud, no <code>Tiremo_AI</code>.</td>
  </tr>
  <tr>
- <td align="center"><a href="./03-HMR_Edge_Deployment/">HMR Gesture Classifier on the Edge</a></td>
- <td>Take the 3-axis HMR capture from 128 Hz through 8 Hz and 4 Hz, train a five-class classifier in Intelligence, and run the generated <code>Tiremo_AI/</code> package on the Cortex (<code>Sw/</code> publishes inference MQTT).</td>
+ <td align="center"><a href="./03-Edge_Deployment_HMR/">HMR Gesture Classifier on the Edge</a></td>
+ <td>Take the 3-axis HMR capture from 128 Hz through 8 Hz and 4 Hz, train a five-class classifier in Intelligence, and run the generated <code>Sw/Tiremo_AI/</code> package on the Cortex (<code>Sw/</code> publishes inference MQTT).</td>
  </tr>
  </table>
 

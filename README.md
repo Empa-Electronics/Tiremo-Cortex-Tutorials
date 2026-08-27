@@ -294,7 +294,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="./Intelligence/Feature_Tutorials/03-Experiments/">Experiments</a></td>
-            <td><a href="./Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/">HMR Gesture Classifier on the Edge</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/">HMR Gesture Classifier on the Edge</a></td>
         </tr>
         <tr>
             <td><a href="./Intelligence/Feature_Tutorials/04-Solutions/">Solutions</a></td>
@@ -438,7 +438,7 @@ of a hand-written Makefile, and Windows-specific notes.
 - [x] [Intelligence/04-Solutions](Intelligence/Feature_Tutorials/04-Solutions/) — UI walkthrough written
 - [x] [Intelligence/Design/01-Accelerometer_Telemetry](Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/) — `Sw/` publishes per-sample `acc_x`/`acc_y`/`acc_z` telemetry
 - [x] [Intelligence/Design/02-Accelerometer_Windowing](Intelligence/Design_Tutorials/02-Accelerometer_Windowing/) — `Sw/` UART tumbling 8×3 window
-- [x] [Intelligence/Design/03-HMR_Edge_Deployment](Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/) — end-to-end HMR case; `Datasets/`, `Tiremo_AI/`, and `Sw/` inference firmware
+- [x] [Intelligence/Design/03-Edge_Deployment_HMR](Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/) — end-to-end HMR case; `Datasets/` and `Sw/` (with `Sw/Tiremo_AI/`) inference firmware
 
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 

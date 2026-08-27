@@ -47,7 +47,7 @@ This tutorial walks **Edge**: download a generated `Tiremo_AI` tree. Cloud is th
 
 **Core Type** tells the compiler which kernels to emit. Hover the options in the UI. Honest choices for a Cortex-class board:
 
-- **ARM Cortex-M4**: CMSIS-NN, FPU. The HMR snapshot in the Design Tutorial was built with `-DCMSIS_NN` (see [`tiremo_makefile.mk`](../../Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/tiremo_makefile.mk)).
+- **ARM Cortex-M4**: CMSIS-NN, FPU. The HMR snapshot in the Design Tutorial was built with `-DCMSIS_NN` (see [`tiremo_makefile.mk`](../../Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/tiremo_makefile.mk)).
 - **ARM Cortex-M3**: integer-only; closer to the ABOV A34G43A if you are compiling *for that chip* without an FPU.
 - **Generic / Reference Kernels**: portable default when the MCU is unclear (`host-reference`). The UI defaults here until you pick otherwise.
 
@@ -114,7 +114,7 @@ Once firmware publishes inference:
 
 ## Done When
 
-An Edge row is **Ready**, you have a zip (or you have inspected the bundled `Tiremo_AI/`), and Data Explorer can be pointed at **Inference** for that Solution. Putting `tiremo_ai_run` in the Cortex loop for the HMR case is [Design Tutorial 03](../../Design_Tutorials/03-HMR_Edge_Deployment/).
+An Edge row is **Ready**, you have a zip (or you have inspected the bundled `Tiremo_AI/`), and Data Explorer can be pointed at **Inference** for that Solution. Putting `tiremo_ai_run` in the Cortex loop for the HMR case is [Design Tutorial 03](../../Design_Tutorials/03-Edge_Deployment_HMR/).
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

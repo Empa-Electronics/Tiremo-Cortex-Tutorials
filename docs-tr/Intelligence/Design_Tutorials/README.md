@@ -36,8 +36,8 @@ Design tutorials, Feature Tutorials'taki Intelligence nesnelerini, gerçekte gö
  <td>Aynı sensör ve tempo; yuvarlanan 8×3 milli-g tampon UART'a dökülür. Bulut yok, <code>Tiremo_AI</code> yok.</td>
  </tr>
  <tr>
- <td align="center"><a href="./03-HMR_Edge_Deployment/">HMR Gesture Classifier on the Edge</a></td>
- <td>3 eksenli HMR yakalamasını 128 Hz'den 8 Hz ve 4 Hz'e götürün, Intelligence'da beş sınıflı bir sınıflandırıcı eğitin ve üretilen <code>Tiremo_AI/</code> paketini Cortex'te çalıştırın (<code>Sw/</code> çıkarımı MQTT ile yayınlar).</td>
+ <td align="center"><a href="./03-Edge_Deployment_HMR/">HMR Gesture Classifier on the Edge</a></td>
+ <td>3 eksenli HMR yakalamasını 128 Hz'den 8 Hz ve 4 Hz'e götürün, Intelligence'da beş sınıflı bir sınıflandırıcı eğitin ve üretilen <code>Sw/Tiremo_AI/</code> paketini Cortex'te çalıştırın (<code>Sw/</code> çıkarımı MQTT ile yayınlar).</td>
  </tr>
  </table>
 

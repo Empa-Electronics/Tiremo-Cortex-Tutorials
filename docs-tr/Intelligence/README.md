@@ -42,7 +42,7 @@ flowchart LR
 - [**Feature Tutorials**](./Feature_Tutorials/) her biri tek bir Intelligence nesnesini ele alır: Data Explorer, Data Sources, Experiments, Solutions. İşlenmiş örnekler (örneğin hareket sınıflandırması için ivmeölçer anahtarları) ayrıntılarda yer alır; nesnenin tek amacı değildir.
 - [**Design Tutorials**](./Design_Tutorials/) bu nesneleri gönderilen bir HMR vakasında birleştirir ve üç LIS2DE12 üretici yazılımı yükler.
 
-UI ekran görüntüleri [`Intelligence/figures/`](../../Intelligence/figures/) içindedir. Tasarım eğitimi yakalamaları (jestler, UART çıkarımı) [`03-HMR_Edge_Deployment/figures/`](../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/figures/) yanındadır.
+UI ekran görüntüleri [`Intelligence/figures/`](../../Intelligence/figures/) içindedir. Tasarım eğitimi yakalamaları (jestler, UART çıkarımı) [`03-Edge_Deployment_HMR/figures/`](../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/figures/) yanındadır.
 
 <p align="center"><img alt="" src="../../images/banner.png" width="100%"></p>
 

@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a href="../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/README.md">English</a> | <a>Türkçe</a></p>
+<p class="sphinxhide" align="right"><a href="../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/README.md">English</a> | <a>Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -18,7 +18,7 @@
 
 ***Kart: Tiremo Cortex (ESP32) · Bölüm: Intelligence / Design Tutorials · Zorluk: Zor***
 
-> Bu sayfa [İngilizce orijinalinin](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/README.md)
+> Bu sayfa [İngilizce orijinalinin](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/README.md)
 > Türkçe çevirisidir. `Datasets/` ve `Tiremo_AI/` yalnızca İngilizce
 > eğitim klasöründe yaşar; burada kopyalanmaz; içerik farklılaşırsa
 > İngilizce sürüm esas alınır.
@@ -27,9 +27,9 @@
 
 Özellik eğitimleri 01–04 her biri genel olarak tek bir Intelligence nesnesini öğretir (dışa aktarma, Data Source, Experiment, Solution). Bu tasarım eğitimi o zinciri gerçekten göndereceğiniz bir şeye uygular: Tiremo Cortex LIS2DE12 üzerinde **Human Motion Recognition**: beş jest, üç eksen, MCU'ya sığan bir model, çıkarım olarak yayınlanan sonuçlar.
 
-Yakalama **128 Hz**'de başladı. O dosya 8 örnekli bir TinyML penceresi için çok yoğundur, bu yüzden aynı kayıt **8 Hz** ve **4 Hz**'e indirgenmiştir. Üç CSV [`Datasets/`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Datasets/) içindedir. Intelligence'ın bu vaka için ürettiği Edge paketi [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/) içindedir; `Tiremo-Secure-Iot-Sw-Cloud-Collect-Infer/Tiremo_Lib/Tiremo_AI` klasörünün olduğu gibi kopyası, elle yazılmış bir sürücü değil.
+Yakalama **128 Hz**'de başladı. O dosya 8 örnekli bir TinyML penceresi için çok yoğundur, bu yüzden aynı kayıt **8 Hz** ve **4 Hz**'e indirgenmiştir. Üç CSV [`Datasets/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Datasets/) içindedir. Intelligence'ın bu vaka için ürettiği Edge paketi [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/) içindedir; `Tiremo-Secure-Iot-Sw-Cloud-Collect-Infer/Tiremo_Lib/Tiremo_AI` klasörünün olduğu gibi kopyası, elle yazılmış bir sürücü değil.
 
-Burada ekstra bir Feature-Tutorial `Sw/` ağacı yoktur. Eğitim ve dağıtım Tiremo UI'dır. Bu tasarım eğitiminin Cortex ikilisi [`Sw/`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Sw/) içindedir (`tiremo_ai_run` + `…/inference` MQTT). `Tiremo_AI/` `Sw/` kardeşidir.
+Burada ekstra bir Feature-Tutorial `Sw/` ağacı yoktur. Eğitim ve dağıtım Tiremo UI'dır. Bu tasarım eğitiminin Cortex ikilisi [`Sw/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/) içindedir (`tiremo_ai_run` + `…/inference` MQTT). `Tiremo_AI/` `Sw/` içindedir.
 
 ## Neler Öğreneceksiniz
 
@@ -56,7 +56,7 @@ acc_x,acc_y,acc_z,class
 
 Birimler milli-g'dir ([LIS2DE12](../../../../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/) ile aynı dönüşüm). Sınıflar: `CIRCLE`, `HORIZONTAL`, `STANDBY`, `TRIANGLE`, `VERTICAL`.
 
-![Tiremo Cortex üzerinde beş HMR jesti](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/figures/hmr_gestures_board.png)
+![Tiremo Cortex üzerinde beş HMR jesti](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/figures/hmr_gestures_board.png)
 
 | Dosya | Satır | Boyut | Hız | Sınıf başına örnek (CIRCLE … VERTICAL) |
 |---|---:|---:|---|---|
@@ -111,7 +111,7 @@ Yeniden yakalama yolu: Feature Tutorial 01 → etiket → 02. Atlama yolu: `Data
 | **Training Record** | Bir arama koşusu: pencere 8, F1 Macro, Balanced, Medium derinlik. |
 | **Solution** | Experiment'i Cortex **Product**'ına bağlar. |
 | **Edge dağıtımı** | Seçilen modeli derler; Download `Tiremo_AI/` verir. |
-| **Bu klasörün `Tiremo_AI/`** | Eğitimin çevrimdışı tamamlanması için işlenmiş indirme. |
+| **Bu eğitimin `Sw/Tiremo_AI/`** | Eğitimin çevrimdışı tamamlanması için işlenmiş indirme. |
 
 ## Kullanılan yapılandırma (ve neden)
 
@@ -150,7 +150,7 @@ Anlık görüntünün UUID'lerini yeni bir Solution'a kopyalamayın. Onlar *bu* 
 UI yolu (Feature 02–04 ile aynı, 4 Hz dosyasıyla):
 
 1. Data Source oluşturun: Classification + Time Series
-2. [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) içe aktarın (karşılaştırma için 8 Hz'i ikinci küme/sürüm olarak yineleyin)
+2. [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) içe aktarın (karşılaştırma için 8 Hz'i ikinci küme/sürüm olarak yineleyin)
 3. Data Studio: etiket sütunu `class` → Analyze → Save
 4. Sürüm oluşturun örn. `4Hz-v1`
 5. Experiment: Classification; o sürümü bağlayın
@@ -158,9 +158,9 @@ UI yolu (Feature 02–04 ile aynı, 4 Hz dosyasıyla):
 7. **Completed** olunca Edge-yetenekli bir model seçin (anlık görüntü ANN)
 8. Solution → Edge → Create Edge → Download
 
-Veya beklemeyi atlayın ve o indirme olarak [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/) kullanın.
+Veya beklemeyi atlayın ve o indirme olarak [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/) kullanın.
 
-**Anlık görüntünün doğrulanmış içeriği** (üretilme 2026-08-24, config hash `a7ad8992e5fc917e`): Classification, pencere 8, 3 öznitelik, girdi 24, 5 sınıf, ANN, konu soneki `inference`. Ayrıntı: [`Tiremo_AI/API.md`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/API.md).
+**Anlık görüntünün doğrulanmış içeriği** (üretilme 2026-08-24, config hash `a7ad8992e5fc917e`): Classification, pencere 8, 3 öznitelik, girdi 24, 5 sınıf, ANN, konu soneki `inference`. Ayrıntı: [`Tiremo_AI/API.md`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/API.md).
 
 ## Adım Adım
 
@@ -174,7 +174,7 @@ Feature 03. Training Record'a hızı açık eden bir ad verin (`HMR-4Hz-w8`). 12
 
 ### 3. Edge dağıtın ve paketi açın
 
-Feature 04. İndirin veya [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/) üzerinde kalın.
+Feature 04. İndirin veya [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/) üzerinde kalın.
 
 Üretilen dosyalar `GENERATED FILE. Do not edit.` işaretlidir. Bir üretici yazılım `Makefile`'ından makefile'ı dahil edin:
 
@@ -182,7 +182,7 @@ Feature 04. İndirin veya [`Tiremo_AI/`](../../../../Intelligence/Design_Tutoria
 -include $(TIREMO_DIR)/Tiremo_AI/tiremo_makefile.mk
 ```
 
-Bu eğitimde ağaç `Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/` konumundadır. ELF'i `$(CXX)` ile bağlayın; C++17 TFLM'dir. Çekirdek türü FPU bekliyorsa FPU'yu açın (`tiremo_makefile.mk` notu).
+Bu eğitimde ağaç `Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/` konumundadır. ELF'i `$(CXX)` ile bağlayın; C++17 TFLM'dir. Çekirdek türü FPU bekliyorsa FPU'yu açın (`tiremo_makefile.mk` notu).
 
 ### 4. Pencereleri LIS2DE12'den besleyin
 
@@ -196,9 +196,9 @@ int rc = tiremo_ai_run(features, &result);
 
 İlk kullanımda `tiremo_ai_run` `tiremo_init()` çağırır. Çağrıyı zamanlayın; geçen ms ile pencere başlangıç/bitiş Unix ms'ini `tiremo_ai_format_mqtt_json`'a verin ve `pub/<product_id>/<device_id>/inference` üzerinde yayınlayın.
 
-Örnekleri o tampona **eğittiğiniz CSV ile eşleşen 4 Hz veya 8 Hz**'de itin, 128 Hz yakalama hızında değil; 128 Hz'i *çok* daha büyük bir pencereyle eğitmediyseniz. [`Sw/`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Sw/) UART'ta `predicted_class_label` yazar ve MQTT gövdesini yayınlar.
+Örnekleri o tampona **eğittiğiniz CSV ile eşleşen 4 Hz veya 8 Hz**'de itin, 128 Hz yakalama hızında değil; 128 Hz'i *çok* daha büyük bir pencereyle eğitmediyseniz. [`Sw/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/) UART'ta `predicted_class_label` yazar ve MQTT gövdesini yayınlar.
 
-![tiremo_ai_run sonrası predicted_class_label UART günlüğü](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/figures/edge_uart_inference.png)
+![tiremo_ai_run sonrası predicted_class_label UART günlüğü](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/figures/edge_uart_inference.png)
 
 ### 5. Döngüyü UI'da kapatın
 
@@ -211,9 +211,9 @@ Data Explorer → Data Type **Inference** → o Solution. Jestleri tekrarladığ
 - 128 → 8 → 4'ü **aynı yakalama, 8 örnekli bir pencerenin bir jesti kapsaması için indirgenmiş** diye açıklayabilirsiniz
 - CSV'lerden biri üzerinde **Classification + Time Series** bir Data Source ve dondurulmuş bir sürüm vardır
 - **Pencere 8** ile tamamlanmış bir Training Record ve Edge-seçili bir model vardır
-- Ya bir UI Edge **Download** ya da bu klasörün `Tiremo_AI/`'si 24 float üzerinde `tiremo_ai_run` çalıştırır ve beş sınıftan birini adlandırır
+- Ya bir UI Edge **Download** ya da bu eğitimin `Sw/Tiremo_AI/`'si 24 float üzerinde `tiremo_ai_run` çalıştırır ve beş sınıftan birini adlandırır
 
-Bu klasörün [`Sw/`](../../../../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Sw/) pencereyi besleyen ve çıkarımı yayınlayan Cortex ikilisidir.
+Bu klasörün [`Sw/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/) pencereyi besleyen ve çıkarımı yayınlayan Cortex ikilisidir.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 

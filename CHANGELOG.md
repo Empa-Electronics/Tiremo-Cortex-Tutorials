@@ -27,14 +27,14 @@ release.
   (per-sample LIS2DE12 MQTT),
   [`02-Accelerometer_Windowing`](Intelligence/Design_Tutorials/02-Accelerometer_Windowing/)
   (local 8×3 UART window), and
-  [`03-HMR_Edge_Deployment`](Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/)
+  [`03-Edge_Deployment_HMR`](Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/)
   as one complete HMR case: 3-axis Human Motion Recognition from the 128 Hz
   capture through 8 Hz / 4 Hz decimation, Classification + Time Series
   training, a generated Edge package, and Cortex `Sw/` that calls
   `tiremo_ai_run` and publishes `…/inference`. Labeled CSVs live in that
   tutorial's `Datasets/`; the Edge tree is a copy of
   `Tiremo_Lib/Tiremo_AI` at
-  [`Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/`](Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/).
+  [`Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/`](Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/).
   UI screenshots live in [`Intelligence/figures/`](Intelligence/figures/);
   UART and gesture photos in that design tutorial's `figures/`.
   Matching Turkish pages under `docs-tr/Intelligence/`.

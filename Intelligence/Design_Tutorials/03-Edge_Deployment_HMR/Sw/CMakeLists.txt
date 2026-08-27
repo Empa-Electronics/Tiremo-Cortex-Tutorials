@@ -9,7 +9,7 @@ project(HMREdgeDeployment C CXX)
 # root's Generation/ directory for why it's checked in once, shared,
 # instead of duplicated per tutorial.
 set(GEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Generation/AUDK32_A34xxxx-1.0.12)
-set(TIREMO_AI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../Tiremo_AI)
+set(TIREMO_AI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Tiremo_AI)
 include(${CMAKE_CURRENT_SOURCE_DIR}/tiremo_ai_sources.cmake)
 
 # --- embed the shared claim credentials as C byte arrays ---------------

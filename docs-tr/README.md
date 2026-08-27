@@ -298,7 +298,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="./Intelligence/Feature_Tutorials/03-Experiments/">Experiments</a></td>
-            <td><a href="./Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/">HMR Gesture Classifier on the Edge</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/">HMR Gesture Classifier on the Edge</a></td>
         </tr>
         <tr>
             <td><a href="./Intelligence/Feature_Tutorials/04-Solutions/">Solutions</a></td>
@@ -444,7 +444,7 @@ bakın.
 - [x] [Intelligence/04-Solutions](../Intelligence/Feature_Tutorials/04-Solutions/) — UI yürüyüşü yazıldı
 - [x] [Intelligence/Design/01-Accelerometer_Telemetry](../Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/) — `Sw/` örnek başına `acc_x`/`acc_y`/`acc_z` telemetrisi yayınlar
 - [x] [Intelligence/Design/02-Accelerometer_Windowing](../Intelligence/Design_Tutorials/02-Accelerometer_Windowing/) — `Sw/` UART yuvarlanan 8×3 pencere
-- [x] [Intelligence/Design/03-HMR_Edge_Deployment](../Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/) — uçtan uca HMR vakası; `Datasets/`, `Tiremo_AI/` ve `Sw/` çıkarım üretici yazılımı
+- [x] [Intelligence/Design/03-Edge_Deployment_HMR](../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/) — uçtan uca HMR vakası; `Datasets/` ve `Sw/` (`Sw/Tiremo_AI/` ile) çıkarım üretici yazılımı
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 

@@ -14,8 +14,7 @@
   </tr>
 </table>
 
-> Bu sayfa [İngilizce orijinalinin](../../../../Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/README.md)
-> Türkçe çevirisidir. `Sw/` yalnızca İngilizce eğitim klasöründedir.
+> Bu sayfa [İngilizce orijinalinin](../../../../Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/README.md) Türkçe çevirisidir. `Sw/` yalnızca İngilizce eğitim klasöründedir.
 
 # Accelerometer Telemetry
 
@@ -31,7 +30,7 @@
 
 Konu: `pub/<product_id>/<device_id>/telemetry` (QoS 0). Değerler milli-g. Data Explorer CSV sütunları `data.acc_x` / `data.acc_y` / `data.acc_z` olur.
 
-Tam yürüyüş bu üretici yazılımından sonra gelir. Pencereli modeli tüketen HMR vakası: [03-HMR_Edge_Deployment](../03-HMR_Edge_Deployment/).
+Tam yürüyüş bu üretici yazılımından sonra gelir. Pencereli modeli tüketen HMR vakası: [03-Edge_Deployment_HMR](../03-Edge_Deployment_HMR/).
 
 ## Derleme ve yükleme
 

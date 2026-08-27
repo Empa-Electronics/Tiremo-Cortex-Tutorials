@@ -1,4 +1,4 @@
-# Generated from ../Tiremo_AI/tiremo_makefile.mk. Do not hand-edit the list.
+# Generated from Tiremo_AI/tiremo_makefile.mk. Do not hand-edit the list.
 set(TIREMO_AI_SRCS
     ${TIREMO_AI_DIR}/tiremo_api.cc
     ${TIREMO_AI_DIR}/model.cc

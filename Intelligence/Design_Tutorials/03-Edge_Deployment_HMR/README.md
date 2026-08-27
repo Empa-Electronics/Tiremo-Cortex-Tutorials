@@ -1,4 +1,4 @@
-<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/README.md">Türkçe</a></p>
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../docs-tr/Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/README.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">
@@ -22,9 +22,9 @@
 
 Feature tutorials 01–04 each teach one Intelligence object in general (export, Data Source, Experiment, Solution). This design tutorial applies that chain to something you would actually ship: **Human Motion Recognition** on the Tiremo Cortex LIS2DE12: five gestures, three axes, a model that fits the MCU, results published as inference.
 
-The capture started at **128 Hz**. That file is too dense for an 8-sample TinyML window, so the same recording was decimated to **8 Hz** and **4 Hz**. Those three CSVs are in [`Datasets/`](./Datasets/). The Edge package that came out of Intelligence for this case is in [`Tiremo_AI/`](./Tiremo_AI/), a verbatim copy of `Tiremo-Secure-Iot-Sw-Cloud-Collect-Infer/Tiremo_Lib/Tiremo_AI`, not a hand-written driver.
+The capture started at **128 Hz**. That file is too dense for an 8-sample TinyML window, so the same recording was decimated to **8 Hz** and **4 Hz**. Those three CSVs are in [`Datasets/`](./Datasets/). The Edge package that came out of Intelligence for this case is in [`Tiremo_AI/`](./Sw/Tiremo_AI/), a verbatim copy of `Tiremo-Secure-Iot-Sw-Cloud-Collect-Infer/Tiremo_Lib/Tiremo_AI`, not a hand-written driver.
 
-There is no extra Feature-Tutorial `Sw/` tree here. Training and deploy are Tiremo UI. The Cortex binary for this case is [`Sw/`](./Sw/); it includes the generated library (`tiremo_makefile.mk` source list, hard FPU, `TIREMO_AI_DIR=../Tiremo_AI`).
+There is no extra Feature-Tutorial `Sw/` tree here. Training and deploy are Tiremo UI. The Cortex binary for this case is [`Sw/`](./Sw/); it includes the generated library (`tiremo_makefile.mk` source list, hard FPU, `TIREMO_AI_DIR=Tiremo_AI`).
 
 ## You Will Learn
 
@@ -43,7 +43,7 @@ There is no extra Feature-Tutorial `Sw/` tree here. Training and deploy are Tire
 
 ## Firmware (`Sw/`)
 
-[`Sw/`](./Sw/) is the Cortex binary for this case. It reuses the Tiremo Cloud 05 session (WiFi, SNTP, provision, shadow), fills the same 8×3 tumbling window as [02](../02-Accelerometer_Windowing/), calls `tiremo_ai_run`, logs `predicted_class_label` on UART, and publishes the generated MQTT JSON on `pub/<product_id>/<device_id>/inference`. `TIREMO_AI_DIR` is `../Tiremo_AI` (sibling of `Sw/`, not a second copy). CMake enables hard-float (`-mfloat-abi=hard -mfpu=fpv4-sp-d16`) and `EXTRN_FPU_USED`.
+[`Sw/`](./Sw/) is the Cortex binary for this case. It reuses the Tiremo Cloud 05 session (WiFi, SNTP, provision, shadow), fills the same 8×3 tumbling window as [02](../02-Accelerometer_Windowing/), calls `tiremo_ai_run`, logs `predicted_class_label` on UART, and publishes the generated MQTT JSON on `pub/<product_id>/<device_id>/inference`. `TIREMO_AI_DIR` is `Tiremo_AI` (inside `Sw/`, not a second copy). CMake enables hard-float (`-mfloat-abi=hard -mfpu=fpv4-sp-d16`) and `EXTRN_FPU_USED`.
 
 Copy secrets and claim PEMs as in [01](../01-Accelerometer_Telemetry/), then from `Sw/`:
 
@@ -83,7 +83,7 @@ The Sensors tutorial programs the LIS2DE12 at **100 Hz** by default. 128 Hz is t
 
 ### Why 8 Hz and 4 Hz were tried
 
-Edge inference in this pipeline uses a **fixed window of 8 samples** (see [`Tiremo_AI/tiremo_config.h`](./Tiremo_AI/tiremo_config.h): `TIREMO_WINDOW_SIZE 8`, `TIREMO_NUM_FEATURES 3`, `TIREMO_INPUT_SIZE 24`). That window's **duration** is `8 / f_s`:
+Edge inference in this pipeline uses a **fixed window of 8 samples** (see [`Tiremo_AI/tiremo_config.h`](./Sw/Tiremo_AI/tiremo_config.h): `TIREMO_WINDOW_SIZE 8`, `TIREMO_NUM_FEATURES 3`, `TIREMO_INPUT_SIZE 24`). That window's **duration** is `8 / f_s`:
 
 | Rate | Duration of 8 samples | Fits a hand-drawn CIRCLE / TRIANGLE? |
 |---|---|---|
@@ -144,7 +144,7 @@ flowchart TD
 | **Training Record** | One search run: window 8, F1 Macro, Balanced, Medium depth. |
 | **Solution** | Ties the experiment to the Cortex **Product**. |
 | **Edge deployment** | Compiles the selected model; Download yields `Tiremo_AI/`. |
-| **This folder's `Tiremo_AI/`** | The worked download so the tutorial is complete offline. |
+| **This tutorial's `Sw/Tiremo_AI/`** | The worked download so the tutorial is complete offline. |
 
 ## Configuration used (and why)
 
@@ -191,7 +191,7 @@ UI path (same as Feature 02–04, with the 4 Hz file):
 7. When **Completed**, select an Edge-capable model (the snapshot is ANN)
 8. Solution → Edge → Create Edge → Download
 
-Or skip the wait and use [`Tiremo_AI/`](./Tiremo_AI/) as that download.
+Or skip the wait and use [`Tiremo_AI/`](./Sw/Tiremo_AI/) as that download.
 
 **Verified contents of the snapshot** (generated 2026-08-24, config hash `a7ad8992e5fc917e`):
 
@@ -206,7 +206,7 @@ algorithmName               ANN
 TIREMO_MQTT_TOPIC_SUFFIX    inference
 ```
 
-See [`Tiremo_AI/API.md`](./Tiremo_AI/API.md).
+See [`Tiremo_AI/API.md`](./Sw/Tiremo_AI/API.md).
 
 ## Walkthrough
 
@@ -224,7 +224,7 @@ Feature 03. Name the Training Record so the rate is obvious (`HMR-4Hz-w8`). If y
 
 ### 3. Deploy Edge and open the package
 
-Feature 04. Download, or stay on [`Tiremo_AI/`](./Tiremo_AI/).
+Feature 04. Download, or stay on [`Tiremo_AI/`](./Sw/Tiremo_AI/).
 
 ![Edge tab: Core Type, Create Edge, Download](../../../figures/04_deploy_edge.png)
 
@@ -234,7 +234,7 @@ Generated files are marked `GENERATED FILE. Do not edit.` Include the makefile f
 -include $(TIREMO_DIR)/Tiremo_AI/tiremo_makefile.mk
 ```
 
-In this tutorial the tree lives at `Intelligence/Design_Tutorials/03-HMR_Edge_Deployment/Tiremo_AI/`. Point `TIREMO_AI_DIR` (or copy the folder next to your `Sw/`) so that include resolves. Link the ELF with `$(CXX)`; it is C++17 TFLM. Enable an FPU when the core type expects one (`-mfloat-abi=hard` …) as noted at the bottom of `tiremo_makefile.mk`.
+In this tutorial the tree lives at `Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/`. From `Sw/`, `TIREMO_AI_DIR` is `Tiremo_AI` (already laid out that way here) so that include resolves. Link the ELF with `$(CXX)`; it is C++17 TFLM. Enable an FPU when the core type expects one (`-mfloat-abi=hard` …) as noted at the bottom of `tiremo_makefile.mk`.
 
 ### 4. Feed windows from the LIS2DE12
 
@@ -265,7 +265,7 @@ Data Explorer → Data Type **Inference** → that Solution. Solution **Activity
 - You can explain 128 → 8 → 4 as **same capture, decimated so an 8-sample window covers a gesture**
 - A Data Source exists as **Classification + Time Series** on one of the CSVs, with a frozen version
 - A Training Record completed with **window 8** and an Edge-selected model
-- Either a UI Edge **Download** or this folder's [`Tiremo_AI/`](./Tiremo_AI/) runs `tiremo_ai_run` on 24 floats and names one of the five classes
+- Either a UI Edge **Download** or this tutorial's [`Sw/Tiremo_AI/`](./Sw/Tiremo_AI/) runs `tiremo_ai_run` on 24 floats and names one of the five classes
 
 This folder's [`Sw/`](./Sw/) is the Cortex binary that feeds the window and publishes inference.
 
