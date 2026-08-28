@@ -358,43 +358,6 @@ See [01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
 for the full story — what each command actually does, why CMake instead
 of a hand-written Makefile, and Windows-specific notes.
 
-- [x] [01-Hello_Blink](Getting_Started/01-Hello_Blink/) — built, flashed, verified on real hardware
-- [x] [02-SysTick_Timing](Getting_Started/02-SysTick_Timing/) — built, flashed, verified
-- [x] [03-Debug_UART_Logging](Getting_Started/03-Debug_UART_Logging/) — built, flashed, verified; UART output confirmed via `tdf.py monitor`
-- [x] [04-Button_Read_And_Debounce](Getting_Started/04-Button_Read_And_Debounce/) — built, flashed, verified; button-press behavior itself not yet confirmed (needs a human finger — see the tutorial's own Solution)
-- [x] [05-Ten_LED_Pattern_Driver](Getting_Started/05-Ten_LED_Pattern_Driver/) — built, flashed, verified; auto-cycle timing confirmed; LED staggering and button-triggered advance not yet confirmed (see the tutorial's own Solution)
-- [x] [Sensors_And_Storage/01-I2C_Bus_Bringup](Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/) — built, flashed, verified; both SHT40 and LIS2DE12 genuinely ACK on I2C2, confirmed live over `tdf.py monitor`
-- [x] [Sensors_And_Storage/02-SHT40_Temperature_Humidity](Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/) — built, flashed, verified; live T/RH once per second over `tdf.py monitor` (CRC-valid, stable within sensor noise)
-- [x] [Sensors_And_Storage/03-LIS2DE12_Accelerometer](Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/) — built, flashed, verified; WHO_AM_I=0x33, Z≈1036 mg at rest; axis-by-axis tilt not confirmed
-- [x] [Sensors_And_Storage/04-Battery_Voltage_ADC](Sensors_And_Storage/Feature_Tutorials/04-Battery_Voltage_ADC/) — built, flashed, verified; live VCORE raw + AVDD mV; not compared to a multimeter
-- [x] [Sensors_And_Storage/05-Microphone_RMS_To_dB](Sensors_And_Storage/Feature_Tutorials/05-Microphone_RMS_To_dB/) — built, flashed, verified; DMA blocks climbing, quiet ~24 dB; talk-vs-silence not confirmed
-- [x] [Sensors_And_Storage/06-Flash_Backed_Config](Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/) — built, flashed, verified; bootCount persisted across reset, corrupt CRC rejected
-- [x] [Sensors_And_Storage/07-Software_Wall_Clock](Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/) — built, flashed, verified; GetEpoch advances 1 s per second after a manual SetEpoch
-- [x] [Sensors_And_Storage/Design/01-Standalone_Environmental_Logger](Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/) — built, flashed, verified; live SHT40+accel+battery+mic sample (`flags=0x07`); `seq` history survived SWD reset
-- [x] [ESP32_Connectivity/01-AT_Command_Transport](ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/) — built, flashed, verified; `AT`→`OK`, echo-on then `ATE0` echo-free, 5 s heartbeat
-- [x] [ESP32_Connectivity/02-WiFi_Station_Join](ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/) — built (`.text` 15200); `CWMODE` / `CWJAP` / `CWSTATE:2` + substring-gotcha; join confirmed on a real 2.4 GHz AP
-- [x] [ESP32_Connectivity/03-Connect_Retry_State_Machine](ESP32_Connectivity/Feature_Tutorials/03-Connect_Retry_State_Machine/) — built (`.text` 19440), flashed; `CWLAP` scan-first, 3 retries, `WF01` last-good SSID; heartbeat after join confirmed
-- [x] [ESP32_Connectivity/04-NTP_Time_Sync](ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/) — built (`.text` 20956), flashed; SNTP → `SetEpoch`; `GetEpoch()` matched UTC and advanced 1 s/s
-- [x] [ESP32_Connectivity/05-BluFi_Provisioning](ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/) — built (`.text` 21156), flashed; `AT+BLUFI=1` advertising `Tiremo-Cortex` confirmed; EspBluFi Configure is a human step
-- [x] [Cloud_Messaging/01-MQTT_To_Public_Broker](Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/) — built (`.text` 17268), flashed, verified over SWD; full publish/subscribe round trip (string + binary-safe) confirmed live, and independently cross-checked with a separate `mqttx` CLI subscriber on the same public broker
-- [x] [Cloud_Messaging/02-mTLS_Credentials_In_Module_NVS](Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/) — built (`.text` 21140), flashed, verified over SWD; write/read-back/erase round-trips byte-for-byte confirmed live for all three real (self-signed test) PEM credential slots against the correct `mqtt_*` SYSMFG namespace (see the tutorial's own "A Real Bug" note)
-- [x] [Cloud_Messaging/03-MQTT_mTLS_To_AWS_IoT](Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — built (`.text` 21648), flashed, verified over SWD; genuine mutual-TLS `+MQTTCONNECTED` against a real Tiremo Cloud endpoint, with SNTP time sync ahead of the connect sequence; connect only, no publish/subscribe yet
-- [x] [ESP32_Connectivity/Design/01-Boot_Cascade_Saved_WiFi_Then_BluFi](ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/) — built (`.text` 25196), flashed; EspBluFi provisioned → `CS01` saved → next reset came up on the `nvs` path with NTP, no BluFi step
-- [x] [Tiremo_Cloud/01-Device_Identity_From_MAC](Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/) — built (`.text` 15060), flashed; `CIPSTAMAC?` → `deviceId 30eda0806324`, heartbeat re-read unchanged
-- [x] [Tiremo_Cloud/02-Minimal_JSON_Helpers](Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/) — built (`.text` 16156), flashed; Find* + writer round-trip on a sample shadow (`reporting.enabled`, colon-in-string, sibling-key miss)
-- [x] [Tiremo_Cloud/04-Shadow_Get_Apply_Report](Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — built (`.text` 33764), flashed; boot GET → apply `reporting.enabled` / `led.on` → full desired echo as `reported` → second GET `no leftover delta`
-- [x] [Tiremo_Cloud/05-Live_Shadow_Delta_Handling](Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — built (`.text` 34928), flashed; boot GET/report then `subscribed update/delta`; flip `desired` in the console to apply live (no reboot)
-- [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — built (`.text` 37528); 05 ready loop + `pub/{product}/{device}/telemetry` / `alarm`; not yet flashed/verified on hardware
-- [ ] [Tiremo_Cloud/07-Tiremo_Jobs](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — built; 06 ready loop + jobs notify/start-next/health SUCCEEDED; not yet flashed/verified on hardware
-- [x] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — built (`.text` 55012); BluFi cascade + Cloud + live shadow flags + HEALTH_CHECK + gated SHT40/LIS2DE12 telemetry; not yet flashed on a board in this pass
-- [x] [Intelligence/01-Data_Collection](Intelligence/Feature_Tutorials/01-Data_Collection/) — UI walkthrough written
-- [x] [Intelligence/02-Data_Sources](Intelligence/Feature_Tutorials/02-Data_Sources/) — UI walkthrough written
-- [x] [Intelligence/03-Experiments](Intelligence/Feature_Tutorials/03-Experiments/) — UI walkthrough written
-- [x] [Intelligence/04-Solutions](Intelligence/Feature_Tutorials/04-Solutions/) — UI walkthrough written
-- [x] [Intelligence/Design/01-Accelerometer_Telemetry](Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/) — `Sw/` publishes per-sample `acc_x`/`acc_y`/`acc_z` telemetry
-- [x] [Intelligence/Design/02-Accelerometer_Windowing](Intelligence/Design_Tutorials/02-Accelerometer_Windowing/) — `Sw/` UART tumbling 8×3 window
-- [x] [Intelligence/Design/03-Edge_Deployment_HMR](Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/) — end-to-end HMR case; `Datasets/` and `Sw/` (with `Sw/Tiremo_AI/`) inference firmware
-
 <p align="center"><img alt="" src="images/banner.png" width="100%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
