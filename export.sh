@@ -42,6 +42,24 @@ esac
 
 echo "Tiremo Development Framework: tdf.py added to PATH."
 
+# Tab-complete tdf.py command names (build / flash / monitor / ...) so
+# `tdf.py flash <TAB>` offers monitor, and pipelines like
+# `tdf.py build flash monitor` can be typed without memorizing the list.
+if [ -n "${ZSH_VERSION:-}" ]; then
+    fpath=("$TDF_PATH/tools/completions" $fpath)
+    if typeset -f compdef >/dev/null 2>&1; then
+        # shellcheck disable=SC1091
+        . "$TDF_PATH/tools/completions/_tdf"
+        echo "tdf.py tab completion enabled (zsh)."
+    else
+        echo "tdf.py tab completion: run \`autoload -Uz compinit && compinit\`, then source export.sh again."
+    fi
+elif [ -n "${BASH_VERSION:-}" ]; then
+    # shellcheck disable=SC1091
+    . "$TDF_PATH/tools/completions/tdf.bash"
+    echo "tdf.py tab completion enabled (bash)."
+fi
+
 # Activate tdf_venv/ (created by install.sh) so `python3`/`pip` -- and
 # therefore tdf.py's own `#!/usr/bin/env python3` -- resolve to the venv
 # with pyserial in it, not the system interpreter. VIRTUAL_ENV_DISABLE_PROMPT
@@ -63,4 +81,4 @@ else
     echo "No tdf_venv/ found -- 'tdf.py monitor' needs pyserial. Run ./install.sh once to set it up."
 fi
 
-echo "Try: cd Getting_Started/01-Hello_Blink/Sw && tdf.py build"
+echo "Try: cd Getting_Started/01-Hello_Blink/Sw && tdf.py flash monitor"

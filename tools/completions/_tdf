@@ -1,0 +1,53 @@
+#compdef tdf.py tdf
+
+# zsh completion for tdf.py -- sourced or autoloaded from export.sh.
+# Completes remaining pipeline commands (build flash monitor ...) and flags.
+
+_tdf() {
+  local -a all remaining opts
+  local w
+
+  all=(build flash monitor clean clean-device create-project help)
+  opts=(-D --reconfigure --port --baud --no-color -y --yes --dir -h --help)
+
+  remaining=()
+  for w in $all; do
+    (( ${words[(Ie)$w]} )) || remaining+=($w)
+  done
+
+  case $words[CURRENT-1] in
+    --port)
+      _files
+      return
+      ;;
+    --baud)
+      _wanted bauds expl 'baud rate' compadd 115200 57600 38400 19200 9600
+      return
+      ;;
+    --dir)
+      _directories
+      return
+      ;;
+    help)
+      _wanted topics expl 'command' compadd build flash monitor clean clean-device create-project help
+      return
+      ;;
+    -D)
+      return
+      ;;
+  esac
+
+  if [[ $words[CURRENT] == -* ]]; then
+    _describe -t options 'tdf.py option' opts
+    return
+  fi
+
+  _alternative \
+    'commands:command:compadd -a remaining' \
+    'options:option:compadd -a opts'
+}
+
+# When sourced from export.sh, register immediately if compdef exists.
+if [[ -n ${ZSH_VERSION-} ]] && (( $+functions[compdef] )); then
+  compdef _tdf tdf.py tdf
+fi

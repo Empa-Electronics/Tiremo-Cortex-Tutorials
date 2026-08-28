@@ -25,7 +25,7 @@ Design tutorials combine several feature tutorials into one working subsystem, c
  </tr>
  <tr>
  <td align="center"><a href="./01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
- <td>Demo: publish onboard sensor telemetry and open/close an output from classic shadow desired, with no reboot. (Not implemented yet.)</td>
+ <td>Demo: BluFi auto-connect, Tiremo Cloud provision, live shadow, HEALTH_CHECK, and sensor telemetry gated by `ACC_en` / `GYRO_en` / `TEMP_en` / `HUM_en`.</td>
  </tr>
  </table>
 

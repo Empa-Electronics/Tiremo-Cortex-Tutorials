@@ -19,6 +19,11 @@ release.
 
 ### Added
 
+- `tdf.py` accepts chained commands, idf.py-style (`tdf.py flash monitor`,
+  `tdf.py build flash monitor`). `tdf.py help` / `tdf.py help <command>`
+  print an overview or a per-command page. `source ./export.sh` installs
+  bash/zsh tab completion for those command names.
+
 - New curriculum section [`Intelligence/`](Intelligence/): four Feature
   Tutorials (Data Collection, Data Sources, Experiments, Solutions) that
   teach the Intelligence objects in the Tiremo UI, plus three design
@@ -52,11 +57,14 @@ release.
   now has firmware: 06's ready loop plus `jobs/notify` → `start-next` →
   health-check `SUCCEEDED` (`1_<uuid>`) / OTA `REJECTED` (`2_<uuid>`).
 
-- Tiremo Cloud scaffolds (README only, firmware not yet written):
-  design tutorial
+- Tiremo Cloud design tutorial
   [`01-Sensor_Telemetry_And_Shadow_Control`](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/)
-  (sensor telemetry + shadow open/close demo). Removed the unused
-  `01-Provision_And_Sync_A_Real_Thing` scaffold.
+  now has firmware: BluFi cascade (no `wifi_secrets.h`), fleet
+  provision, boot GET + live delta, HEALTH_CHECK, and
+  `pub/{product}/{device}/telemetry` gated by
+  `{"ACC_en","GYRO_en","TEMP_en","HUM_en"}` (`true`/`false` or 0/1). Built
+  (`.text` 55012). Tiremo UI dashboard screenshots: On/Off shadow widgets,
+  telemetry chart, climate widget, **Add Widget** catalog.
 
 - Initial repository scaffold: `Getting_Started`, `Sensors_And_Storage`,
   `ESP32_Connectivity`, `Cloud_Messaging`, `Tiremo_Cloud`, and

@@ -17,11 +17,17 @@ lives):
     tdf.py build                       configure (if needed) + build
     tdf.py build -DTIREMO_DEBUG_LEVEL=2   (extra CMake cache vars, forwarded as-is)
     tdf.py flash                       build (if needed), then flash over SWD
-    tdf.py monitor                     reset the board over SWD, then stream
-                                        color-coded UART log output (Ctrl+C to exit)
+    tdf.py monitor                     drain stale UART, reset over SWD, then
+                                        stream color-coded log output (Ctrl+C to exit)
+    tdf.py flash monitor               chain: flash, then monitor (idf.py-style)
+    tdf.py build flash monitor         chain: build, flash, then monitor
     tdf.py clean                       remove build/
     tdf.py clean-device                mass-erase the connected board's chip flash
     tdf.py create-project <name>       scaffold a new, empty buildable Sw/ project
+    tdf.py help                        this overview
+    tdf.py help flash                  detailed help for one command
+
+Tab-complete command names after `source ./export.sh` (bash or zsh).
 
 `monitor` is the one command that isn't pure CMake delegation underneath
 -- resetting the board is still just `cmake --build build --target
@@ -142,6 +148,7 @@ def cmd_build(args):
     if needs_configure(args):
         configure(args.define)
     run(["cmake", "--build", str(BUILD_DIR)])
+    args._built = True
 
 
 def cmd_clean(args):
@@ -155,8 +162,30 @@ def cmd_clean(args):
 
 def cmd_flash(args):
     require_project_dir()
-    cmd_build(args)
+    if not getattr(args, "_built", False):
+        cmd_build(args)
     run(["cmake", "--build", str(BUILD_DIR), "--target", "flash"])
+
+
+def pick_serial_port(preferred, list_ports):
+    if preferred is not None:
+        return preferred
+
+    candidates = list(list_ports.comports())
+    cmsis = [p for p in candidates if "cmsis-dap" in (p.description or "").lower()]
+    pool = cmsis if cmsis else candidates
+    if len(pool) == 1:
+        return pool[0].device
+    if len(pool) > 1:
+        log("multiple serial ports found -- pass one explicitly with --port:")
+        for p in pool:
+            log(f"  {p.device}  ({p.description})")
+        sys.exit(1)
+    die(
+        "no serial port auto-detected. Pass one explicitly:\n"
+        "       tdf.py monitor --port /dev/tty.usbmodemXXXX   "
+        "(or COM3 on Windows, /dev/ttyACM0 on Linux)"
+    )
 
 
 def cmd_monitor(args):
@@ -179,33 +208,24 @@ def cmd_monitor(args):
     if not (BUILD_DIR / "CMakeCache.txt").exists():
         configure([])
 
-    log("resetting device over SWD")
-    run(["cmake", "--build", str(BUILD_DIR), "--target", "reset-device"])
-
-    port = args.port
-    if port is None:
-        candidates = list(list_ports.comports())
-        cmsis = [p for p in candidates if "cmsis-dap" in (p.description or "").lower()]
-        pool = cmsis if cmsis else candidates
-        if len(pool) == 1:
-            port = pool[0].device
-        elif len(pool) > 1:
-            log("multiple serial ports found -- pass one explicitly with --port:")
-            for p in pool:
-                log(f"  {p.device}  ({p.description})")
-            sys.exit(1)
-        else:
-            die(
-                "no serial port auto-detected. Pass one explicitly:\n"
-                "       tdf.py monitor --port /dev/tty.usbmodemXXXX   "
-                "(or COM3 on Windows, /dev/ttyACM0 on Linux)"
-            )
-
+    port = pick_serial_port(args.port, list_ports)
     use_color = (not args.no_color) and sys.stdout.isatty()
-    log(f"monitoring {port} @ {args.baud} 8N1 -- Ctrl+C to exit")
 
     try:
-        with serial.Serial(port, args.baud, timeout=1) as ser:
+        ser = serial.Serial(port, args.baud, timeout=1)
+        # Host USB-CDC / tty still holds unread bytes from the previous
+        # monitor session (or from the board logging while no one was
+        # listening). Drop those before SWD reset so they are not mixed
+        # into the new boot log.
+        ser.reset_input_buffer()
+        log("resetting device over SWD")
+        run(["cmake", "--build", str(BUILD_DIR), "--target", "reset-device"])
+        if not ser.is_open:
+            ser.close()
+            port = pick_serial_port(args.port, list_ports)
+            ser = serial.Serial(port, args.baud, timeout=1)
+        log(f"monitoring {port} @ {args.baud} 8N1 -- Ctrl+C to exit")
+        try:
             while True:
                 raw = ser.readline()
                 if not raw:
@@ -214,6 +234,8 @@ def cmd_monitor(args):
                 if not text:
                     continue
                 print(colorize(text) if use_color else text, flush=True)
+        finally:
+            ser.close()
     except KeyboardInterrupt:
         print()
         log("monitor stopped")
@@ -278,77 +300,267 @@ def cmd_create_project(args):
     shutil.copy(NEW_PROJECT_TEMPLATE_DIR / "Src" / "prv_user_code.c", sw_dir / "Src" / "prv_user_code.c")
 
     log(f"created {sw_dir}")
-    log(f"next: cd {sw_dir} && tdf.py build && tdf.py flash")
+    log(f"next: cd {sw_dir} && tdf.py flash monitor")
+
+
+def print_overview():
+    cmds = "\n".join(f"  {name:<18} {COMMANDS[name][0]}" for name in COMMANDS)
+    print(
+        f"""tdf.py -- Tiremo Development Framework
+
+Build, flash, and monitor Tiremo Cortex tutorial firmware from a
+tutorial Sw/ directory (where CMakeLists.txt lives).
+
+Usage:
+  tdf.py <command> [command ...] [options]
+  tdf.py help [command]
+
+Commands:
+{cmds}
+
+Pipeline (run left to right, idf.py-style):
+  tdf.py flash monitor
+  tdf.py build flash monitor
+  tdf.py build -DTIREMO_DEBUG_LEVEL=2 flash monitor --port /dev/cu.usbmodemXXXX
+
+Options (may appear before, between, or after commands):
+  -h, --help             this page
+  -D KEY=VALUE           extra CMake cache var (build / flash)
+  --reconfigure          force a fresh cmake configure
+  --port PORT            serial device for monitor
+  --baud N               monitor baud (default 115200)
+  --no-color             disable monitor log colors
+  -y, --yes              skip clean-device confirmation
+  --dir PARENT_DIR       create-project parent directory
+
+Tab completion: source ./export.sh  then  tdf.py <Tab>
+More on one command: tdf.py help flash
+""",
+        end="",
+    )
+
+
+def print_command_help(topic):
+    page = COMMAND_PAGES.get(topic)
+    if page is None:
+        die(
+            f"no help for {topic!r}\n"
+            "       commands: " + ", ".join(COMMANDS)
+        )
+    print(page, end="" if page.endswith("\n") else "\n")
+
+
+def cmd_help(args):
+    topic = getattr(args, "help_topic", None)
+    if topic:
+        print_command_help(topic)
+    else:
+        print_overview()
+
+
+# Name -> (one-liner, handler). Order is help listing and tab-complete.
+COMMANDS = {
+    "build": ("Configure (if needed) and build", cmd_build),
+    "flash": ("Build (if needed), then flash over SWD", cmd_flash),
+    "monitor": ("Reset over SWD, then stream color-coded UART log output", cmd_monitor),
+    "clean": ("Remove the build/ directory", cmd_clean),
+    "clean-device": ("Mass-erase the connected board's chip flash (asks first)", cmd_clean_device),
+    "create-project": (
+        "Scaffold a new empty Sw/ project (CMakeLists.txt + main.c + empty prv_user_code.c)",
+        cmd_create_project,
+    ),
+    "help": ("Show this overview, or detailed help for one command", cmd_help),
+}
+
+COMMAND_PAGES = {
+    "build": """tdf.py build
+
+Configure (if needed) and compile the firmware in the current Sw/
+directory. Extra -D flags are forwarded to cmake configure.
+
+  tdf.py build
+  tdf.py build -DTIREMO_DEBUG_LEVEL=2
+  tdf.py build --reconfigure
+
+Underneath: cmake -G Ninja -B build -DCMAKE_TOOLCHAIN_FILE=... &&
+cmake --build build
+""",
+    "flash": """tdf.py flash
+
+Build if needed, then program the board over SWD (cmake target flash).
+
+  tdf.py flash
+  tdf.py flash monitor
+  tdf.py build flash monitor
+
+In a pipeline, a preceding build is not repeated.
+""",
+    "monitor": """tdf.py monitor
+
+Drain stale UART bytes, reset the board over SWD, then stream the
+debug log (color-coded by [ERROR]/[WARN]/[INFO]/[DEBUG]). Ctrl+C exits.
+Needs pyserial (./install.sh then source ./export.sh).
+
+  tdf.py monitor
+  tdf.py flash monitor
+  tdf.py monitor --port /dev/cu.usbmodemXXXX --baud 115200 --no-color
+""",
+    "clean": """tdf.py clean
+
+Delete the current project's build/ directory. Does not touch the board.
+
+  tdf.py clean
+""",
+    "clean-device": """tdf.py clean-device
+
+Mass-erase both flash banks on the connected chip. The board will not
+boot until you flash again. Asks for confirmation unless -y.
+
+  tdf.py clean-device
+  tdf.py clean-device -y
+""",
+    "create-project": """tdf.py create-project <name>
+
+Scaffold <name>/Sw/ (CMakeLists.txt, Src/main.c, empty prv_user_code.c)
+inside this repo. Cannot be chained with other commands.
+
+  tdf.py create-project MyDemo
+  tdf.py create-project MyDemo --dir Getting_Started
+""",
+    "help": """tdf.py help [command]
+
+Overview of every command, or the detailed page for one of them.
+
+  tdf.py help
+  tdf.py help flash
+  tdf.py --help
+""",
+}
+
+
+def _take_value(argv, i, flag):
+    """Read FLAG VALUE or FLAG=VALUE. Returns (value, next_index)."""
+    arg = argv[i]
+    prefix = flag + "="
+    if arg.startswith(prefix):
+        value = arg[len(prefix):]
+        if not value:
+            die(f"{flag} needs a value")
+        return value, i + 1
+    if arg != flag:
+        die(f"internal: expected {flag}")
+    if i + 1 >= len(argv):
+        die(f"{flag} needs a value")
+    return argv[i + 1], i + 2
+
+
+def parse_pipeline(argv):
+    """Split argv into an ordered command list plus a shared options namespace.
+
+    Flags may appear before, between, or after commands:
+      tdf.py flash monitor --port /dev/cu.usbmodemXXXX
+      tdf.py build -DTIREMO_DEBUG_LEVEL=2 flash
+    """
+    args = argparse.Namespace(
+        define=[],
+        reconfigure=False,
+        port=None,
+        baud=115200,
+        no_color=False,
+        yes=False,
+        name=None,
+        dir=None,
+        help_topic=None,
+        _built=False,
+    )
+    commands = []
+    i = 0
+    while i < len(argv):
+        arg = argv[i]
+        if arg in ("-h", "--help"):
+            print_overview()
+            sys.exit(0)
+        if arg in COMMANDS:
+            if arg in commands:
+                die(f"'{arg}' is already in the pipeline")
+            commands.append(arg)
+            i += 1
+            if arg == "create-project":
+                if (i < len(argv) and
+                        not argv[i].startswith("-") and
+                        argv[i] not in COMMANDS):
+                    args.name = argv[i]
+                    i += 1
+            elif arg == "help":
+                if (i < len(argv) and
+                        not argv[i].startswith("-")):
+                    args.help_topic = argv[i]
+                    i += 1
+            continue
+        if arg == "-D":
+            if i + 1 >= len(argv):
+                die("-D needs KEY=VALUE")
+            args.define.append(argv[i + 1])
+            i += 2
+            continue
+        if arg.startswith("-D") and len(arg) > 2:
+            args.define.append(arg[2:])
+            i += 1
+            continue
+        if arg == "--reconfigure":
+            args.reconfigure = True
+            i += 1
+            continue
+        if arg == "--port" or arg.startswith("--port="):
+            args.port, i = _take_value(argv, i, "--port")
+            continue
+        if arg == "--baud" or arg.startswith("--baud="):
+            raw, i = _take_value(argv, i, "--baud")
+            try:
+                args.baud = int(raw)
+            except ValueError:
+                die(f"--baud needs an integer, not {raw!r}")
+            continue
+        if arg == "--no-color":
+            args.no_color = True
+            i += 1
+            continue
+        if arg in ("-y", "--yes"):
+            args.yes = True
+            i += 1
+            continue
+        if arg == "--dir" or arg.startswith("--dir="):
+            args.dir, i = _take_value(argv, i, "--dir")
+            continue
+        die(
+            f"unknown argument: {arg}\n"
+            "       commands: " + ", ".join(COMMANDS) + "\n"
+            "       try: tdf.py help"
+        )
+
+    if not commands:
+        print_overview()
+        sys.exit(2)
+    if "help" in commands:
+        if len(commands) != 1:
+            die("help cannot be chained with other commands; use tdf.py help [command]")
+        if args.help_topic is not None and args.help_topic not in COMMAND_PAGES:
+            die(
+                f"no help for {args.help_topic!r}\n"
+                "       commands: " + ", ".join(COMMANDS)
+            )
+    if "create-project" in commands:
+        if len(commands) != 1:
+            die("create-project cannot be chained with other commands")
+        if not args.name:
+            die("create-project needs a project name, e.g. tdf.py create-project MyDemo")
+    return commands, args
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        prog="tdf.py",
-        description="Tiremo Development Framework -- build/flash tool for Tiremo Cortex tutorials.",
-    )
-    sub = parser.add_subparsers(dest="command", required=True)
-
-    def add_define_args(p):
-        p.add_argument(
-            "-D", dest="define", action="append", default=[], metavar="KEY=VALUE",
-            help="Extra CMake cache variable, e.g. -DTIREMO_DEBUG_LEVEL=2 "
-                 "(forwarded to cmake configure)",
-        )
-        p.add_argument(
-            "--reconfigure", action="store_true",
-            help="Force a fresh cmake configure step even if build/ already exists",
-        )
-
-    p_build = sub.add_parser("build", help="Configure (if needed) and build")
-    add_define_args(p_build)
-    p_build.set_defaults(func=cmd_build)
-
-    p_clean = sub.add_parser("clean", help="Remove the build/ directory")
-    p_clean.set_defaults(func=cmd_clean)
-
-    p_flash = sub.add_parser("flash", help="Build (if needed), then flash over SWD")
-    add_define_args(p_flash)
-    p_flash.set_defaults(func=cmd_flash)
-
-    p_monitor = sub.add_parser(
-        "monitor",
-        help="Reset the board over SWD, then stream color-coded UART log output",
-    )
-    p_monitor.add_argument(
-        "--port", metavar="PORT",
-        help="Serial port device, e.g. /dev/tty.usbmodemXXXX, /dev/ttyACM0, COM3 "
-             "(auto-detected if omitted and exactly one candidate is found)",
-    )
-    p_monitor.add_argument(
-        "--baud", type=int, default=115200,
-        help="Baud rate (default: 115200, matching TIREMO_Debug_Init())",
-    )
-    p_monitor.add_argument(
-        "--no-color", action="store_true",
-        help="Disable ANSI color coding by log level",
-    )
-    p_monitor.set_defaults(func=cmd_monitor)
-
-    p_erase = sub.add_parser(
-        "clean-device",
-        help="Mass-erase the connected board's chip flash (destructive; asks first)",
-    )
-    p_erase.add_argument("-y", "--yes", action="store_true", help="Skip the confirmation prompt")
-    p_erase.set_defaults(func=cmd_clean_device)
-
-    p_create = sub.add_parser(
-        "create-project",
-        help="Scaffold a new, empty buildable Sw/ project (CMakeLists.txt + main.c + empty prv_user_code.c)",
-    )
-    p_create.add_argument("name", help="Project name -- used as the CMake target name and the new folder's name")
-    p_create.add_argument(
-        "--dir", metavar="PARENT_DIR",
-        help="Parent directory for the new <name>/ project folder (default: current directory)",
-    )
-    p_create.set_defaults(func=cmd_create_project)
-
-    args = parser.parse_args()
-    args.func(args)
+    commands, args = parse_pipeline(sys.argv[1:])
+    for name in commands:
+        COMMANDS[name][1](args)
 
 
 if __name__ == "__main__":

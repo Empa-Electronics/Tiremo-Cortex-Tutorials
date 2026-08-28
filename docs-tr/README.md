@@ -349,10 +349,16 @@ Ardından, herhangi bir eğitimin `Sw/` dizininden:
 tdf.py build              # yapılandır + derle
 tdf.py flash               # derle, sonra SWD üzerinden flaşla
 tdf.py monitor             # kartı resetle, UART log'unu akıt (renk kodlu)
+tdf.py flash monitor       # zincir: flaşla, sonra izle
+tdf.py build flash monitor
 tdf.py clean                # build/'i kaldır
 tdf.py clean-device         # kartın çip flash'ını topluca sil (önce sorar)
 tdf.py create-project <Name>   # yeni, boş bir Sw/ projesi oluştur
+tdf.py help                    # komut özeti
+tdf.py help flash              # bir komutun ayrıntılı yardımı
 ```
+
+`source ./export.sh` bu komut adları için tab tamamlamayı da kurar (bash ve zsh).
 
 Her komutun gerçekte ne yaptığı, neden elle yazılmış bir Makefile
 yerine CMake kullanıldığı, ve Windows'a özgü notlar için
@@ -387,7 +393,7 @@ bakın.
 - [x] [Tiremo_Cloud/05-Live_Shadow_Delta_Handling](../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — derlendi (`.text` 34928), flaşlandı; açılış GET/report sonra `subscribed update/delta`; canlı uygulamak için konsolda `desired` değiştirin (sıfırlama yok)
 - [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — üretici yazılımı yazıldı; henüz kartta doğrulanmadı
 - [ ] [Tiremo_Cloud/07-Tiremo_Jobs](../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — derlendi; 06 hazır döngüsü + jobs notify/start-next/health SUCCEEDED; henüz kartta doğrulanmadı
-- [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — yalnızca README iskeleti
+- [x] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — derlendi (`.text` 55012); BluFi zinciri + Cloud + canlı shadow bayrakları + HEALTH_CHECK + kapılı SHT40/LIS2DE12 telemetrisi; bu geçişte karta flaşlanmadı
 - [x] [Intelligence/01-Data_Collection](../Intelligence/Feature_Tutorials/01-Data_Collection/) — UI yürüyüşü yazıldı
 - [x] [Intelligence/02-Data_Sources](../Intelligence/Feature_Tutorials/02-Data_Sources/) — UI yürüyüşü yazıldı
 - [x] [Intelligence/03-Experiments](../Intelligence/Feature_Tutorials/03-Experiments/) — UI yürüyüşü yazıldı

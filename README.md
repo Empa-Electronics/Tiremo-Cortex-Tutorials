@@ -343,10 +343,16 @@ Then, from any tutorial's `Sw/` directory:
 tdf.py build             # configure + build
 tdf.py flash              # build, then flash over SWD
 tdf.py monitor            # reset the board, stream the UART log (color-coded)
+tdf.py flash monitor      # chain: flash, then monitor
+tdf.py build flash monitor
 tdf.py clean              # remove build/
 tdf.py clean-device       # mass-erase the board's chip flash (asks first)
 tdf.py create-project <Name>   # scaffold a new, empty Sw/ project
+tdf.py help                    # command overview
+tdf.py help flash              # detailed help for one command
 ```
+
+`source ./export.sh` also installs tab completion for those command names (bash and zsh).
 
 See [01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
 for the full story — what each command actually does, why CMake instead
@@ -380,7 +386,7 @@ of a hand-written Makefile, and Windows-specific notes.
 - [x] [Tiremo_Cloud/05-Live_Shadow_Delta_Handling](Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/) — built (`.text` 34928), flashed; boot GET/report then `subscribed update/delta`; flip `desired` in the console to apply live (no reboot)
 - [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — built (`.text` 37528); 05 ready loop + `pub/{product}/{device}/telemetry` / `alarm`; not yet flashed/verified on hardware
 - [ ] [Tiremo_Cloud/07-Tiremo_Jobs](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — built; 06 ready loop + jobs notify/start-next/health SUCCEEDED; not yet flashed/verified on hardware
-- [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — README scaffold only
+- [x] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — built (`.text` 55012); BluFi cascade + Cloud + live shadow flags + HEALTH_CHECK + gated SHT40/LIS2DE12 telemetry; not yet flashed on a board in this pass
 - [x] [Intelligence/01-Data_Collection](Intelligence/Feature_Tutorials/01-Data_Collection/) — UI walkthrough written
 - [x] [Intelligence/02-Data_Sources](Intelligence/Feature_Tutorials/02-Data_Sources/) — UI walkthrough written
 - [x] [Intelligence/03-Experiments](Intelligence/Feature_Tutorials/03-Experiments/) — UI walkthrough written

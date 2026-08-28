@@ -3,7 +3,8 @@
 Screenshots for [Getting credentials from the Tiremo UI](../Feature_Tutorials/03-Fleet_Provisioning_By_Claim/#getting-credentials-from-the-tiremo-ui),
 [Sending a shadow update in the Tiremo UI](../Feature_Tutorials/05-Live_Shadow_Delta_Handling/#sending-a-shadow-update-in-the-tiremo-ui),
 [Seeing telemetry and alarms in the Tiremo UI](../Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/#seeing-telemetry-and-alarms-in-the-tiremo-ui),
-and [Creating a job in the Tiremo UI](../Feature_Tutorials/07-Tiremo_Jobs/#creating-a-job-in-the-tiremo-ui).
+[Creating a job in the Tiremo UI](../Feature_Tutorials/07-Tiremo_Jobs/#creating-a-job-in-the-tiremo-ui),
+and [Building a dashboard in the Tiremo UI](../Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/#building-a-dashboard-in-the-tiremo-ui).
 
 | File | What it shows |
 |---|---|
@@ -24,6 +25,8 @@ and [Creating a job in the Tiremo UI](../Feature_Tutorials/07-Tiremo_Jobs/#creat
 | `tiremo_ui_job_create_step2.png` | Create job step 2 — Snapshot, **Next** |
 | `tiremo_ui_job_create_step3.png` | Create job step 3 — **Submit** |
 | `tiremo_ui_job_details_succeeded.png` | Job details — **Job Executions** **Succeeded** |
+| `tiremo_ui_cortex_dashboard.png` | Dashboards — On/Off shadow widgets plus telemetry chart and climate |
+| `tiremo_ui_dashboard_add_widget.png` | Dashboards — **Add Widget** catalog |
 
 Credential values go into gitignored `certs/claim_cert.pem`, `certs/claim_key.pem`,
 and `aws_iot_config.h` (`TIREMO_AWS_PRODUCT_IDENTIFIER`,
