@@ -139,7 +139,7 @@ than `MAJOR` / `MINOR` / `WARNING` / `INFO`):
 
 Hysteresis: raise at **≥ 35 °C**, clear at **≤ 30 °C**. Sitting at 40 °C
 does not republish `TEMP_HIGH`. Sitting at 22 °C does not republish the
-clear. Production Firmware 02 extends this latch to more sensors.
+clear. A fuller fleet build would extend this latch to more sensors.
 
 `reporting.enabled=false` (live delta from tutorial 05) pauses telemetry
 publishes. Alarms still evaluate so a USER tap remains visible.

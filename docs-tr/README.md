@@ -40,9 +40,8 @@ on LED'lik bankayı sürün. Bu bölüm için WiFi veya bulut hesabı gerekmez.
 Oradan sonra eğitimler [Eğitimler](#eğitimler) altında konuya göre
 düzenlenmiştir, kabaca gerçek bir devreye almanın izleyeceği sırayla: önce
 yerel sensörler, sonra ESP32 WiFi, sonra bulut mesajlaşma, sonra Tiremo Cloud,
-sonra çalışan bir prototipi filoya hazır bir cihaza dönüştüren üretim
-davranışları (shadow tabanlı LED'ler, alarmlar, telemetri, işler, fabrika
-sıfırlama).
+sonra Intelligence (telemetri toplama, Tiremo UI'da eğitim, bir
+Solution dağıtma).
 
 Her konu iki tür eğitime ayrılır:
 
@@ -275,12 +274,12 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../Production_Firmware/">Production Firmware</a></strong>
+                <strong><a href="./Intelligence/">Intelligence</a></strong>
             </td>
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Çalışan bir prototipi filoya hazır bir cihaza dönüştüren davranışlar: shadow tabanlı LED'ler, histerezisli kenar alarmları, gruplanmış telemetri, Tiremo Jobs, fabrika sıfırlama ve bağlantı kurtarma — hepsi tam kapsamlı bir yapı ile taçlanır.
+                Eğitim verisini toplayın (Data Explorer veya tercih ettiğiniz herhangi bir yol), bir Data Source'a dönüştürün, bir Experiment eğitin ve bir Solution dağıtın, cihaz üzerindeki bir Edge paketi dahil, Tiremo UI'dan. Özellik eğitimleri yalnızca UI'dır. Üç tasarım eğitimi LIS2DE12 üretici yazılımı yükler: örnek başına telemetri, yerel 8 örnekli pencere, ardından HMR Edge çıkarımı.
             </td>
         </tr>
         <tr>
@@ -288,31 +287,19 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/01-Shadow_Driven_LED_State_Machine/">Shadow-Driven LED State Machine</a></td>
-            <td><a href="../Production_Firmware/Design_Tutorials/01-Full_Event_Loop_Integration/">Full Event Loop Integration (Capstone)</a></td>
+            <td><a href="./Intelligence/Feature_Tutorials/01-Data_Collection/">Data Collection</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/">Accelerometer Telemetry</a></td>
         </tr>
         <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/02-Edge_Alarms_With_Hysteresis/">Edge Alarms with Hysteresis</a></td>
-            <td><a href="../Production_Firmware/Design_Tutorials/02-Add_A_New_Sensor_End_To_End/">Add a New Sensor End-to-End</a></td>
+            <td><a href="./Intelligence/Feature_Tutorials/02-Data_Sources/">Data Sources</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/02-Accelerometer_Windowing/">Accelerometer Windowing</a></td>
         </tr>
         <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/03-Batched_Telemetry_Publisher/">Batched Telemetry Publisher</a></td>
-            <td></td>
+            <td><a href="./Intelligence/Feature_Tutorials/03-Experiments/">Experiments</a></td>
+            <td><a href="./Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/">HMR Gesture Classifier on the Edge</a></td>
         </tr>
         <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/04-AWS_IoT_Jobs_Health_Check/">Tiremo Jobs — Health Check</a></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/05-Reject_Unsupported_Jobs/">Reject Unsupported Jobs (OTA Stub)</a></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/06-Factory_Reset/">Factory Reset</a></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="../Production_Firmware/Feature_Tutorials/07-Link_Recovery_And_Backoff/">Link Recovery & Backoff</a></td>
+            <td><a href="./Intelligence/Feature_Tutorials/04-Solutions/">Solutions</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -401,6 +388,13 @@ bakın.
 - [ ] [Tiremo_Cloud/06-Publishing_Alarms_And_Telemetry](../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) — üretici yazılımı yazıldı; henüz kartta doğrulanmadı
 - [ ] [Tiremo_Cloud/07-Tiremo_Jobs](../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — derlendi; 06 hazır döngüsü + jobs notify/start-next/health SUCCEEDED; henüz kartta doğrulanmadı
 - [ ] [Tiremo_Cloud/Design/01-Sensor_Telemetry_And_Shadow_Control](../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/) — yalnızca README iskeleti
+- [x] [Intelligence/01-Data_Collection](../Intelligence/Feature_Tutorials/01-Data_Collection/) — UI yürüyüşü yazıldı
+- [x] [Intelligence/02-Data_Sources](../Intelligence/Feature_Tutorials/02-Data_Sources/) — UI yürüyüşü yazıldı
+- [x] [Intelligence/03-Experiments](../Intelligence/Feature_Tutorials/03-Experiments/) — UI yürüyüşü yazıldı
+- [x] [Intelligence/04-Solutions](../Intelligence/Feature_Tutorials/04-Solutions/) — UI yürüyüşü yazıldı
+- [x] [Intelligence/Design/01-Accelerometer_Telemetry](../Intelligence/Design_Tutorials/01-Accelerometer_Telemetry/) — `Sw/` örnek başına `acc_x`/`acc_y`/`acc_z` telemetrisi yayınlar
+- [x] [Intelligence/Design/02-Accelerometer_Windowing](../Intelligence/Design_Tutorials/02-Accelerometer_Windowing/) — `Sw/` UART yuvarlanan 8×3 pencere
+- [x] [Intelligence/Design/03-Edge_Deployment_HMR](../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/) — uçtan uca HMR vakası; `Datasets/` ve `Sw/` (`Sw/Tiremo_AI/` ile) çıkarım üretici yazılımı
 
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 
