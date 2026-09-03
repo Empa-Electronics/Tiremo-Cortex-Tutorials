@@ -32,7 +32,7 @@ SHT40 and LIS2DE12 share I2C2. Before writing either sensor driver, get the bus 
 
 ## Prerequisites
 
-- [Getting_Started](../../../Getting_Started/) complete — this tutorial reuses its SysTick and debug-UART logging unchanged, and assumes `tdf.py`/`install.sh`/`export.sh` are already set up
+- [Getting_Started](../../../Getting_Started/) complete — this tutorial reuses its SysTick and debug-UART logging unchanged, and assumes `tdf.py` plus the setup scripts (`install.sh`/`export.sh`, or `install.ps1`/`export.ps1`, or `install.bat`/`export.bat`) are already run
 - `tdf.py monitor` to watch the probe results (see [Getting_Started/04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution) for setup)
 - An ABOV A34G43A Starter Kit connected over its onboard SWD debugger, with the SHT40 and LIS2DE12 present on I2C2
 

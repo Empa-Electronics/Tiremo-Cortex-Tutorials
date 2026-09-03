@@ -198,7 +198,7 @@
 
 /* Multi Bank */
 #define FMC_FEATURE_CFMC_BANK_SWITCH_CMD_TYPE         2
-#define FMC_FEATURE_CFMC_BANK_SWITCH_CMD_OFFSET       0x0F000600
+#define FMC_FEATURE_CFMC_BANK_SWITCH_CMD_OFFSET       0x0F000C00
 #define CFMC_BANK_WKI_KEY                             0x5A3C0F
 #define SET_CFMC_BANK_MODE(Peri,Data)                 SET_BIT_KEY_BITNAME(Peri, CFMC_BANK_WKI_KEY, BANK_WTIDKY, Data, CFMC, BANK, BM)
 #define SET_CFMC_BANK_SWITCH(Peri,Data)               SET_BIT_KEY_BITNAME(Peri, CFMC_BANK_WKI_KEY, BANK_WTIDKY, Data, CFMC, BANK, BS)
@@ -1025,18 +1025,15 @@ RAMFUNC static __inline void CFMC_EraseUserInfo(uint32_t un32PageAddr, FMC_ERASE
 
 RAMFUNC static __inline void CFMC_SetMultiBankConfig(bool bRequestMultiBank)
 {
-    CFMC_Type *ptRegBase = (CFMC_Type *)CFMC_REG_BASE;
+    uint32_t un32BankModeCMD[] = {0x5A3C0F10, 0xFFFFFFFF};
+
+    CFMC_EraseUserInfo(FMC_FEATURE_CFMC_BANK_SWITCH_CMD_OFFSET, FMC_PAGE_ERASE_MODE, PRV_CMFC_USERINFO_BANK_SWITCH_ID);
 
     if(bRequestMultiBank)
     {
-        SET_CFMC_BANK_MODE(ptRegBase, !bRequestMultiBank);
-        SET_CFMC_BANK_SWITCH(ptRegBase, bRequestMultiBank);
+        CFMC_WriteToUserInfo(FMC_FEATURE_CFMC_BANK_SWITCH_CMD_OFFSET, (uint32_t *)&un32BankModeCMD, sizeof(un32BankModeCMD) >> 2, PRV_CMFC_USERINFO_BANK_SWITCH_ID);
     }
-    else
-    {
-        SET_CFMC_BANK_MODE(ptRegBase, !bRequestMultiBank);
-        SET_CFMC_BANK_SWITCH(ptRegBase, !bRequestMultiBank);
-    }
+
     return;
 }
 

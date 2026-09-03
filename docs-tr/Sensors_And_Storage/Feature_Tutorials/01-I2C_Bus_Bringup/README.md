@@ -42,7 +42,7 @@ yerine taze, minimal bir `Sw/` ile başlıyor.
 
 ## Ön Koşullar
 
-- [Getting_Started](../../../../Getting_Started/README.md) tamamlanmış — bu eğitim onun SysTick'ini ve debug-UART loglamasını değişmeden yeniden kullanır, ve `tdf.py`/`install.sh`/`export.sh`'ın zaten kurulu olduğunu varsayar
+- [Getting_Started](../../../../Getting_Started/README.md) tamamlanmış — bu eğitim onun SysTick'ini ve debug-UART loglamasını değişmeden yeniden kullanır, ve `tdf.py` ile kurulum betiklerinin (`install.sh`/`export.sh`, ya da `install.ps1`/`export.ps1`, ya da `install.bat`/`export.bat`) zaten çalıştırılmış olduğunu varsayar
 - Probe sonuçlarını izlemek için `tdf.py monitor` (kurulum için [Getting_Started/04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution) bakın)
 - SHT40 ve LIS2DE12'nin I2C2 üzerinde bulunduğu, SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
 

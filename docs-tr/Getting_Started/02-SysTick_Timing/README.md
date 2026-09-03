@@ -130,10 +130,11 @@ tdf.py build
 tdf.py flash
 ```
 
-(Yeni bir shell'de ilk seferinde, depo kökünden `source
-../../../export.sh` `tdf.py`'yi `PATH`'e ekler — `tdf.py`'nin aslında ne
-olduğu ve bu deponun neden ham `cmake`/`make` çağrıları yerine onu
-kullandığı için [01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#solution)
+(Yeni bir shell'de ilk seferinde, depo kökünden: `source export.sh`
+(bash/zsh), `. .\export.ps1` (PowerShell) ya da `export.bat` (cmd.exe)
+`tdf.py`'yi `PATH`'e ekler — `tdf.py`'nin aslında ne olduğu ve bu deponun
+neden ham `cmake`/`make` çağrıları yerine onu kullandığı için
+[01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#solution)
 bakın.)
 
 Tutorial 01 ile aynı paylaşılan satıcı SDK'sı

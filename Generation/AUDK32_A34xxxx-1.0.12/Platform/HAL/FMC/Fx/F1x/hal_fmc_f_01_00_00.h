@@ -276,12 +276,16 @@ RAMFUNC static __inline HAL_ERR_e FMC_Erase (FMC_ID_e eFmcID, volatile uint32_t 
     /* Setup chip erase protection */
     if (bIsSystemFlash)
     {
-        SET_CFMC_CR_CHIP_ERS_PROT(ptRegBase, true);
         un32SelectedFlash = FMC_CR_CS_SYSFLASH;
     }
     else
     {
         un32SelectedFlash = FMC_CR_CS_FLASH;
+    }
+
+    if ((eFmcID == FMC_ID_CFMC) && (eEraseMode == FMC_CHIP_ERASE_MODE))
+    {
+        SET_CFMC_CR_CHIP_ERS_PROT(ptRegBase, true);
     }
 
     /* Page buffer has to be set 0xFFFFFFFF on erase operation */
@@ -315,23 +319,17 @@ RAMFUNC static __inline HAL_ERR_e FMC_Erase (FMC_ID_e eFmcID, volatile uint32_t 
     } while(un32State);
 
 #if (CONFIG_DEBUG == 1)
-    if (bIsSystemFlash)
+    if ((*(uint32_t *)CFMC_SEUDO_RPROTR) == 0xFFFFFFFF)
     {
-        if (eEraseMode == FMC_CHIP_ERASE_MODE)
-        {
-            tRdProtectConfig.eRdProtectLevel = FMC_RD_PROTECT_LEVEL0;
-            FMC_SetReadProtect(eFmcID, tRdProtectConfig);
-        }
+        tRdProtectConfig.eRdProtectLevel = FMC_RD_PROTECT_LEVEL0;
+        FMC_SetReadProtect(eFmcID, tRdProtectConfig);
     }
 #endif
 
 ERS_EXIT:
-    if (bIsSystemFlash)
+    if ((eFmcID == FMC_ID_CFMC) && (eEraseMode == FMC_CHIP_ERASE_MODE))
     {
-        if (eEraseMode == FMC_CHIP_ERASE_MODE)
-        {
-            SET_CFMC_CR_CHIP_ERS_PROT(ptRegBase, false);
-        }
+        SET_CFMC_CR_CHIP_ERS_PROT(ptRegBase, false);
     }
 
     /* Come back to Read mode */

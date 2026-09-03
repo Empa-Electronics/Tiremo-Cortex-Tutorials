@@ -1,3 +1,4 @@
 {
-    "python.terminal.activateEnvironment": false
+    "python.terminal.activateEnvironment": false,
+    "cmake.sourceDirectory": "/Users/osmancangudul/Documents/codes/Tiremo-Cortex-Tutorials/Getting_Started/01-Hello_Blink/Sw"
 }

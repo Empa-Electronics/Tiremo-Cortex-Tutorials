@@ -63,8 +63,8 @@ static uint32_t s_aun32BootBRomCMD[] =
     0xED8E0154, 0xAA910011
 };
 #elif (FMC_FEATURE_CFMC_BANK_SWITCH_CMD_TYPE == 2)
-static uint32_t s_aun32BootARomCMD = 0x5A3C0F10;
-static uint32_t s_aun32BootBRomCMD = 0x5A3C0F00;
+static uint32_t s_aun32BootARomCMD[] = {0x5A3C0F10, 0xFFFFFFFF};
+static uint32_t s_aun32BootBRomCMD[] = {0x5A3C0F00, 0xFFFFFFFF};
 #else
 static uint32_t s_aun32BootARomCMD[] =
 {

@@ -35,7 +35,7 @@ The USER button is only used for one thing in the production firmware — a 10-s
 
 - [03-Debug_UART_Logging](../03-Debug_UART_Logging/) — this tutorial's LED loop and logging are exactly Tutorial 03's, with button handling added
 - `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` (see [01-Hello_Blink's Prerequisites](../01-Hello_Blink/#prerequisites))
-- To see the press/release/hold log lines: either `tdf.py monitor` (see **Solution** below — needs `pyserial`, which `./install.sh` sets up in a dedicated `tdf_venv/`), or any USB-to-serial terminal at 115200 8N1
+- To see the press/release/hold log lines: either `tdf.py monitor` (see **Solution** below — needs `pyserial`, which `./install.sh` / `install.ps1` / `install.bat` sets up in a dedicated `tdf_venv/`), or any USB-to-serial terminal at 115200 8N1
 - An ABOV A34G43A Starter Kit connected over its onboard SWD debugger, with the USER button accessible
 
 ## Understanding Debounce (and Why the Reference Driver Doesn't Have Any)
@@ -93,7 +93,8 @@ tdf.py flash
 
 (See [01-Hello_Blink's Solution](../01-Hello_Blink/#solution) for what
 `tdf.py` is and how to get it on `PATH` via `./install.sh` + `source
-./export.sh`.)
+./export.sh` — on Windows, `install.ps1` + `. .\export.ps1`, or
+`install.bat` + `export.bat`.)
 
 Same shared vendor SDK and CMake build shape as every prior tutorial
 ([`Generation/`](../../Generation/) at the repo root). No new vendor
@@ -117,16 +118,30 @@ tdf.py monitor
 This resets the board over SWD (a new `reset-device` CMake target,
 `init; reset run; shutdown` — same OpenOCD, no reprogramming) and then
 streams the log, color-coded by level (`[ERROR]` red, `[WARN]` yellow,
-`[INFO]` green, `[DEBUG]` cyan). It needed one real new dependency,
-`pyserial` — installed into a dedicated `tdf_venv/` by `./install.sh`
-rather than a plain `pip install`, because most current Python installs
-(Homebrew, most Linux distros) now refuse system-wide pip installs
-outright (PEP 668); `source ./export.sh` activates that venv
+`[INFO]` green, `[DEBUG]` cyan — on Windows `tdf.py monitor` turns on the
+console's ANSI processing so the colors render). It needed one real new
+dependency, `pyserial` — installed into a dedicated `tdf_venv/` by
+`./install.sh` rather than a plain `pip install`, because most current
+Python installs (Homebrew, most Linux distros) now refuse system-wide pip
+installs outright (PEP 668); `source ./export.sh` activates that venv
 automatically. Full setup, first time only:
 
 ```sh
+# macOS / Linux
 ./install.sh          # also offers to create tdf_venv/ + install pyserial into it
 source ./export.sh     # activates tdf_venv/ for this shell session
+```
+
+```powershell
+# Windows (PowerShell)
+.\install.ps1
+. .\export.ps1
+```
+
+```bat
+:: Windows (cmd.exe)
+install.bat
+export.bat
 ```
 
 **Genuinely verified with this, for real, on the connected board:** the

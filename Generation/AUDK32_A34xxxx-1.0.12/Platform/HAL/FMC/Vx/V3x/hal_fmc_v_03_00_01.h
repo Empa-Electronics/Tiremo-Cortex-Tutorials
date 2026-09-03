@@ -1031,18 +1031,15 @@ RAMFUNC static __inline void CFMC_EraseUserInfo(uint32_t un32PageAddr, FMC_ERASE
 
 RAMFUNC static __inline void CFMC_SetMultiBankConfig(bool bRequestMultiBank)
 {
-    CFMC_Type *ptRegBase = (CFMC_Type *)CFMC_REG_BASE;
+    uint32_t un32BankModeCMD = 0x5A3C0F10;
+
+    CFMC_EraseUserInfo(FMC_FEATURE_CFMC_BANK_SWITCH_CMD_OFFSET, FMC_PAGE_ERASE_MODE, PRV_CMFC_USERINFO_BANK_SWITCH_ID);
 
     if(bRequestMultiBank)
     {
-        SET_CFMC_BANK_MODE(ptRegBase, !bRequestMultiBank);
-        SET_CFMC_BANK_SWITCH(ptRegBase, bRequestMultiBank);
+        CFMC_WriteToUserInfo(FMC_FEATURE_CFMC_BANK_SWITCH_CMD_OFFSET, (uint32_t *)&un32BankModeCMD, sizeof(un32BankModeCMD) >> 2, PRV_CMFC_USERINFO_BANK_SWITCH_ID);
     }
-    else
-    {
-        SET_CFMC_BANK_MODE(ptRegBase, !bRequestMultiBank);
-        SET_CFMC_BANK_SWITCH(ptRegBase, !bRequestMultiBank);
-    }
+
     return;
 }
 

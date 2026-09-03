@@ -59,9 +59,9 @@ debounce edilmiş şekilde.
 - [03-Debug_UART_Logging](../../../Getting_Started/03-Debug_UART_Logging/README.md) — bu eğitimin LED döngüsü ve loglaması, buton işleme eklenmiş Tutorial 03'ün ta kendisi
 - `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites))
 - Basma/bırakma/tutma log satırlarını görmek için: ya `tdf.py monitor`
-  (aşağıdaki **Çözüm**'e bakın — `pyserial` gerektiriyor, `./install.sh`
-  bunu ayrı bir `tdf_venv/` içinde kurar), ya da 115200 8N1'de herhangi
-  bir USB-seri terminal
+  (aşağıdaki **Çözüm**'e bakın — `pyserial` gerektiriyor, `./install.sh` /
+  `install.ps1` / `install.bat` bunu ayrı bir `tdf_venv/` içinde kurar), ya
+  da 115200 8N1'de herhangi bir USB-seri terminal
 - USER butonuna erişilebilir, SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
 
 ## Debounce'u Anlamak (ve Referans Sürücünün Neden Hiç Debounce'u Olmadığı)
@@ -119,7 +119,8 @@ tdf.py build
 tdf.py flash
 ```
 
-(`tdf.py`'nin ne olduğu ve `./install.sh` + `source ./export.sh` ile
+(`tdf.py`'nin ne olduğu ve `./install.sh` + `source ./export.sh` — Windows'ta
+`install.ps1` + `. .\export.ps1` ya da `install.bat` + `export.bat` — ile
 nasıl `PATH`'e ekleneceği için [01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#solution)
 bakın.)
 
@@ -146,8 +147,9 @@ tdf.py monitor
 Bu, kartı SWD üzerinden resetler (yeni bir `reset-device` CMake hedefi,
 `init; reset run; shutdown` — aynı OpenOCD, yeniden programlama yok) ve
 ardından log'u seviyeye göre renk kodlu olarak akıtır (`[ERROR]` kırmızı,
-`[WARN]` sarı, `[INFO]` yeşil, `[DEBUG]` camgöbeği). Gerçek, yeni bir
-bağımlılık gerektirdi: `pyserial` — düz bir `pip install` yerine
+`[WARN]` sarı, `[INFO]` yeşil, `[DEBUG]` camgöbeği — Windows'ta `tdf.py
+monitor` konsolun ANSI işlemesini açar, böylece renkler görünür). Gerçek,
+yeni bir bağımlılık gerektirdi: `pyserial` — düz bir `pip install` yerine
 `./install.sh` tarafından ayrı bir `tdf_venv/` içine kuruldu, çünkü
 çoğu güncel Python kurulumu (Homebrew, çoğu Linux dağıtımı) artık
 sistem geneline pip kurulumlarını doğrudan reddediyor (PEP 668);
@@ -155,8 +157,21 @@ sistem geneline pip kurulumlarını doğrudan reddediyor (PEP 668);
 tam kurulum:
 
 ```sh
+# macOS / Linux
 ./install.sh          # tdf_venv/ oluşturmayı + içine pyserial kurmayı da önerir
 source ./export.sh     # bu shell oturumu için tdf_venv/'i etkinleştirir
+```
+
+```powershell
+# Windows (PowerShell)
+.\install.ps1
+. .\export.ps1
+```
+
+```bat
+:: Windows (cmd.exe)
+install.bat
+export.bat
 ```
 
 **Bununla, bağlı kartta, gerçekten doğrulanan:** önyükleme satırı ve

@@ -136,7 +136,8 @@ tdf.py build
 tdf.py flash
 ```
 
-(`tdf.py`'nin ne olduğu ve `./install.sh` + `source ./export.sh` ile
+(`tdf.py`'nin ne olduğu ve `./install.sh` + `source ./export.sh` — Windows'ta
+`install.ps1` + `. .\export.ps1` ya da `install.bat` + `export.bat` — ile
 nasıl `PATH`'e ekleneceği için [01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#solution)
 bakın.)
 

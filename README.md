@@ -333,9 +333,27 @@ this repo once at [`Generation/`](Generation/), and one build/flash CLI:
 same role `idf.py` plays for ESP-IDF). First time only:
 
 ```sh
+# macOS / Linux
 ./install.sh
 source ./export.sh
 ```
+
+```powershell
+# Windows (PowerShell)
+.\install.ps1
+. .\export.ps1
+```
+
+```bat
+:: Windows (cmd.exe)
+install.bat
+export.bat
+```
+
+`tdf.py` itself is plain Python and runs the same on all three — the
+only per-OS pieces are these setup scripts (which check for the
+toolchain and wire up `tdf_venv/` + `PATH`). No Git Bash or WSL needed
+on Windows. `python tools\tdf.py build` works with no setup step at all.
 
 Then, from any tutorial's `Sw/` directory:
 
@@ -352,7 +370,7 @@ tdf.py help                    # command overview
 tdf.py help flash              # detailed help for one command
 ```
 
-`source ./export.sh` also installs tab completion for those command names (bash and zsh).
+`source ./export.sh` (bash/zsh) and `. .\export.ps1` (PowerShell) also install tab completion for those command names.
 
 See [01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
 for the full story — what each command actually does, why CMake instead

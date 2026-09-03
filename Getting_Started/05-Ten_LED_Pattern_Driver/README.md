@@ -35,7 +35,7 @@ The production firmware selects LED patterns from shadow state (cloud-driven), b
 
 - [04-Button_Read_And_Debounce](../04-Button_Read_And_Debounce/) — this tutorial reuses its debounce state machine and its `Drivers/button` verbatim
 - `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` (see [01-Hello_Blink's Prerequisites](../01-Hello_Blink/#prerequisites))
-- `tdf.py monitor` to watch the scene changes (see [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution) for setup — needs `pyserial`, via `./install.sh`'s `tdf_venv/`)
+- `tdf.py monitor` to watch the scene changes (see [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution) for setup — needs `pyserial`, via the `tdf_venv/` that `./install.sh` / `install.ps1` / `install.bat` creates)
 - An ABOV A34G43A Starter Kit connected over its onboard SWD debugger, with all ten LEDs and the USER button accessible
 
 ## Understanding the Pattern Engine (There's No Reference to Copy From)

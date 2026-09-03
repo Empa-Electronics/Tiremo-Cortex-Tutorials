@@ -19,10 +19,30 @@ release.
 
 ### Added
 
+- Native Windows setup scripts alongside the bash ones: `install.ps1` /
+  `export.ps1` (PowerShell) and `install.bat` / `export.bat` (cmd.exe),
+  plus a `tools/tdf.cmd` shim so bare `tdf` works, and PowerShell tab
+  completion (`tools/completions/tdf.ps1`). `tdf.py` and the CMake
+  build/toolchain files were already cross-platform; `tdf.py monitor` now
+  also enables the Windows console's ANSI processing so its log colors
+  render. No Git Bash or WSL needed on Windows. `tdf.py build` verified
+  end-to-end on Windows 11 (Arm GNU Toolchain 14.2.1, CMake 4.4.0, Ninja
+  1.13.2); `tdf.py flash` on Windows still needs a hardware run.
+
+- All three `install.*` scripts now treat Python 3 as a checked,
+  installable prerequisite (it runs `tdf.py` itself), not something
+  assumed present: it shows in the `[x]/[ ]` list and, when missing, is
+  offered through the platform package manager — `brew install python3`,
+  `sudo apt-get install -y python3 python3-venv python3-pip`,
+  `winget install Python.Python.3.13`, or `choco install python`.
+  `install.sh` no longer aborts under `set -e` when Python or the
+  `python3-venv` package is absent.
+
 - `tdf.py` accepts chained commands, idf.py-style (`tdf.py flash monitor`,
   `tdf.py build flash monitor`). `tdf.py help` / `tdf.py help <command>`
-  print an overview or a per-command page. `source ./export.sh` installs
-  bash/zsh tab completion for those command names.
+  print an overview or a per-command page. `source ./export.sh` (bash/zsh)
+  or `. .\export.ps1` (PowerShell) installs tab completion for those
+  command names.
 
 - New curriculum section [`Intelligence/`](Intelligence/): four Feature
   Tutorials (Data Collection, Data Sources, Experiments, Solutions) that

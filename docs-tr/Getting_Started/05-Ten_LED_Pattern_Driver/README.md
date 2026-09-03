@@ -55,7 +55,7 @@ edilmiş bir USER butonu (Tutorial 04) döngüyü manuel olarak ilerletir.
 
 - [04-Button_Read_And_Debounce](../../../Getting_Started/04-Button_Read_And_Debounce/README.md) — bu eğitim onun debounce durum makinesini ve `Drivers/button`'unu birebir yeniden kullanır
 - `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites))
-- Sahne değişikliklerini izlemek için `tdf.py monitor` (kurulum için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution) bakın — `pyserial` gerektiriyor, `./install.sh`'ın `tdf_venv/`'i üzerinden)
+- Sahne değişikliklerini izlemek için `tdf.py monitor` (kurulum için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution) bakın — `pyserial` gerektiriyor, `./install.sh` / `install.ps1` / `install.bat`'ın oluşturduğu `tdf_venv/` üzerinden)
 - On LED'in tamamına ve USER butonuna erişilebilir, SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
 
 ## Desen Motorunu Anlamak (Kopyalanacak Bir Referans Yok)

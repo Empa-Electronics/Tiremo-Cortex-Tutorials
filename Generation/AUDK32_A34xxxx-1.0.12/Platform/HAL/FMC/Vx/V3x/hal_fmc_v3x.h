@@ -28,6 +28,8 @@
 #include "hal_fmc_v_03_00_02.h"
 #elif (CONFIG_FMC_VER_MINOR == 3)
 #include "hal_fmc_v_03_00_03.h"
+#elif (CONFIG_FMC_VER_MINOR == 4)
+#include "hal_fmc_v_03_00_04.h"
 #else
 #error "define CONFIG_FMC_VER_MINOR of V-type FMC at config_xxx.h"
 #endif

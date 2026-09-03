@@ -113,8 +113,9 @@ tdf.py build
 tdf.py flash
 ```
 
-(First time in a new shell, `source ../../../export.sh` from the repo
-root puts `tdf.py` on `PATH` — see [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)
+(First time in a new shell, from the repo root: `source export.sh`
+(bash/zsh), `. .\export.ps1` (PowerShell), or `export.bat` (cmd.exe) puts
+`tdf.py` on `PATH` — see [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)
 for what `tdf.py` actually is, and why this repo uses it instead of raw
 `cmake`/`make` invocations.)
 

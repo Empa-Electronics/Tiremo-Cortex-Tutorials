@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tdf.py -- Tiremo Development Framework CLI.
+r"""tdf.py -- Tiremo Development Framework CLI.
 
 The single command-line entry point for building, flashing, and managing
 Tiremo Cortex tutorial firmware -- replaces raw
@@ -27,14 +27,20 @@ lives):
     tdf.py help                        this overview
     tdf.py help flash                  detailed help for one command
 
-Tab-complete command names after `source ./export.sh` (bash or zsh).
+Tab-complete command names after `source ./export.sh` (bash or zsh), or
+`. .\export.ps1` (PowerShell).
+
+On Windows this runs the same in cmd.exe and PowerShell -- no Git Bash or
+WSL needed. Use `install.ps1`/`export.ps1` (PowerShell) or
+`install.bat`/`export.bat` (cmd.exe) instead of the `.sh` scripts;
+`python tools\tdf.py build` works with no setup step at all.
 
 `monitor` is the one command that isn't pure CMake delegation underneath
 -- resetting the board is still just `cmake --build build --target
 reset-device`, but reading the UART afterwards needs a serial port, and
 CMake/OpenOCD has no such concept. That part uses `pyserial`
-(`python3 -m pip install pyserial`, or `./install.sh`, which checks for
-it alongside the compiler toolchain).
+(`python3 -m pip install pyserial`, or `./install.sh` /
+`.\install.ps1`, which checks for it alongside the compiler toolchain).
 
 `create-project` doesn't need to run from inside an existing project --
 run it from wherever the new project's parent directory should be. It
@@ -85,6 +91,33 @@ def colorize(line):
     return f"{color}{line}{_COLOR_RESET}" if color else line
 
 
+def enable_windows_ansi():
+    """Turn on ANSI escape processing for this console on Windows.
+
+    Windows 10+ consoles understand the same "\\033[..m" SGR sequences
+    used by _LEVEL_COLORS, but a freshly spawned python.exe doesn't always
+    have the ENABLE_VIRTUAL_TERMINAL_PROCESSING console mode bit set, so
+    the codes would otherwise print literally in `tdf.py monitor`. No-op
+    off Windows, and harmless if stdout isn't a real console.
+    """
+    if os.name != "nt":
+        return
+    try:
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        STD_OUTPUT_HANDLE = -11
+        ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
+        handle = kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
+        mode = ctypes.c_uint32()
+        if kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            kernel32.SetConsoleMode(
+                handle, mode.value | ENABLE_VIRTUAL_TERMINAL_PROCESSING
+            )
+    except Exception:
+        pass  # best effort -- monitor just falls back to uncolored output
+
+
 def log(msg):
     # flush=True: without it, these interleave out of order with the
     # subprocess's own output, which writes directly to the inherited
@@ -112,9 +145,10 @@ def require_project_dir():
 
 def require_tool(name):
     if shutil.which(name) is None:
+        installer = "install.ps1" if os.name == "nt" else "install.sh"
         die(
             f"'{name}' not found on PATH. Run "
-            f"{REPO_ROOT / 'install.sh'} (or install it yourself), "
+            f"{REPO_ROOT / installer} (or install it yourself), "
             "then open a new shell."
         )
 
@@ -196,6 +230,14 @@ def cmd_monitor(args):
         import serial
         from serial.tools import list_ports
     except ImportError:
+        if os.name == "nt":
+            die(
+                "the 'pyserial' Python package is required for 'tdf.py monitor'.\n"
+                "       Run .\\install.ps1 once -- it creates a venv at tdf_venv\\ and\n"
+                "       installs pyserial there -- then `. .\\export.ps1` to activate\n"
+                "       it. Or run this command with tdf_venv's own interpreter\n"
+                "       directly: tdf_venv\\Scripts\\python.exe tools\\tdf.py monitor"
+            )
         die(
             "the 'pyserial' Python package is required for 'tdf.py monitor'.\n"
             "       Run ./install.sh once -- it creates a venv at tdf_venv/ and\n"
@@ -210,6 +252,8 @@ def cmd_monitor(args):
 
     port = pick_serial_port(args.port, list_ports)
     use_color = (not args.no_color) and sys.stdout.isatty()
+    if use_color:
+        enable_windows_ansi()
 
     try:
         ser = serial.Serial(port, args.baud, timeout=1)
@@ -333,7 +377,8 @@ Options (may appear before, between, or after commands):
   -y, --yes              skip clean-device confirmation
   --dir PARENT_DIR       create-project parent directory
 
-Tab completion: source ./export.sh  then  tdf.py <Tab>
+Tab completion: source ./export.sh (bash/zsh) or ". ./export.ps1"
+               (PowerShell), then  tdf.py <Tab>
 More on one command: tdf.py help flash
 """,
         end="",
@@ -399,7 +444,8 @@ In a pipeline, a preceding build is not repeated.
 
 Drain stale UART bytes, reset the board over SWD, then stream the
 debug log (color-coded by [ERROR]/[WARN]/[INFO]/[DEBUG]). Ctrl+C exits.
-Needs pyserial (./install.sh then source ./export.sh).
+Needs pyserial: run install.sh then "source ./export.sh" (macOS/Linux),
+or install.ps1 then ". ./export.ps1" (Windows PowerShell).
 
   tdf.py monitor
   tdf.py flash monitor

@@ -39,11 +39,11 @@ yakıp söndürür.
 
 ## Ön Koşullar
 
-- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` — eksik olanları görmek ve kurulum komutlarını almak için depo kökünden [`./install.sh`](../../../install.sh) çalıştırın (burada Arm GNU Toolchain 15.2.1, CMake 4.3, Ninja 1.13'e karşı derlenip test edildi; makul ölçüde güncel herhangi bir sürüm çalışmalı)
-- **Windows:** aşağıdaki komutlar cmd.exe, PowerShell, bash ya da zsh'de aynı şekilde çalışır — Git Bash veya WSL gerekmez. (Bu deponun daha önceki bir sürümü `build.sh`/`flash.sh` bash betikleri kullanıyordu ve bunlardan birini gerektiriyordu; CMake'e geçiş özellikle bu gereksinimi kaldırmak için yapıldı — bkz. aşağıdaki [Çözüm](#çözüm).) `install.sh`'ın kendisi bash'tir — Windows'ta ya Git Bash/WSL'den bir kez çalıştırın, ya da üç aracı kendiniz kurun.
+- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` — eksik olanları görmek ve kurulum komutlarını almak için depo kökünden [`./install.sh`](../../../install.sh) (macOS/Linux), [`install.ps1`](../../../install.ps1) (Windows PowerShell) ya da [`install.bat`](../../../install.bat) (Windows cmd.exe) çalıştırın (burada Arm GNU Toolchain 15.2.1, CMake 4.3, Ninja 1.13'e karşı derlenip test edildi; makul ölçüde güncel herhangi bir sürüm çalışmalı)
+- **Windows:** aşağıdaki komutlar cmd.exe, PowerShell, bash ya da zsh'de aynı şekilde çalışır — Git Bash veya WSL gerekmez. (Bu deponun daha önceki bir sürümü `build.sh`/`flash.sh` bash betikleri kullanıyordu ve bunlardan birini gerektiriyordu; CMake'e geçiş özellikle bu gereksinimi kaldırmak için yapıldı — bkz. aşağıdaki [Çözüm](#çözüm).) Kurulum betiklerinin artık yerel sürümleri var: PowerShell için `install.ps1` / `export.ps1` (ikincisini nokta ile kaynak alın: `. .\export.ps1`), cmd.exe için `install.bat` / `export.bat`. PowerShell `.ps1` betiklerini engellerse bir kez çalıştırın: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 - SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
 
-> **Windows'ta henüz doğrulanmadı.** Aşağıdakilerin tamamı macOS'ta (Arm GNU Toolchain 15.2.1, CMake 4.3.3, Ninja 1.13.2) temiz şekilde derlenip, bağlanıp, flaşlanıyor; CMake toolchain dosyasının Windows dalı (paketlenmiş `win32` OpenOCD'yi seçen) yazıldı ama gerçek Windows donanımında uçtan uca test edilmedi.
+> **Windows: derleme doğrulandı, donanımda flaşlama hâlâ bekliyor.** `tdf.py build`, Windows 11'de uçtan uca çalışıyor (Arm GNU Toolchain 14.2.1, CMake 4.4.0, Ninja 1.13.2, `install.ps1` + winget ile kuruldu) — her kaynak derleniyor ve `HelloBlink`, macOS derlemesiyle eşleşen 5156 baytlık bir `.text` imajına bağlanıyor. Windows kurulum betikleri (`install.ps1`/`.bat`, `export.ps1`/`.bat`) ve `tools/tdf.cmd` sarmalayıcısı yerindedir. `tdf.py flash`, paketlenmiş `win32` OpenOCD'yi `CMAKE_HOST_SYSTEM_NAME` ile seçer ama Windows'ta gerçek bir karta karşı henüz denenmedi — flaşlarsanız lütfen geri bildirim verin.
 
 ## GPIO HAL'ı Anlamak
 
@@ -122,8 +122,21 @@ yansıtır.)
 [`Sw/`](../../../Getting_Started/01-Hello_Blink/Sw/) gerçek, derlenebilir bir uygulamaya sahip. Sadece ilk seferde, depo kökünden:
 
 ```sh
+# macOS / Linux
 ./install.sh          # arm-none-eabi-gcc, cmake, ninja'yı kontrol eder / kurmayı teklif eder
 source ./export.sh     # bu shell oturumu için tdf.py'yi PATH'e ekler (isteğe bağlı ama önerilir)
+```
+
+```powershell
+# Windows (PowerShell)
+.\install.ps1
+. .\export.ps1          # nokta ile kaynak alınır, böylece PATH / venv / tamamlama değişiklikleri kalıcı olur
+```
+
+```bat
+:: Windows (cmd.exe)
+install.bat
+export.bat
 ```
 
 Sonra, `Sw/` içinden:
@@ -141,16 +154,18 @@ rol. Kendi başına hiçbir OpenOCD ya da derleyici mantığı taşımaz;
 -DCMAKE_TOOLCHAIN_FILE=<depo>/cmake/toolchain-arm-none-eabi.cmake &&
 cmake --build build`'dir, ve `tdf.py flash` bunun ardına `cmake --build
 build --target flash` ekler. Kendi dosya yolundan depoyu kendisi bulur,
-bu yüzden `python tools/tdf.py build` `export.sh` hiç çalıştırılmadan
-da her yerden aynı şekilde çalışır — o betik yalnızca çıplak `tdf.py`
-yazabilme kolaylığını ekler. Ayrıca `tdf.py clean` (`build/`'i kaldırır)
-ve `tdf.py clean-device` (bağlı kartın çip flash'ını toptan siler —
-önce sorar) de var. Gerçekten okunacak bir UART ortaya çıkınca eklenen
-`tdf.py monitor` (bkz. [04-Button_Read_And_Debounce'un Çözüm bölümü](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution)),
+bu yüzden `python tools/tdf.py build` (Windows'ta `python tools\tdf.py
+build`) `export.sh` hiç çalıştırılmadan da her yerden aynı şekilde
+çalışır — o betik yalnızca çıplak `tdf.py` (Windows'ta `tools/tdf.cmd`
+sarmalayıcısı sayesinde `tdf`) yazabilme kolaylığını ekler. Ayrıca
+`tdf.py clean` (`build/`'i kaldırır) ve `tdf.py clean-device` (bağlı
+kartın çip flash'ını toptan siler — önce sorar) de var. Gerçekten
+okunacak bir UART ortaya çıkınca eklenen `tdf.py monitor` (bkz.
+[04-Button_Read_And_Debounce'un Çözüm bölümü](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution)),
 kartı SWD üzerinden resetler ve log'u akıtır — saf CMake devretmesi
 olmayan tek alt komut, çünkü ayrıca `pyserial` de gerektiriyor;
-`install.sh` tarafından ayrı bir `tdf_venv/` içine kurulur, `export.sh`
-tarafından etkinleştirilir.
+`install.sh` / `install.ps1` / `install.bat` tarafından ayrı bir
+`tdf_venv/` içine kurulur, eşleşen `export.*` tarafından etkinleştirilir.
 
 Bu depodaki paylaşılan satıcı SDK'sına karşı derlenir
 ([`Generation/`](../../../Generation/), depo kökünde — neden tek seferde,

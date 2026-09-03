@@ -31,11 +31,11 @@ Before anything talks to WiFi or AWS, you need a build that flashes and a board 
 
 ## Prerequisites
 
-- `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` — run [`./install.sh`](../../install.sh) from the repo root to check for these and get install commands for what's missing (built and tested here against Arm GNU Toolchain 15.2.1, CMake 4.3, Ninja 1.13; anything reasonably recent should work)
-- **Windows:** the commands below run identically in cmd.exe, PowerShell, bash, or zsh — no Git Bash or WSL required. (An earlier version of this repo used `build.sh`/`flash.sh` bash scripts and needed one of those; the switch to CMake was made specifically to remove that requirement — see [Solution](#solution) below.) `install.sh` itself is bash, though — on Windows, either run it from Git Bash/WSL once, or just install the three tools yourself (see that script's Windows branch for the exact commands it would suggest).
+- `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` — run [`./install.sh`](../../install.sh) (macOS/Linux), [`install.ps1`](../../install.ps1) (Windows PowerShell), or [`install.bat`](../../install.bat) (Windows cmd.exe) from the repo root to check for these and get install commands for what's missing (built and tested here against Arm GNU Toolchain 15.2.1, CMake 4.3, Ninja 1.13; anything reasonably recent should work)
+- **Windows:** the commands below run identically in cmd.exe, PowerShell, bash, or zsh — no Git Bash or WSL required. (An earlier version of this repo used `build.sh`/`flash.sh` bash scripts and needed one of those; the switch to CMake was made specifically to remove that requirement — see [Solution](#solution) below.) The setup scripts come in native flavors now: `install.ps1` / `export.ps1` for PowerShell (dot-source the second: `. .\export.ps1`), `install.bat` / `export.bat` for cmd.exe. If PowerShell blocks `.ps1` scripts, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 - An ABOV A34G43A Starter Kit connected over its onboard SWD debugger
 
-> **Not yet verified on Windows.** Everything below builds, links, and flashes clean on macOS (Arm GNU Toolchain 15.2.1, CMake 4.3.3, Ninja 1.13.2); the CMake toolchain file's Windows branch (picking the bundled `win32` OpenOCD) is written but untested end-to-end on real Windows hardware.
+> **Windows: build verified, hardware flash still pending.** `tdf.py build` runs end-to-end on Windows 11 (Arm GNU Toolchain 14.2.1, CMake 4.4.0, Ninja 1.13.2, installed via `install.ps1` + winget) — every source compiles and `HelloBlink` links to a 5156-byte `.text` image, matching the macOS build. The Windows setup scripts (`install.ps1`/`.bat`, `export.ps1`/`.bat`) and the `tools/tdf.cmd` shim are in place. `tdf.py flash` picks the bundled `win32` OpenOCD via `CMAKE_HOST_SYSTEM_NAME` but hasn't been exercised against a real board on Windows yet — if you flash it, please report back.
 
 ## Understanding the GPIO HAL
 
@@ -113,8 +113,21 @@ LED driver works, too.)
 [`Sw/`](./Sw/) has a real, buildable implementation. First time only, from the repo root:
 
 ```sh
+# macOS / Linux
 ./install.sh          # checks for / offers to install arm-none-eabi-gcc, cmake, ninja
 source ./export.sh     # puts tdf.py on PATH for this shell session (optional but recommended)
+```
+
+```powershell
+# Windows (PowerShell)
+.\install.ps1
+. .\export.ps1          # dot-sourced, so PATH / venv / completion changes stick
+```
+
+```bat
+:: Windows (cmd.exe)
+install.bat
+export.bat
 ```
 
 Then, from `Sw/`:
@@ -125,7 +138,7 @@ tdf.py build
 tdf.py flash
 ```
 
-**What `tdf.py` actually is:** a thin Python wrapper at [`tools/tdf.py`](../../tools/tdf.py) — the same role `idf.py` plays for ESP-IDF. It owns no OpenOCD or compiler logic itself; `tdf.py build` is exactly `cmake -G Ninja -B build -DCMAKE_TOOLCHAIN_FILE=<repo>/cmake/toolchain-arm-none-eabi.cmake && cmake --build build`, and `tdf.py flash` adds `cmake --build build --target flash` after it. It self-locates the repo from its own file path, so `python tools/tdf.py build` works from anywhere, with or without `export.sh` — that script only adds the convenience of typing bare `tdf.py`. There's also `tdf.py clean` (removes `build/`) and `tdf.py clean-device` (mass-erases the connected board's chip flash — asks first). `tdf.py monitor`, added once there was a UART to actually read (see [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution)), resets the board over SWD and streams the log — it's the one subcommand that isn't pure CMake delegation, since it also needs `pyserial`, installed into a dedicated `tdf_venv/` by `install.sh` and activated by `export.sh`.
+**What `tdf.py` actually is:** a thin Python wrapper at [`tools/tdf.py`](../../tools/tdf.py) — the same role `idf.py` plays for ESP-IDF. It owns no OpenOCD or compiler logic itself; `tdf.py build` is exactly `cmake -G Ninja -B build -DCMAKE_TOOLCHAIN_FILE=<repo>/cmake/toolchain-arm-none-eabi.cmake && cmake --build build`, and `tdf.py flash` adds `cmake --build build --target flash` after it. It self-locates the repo from its own file path, so `python tools/tdf.py build` (`python tools\tdf.py build` on Windows) works from anywhere, with or without `export.sh` — that script only adds the convenience of typing bare `tdf.py` (or `tdf`, via the `tools/tdf.cmd` shim on Windows). There's also `tdf.py clean` (removes `build/`) and `tdf.py clean-device` (mass-erases the connected board's chip flash — asks first). `tdf.py monitor`, added once there was a UART to actually read (see [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution)), resets the board over SWD and streams the log — it's the one subcommand that isn't pure CMake delegation, since it also needs `pyserial`, installed into a dedicated `tdf_venv/` by `install.sh` / `install.ps1` / `install.bat` and activated by the matching `export.*`.
 
 It builds against this repo's shared vendor SDK ([`Generation/`](../../Generation/) at the repo root — see that folder for why it's checked in once, shared, instead of copied per tutorial) and links a single ~5 KB image: no sensors, no radios, no debug UART, just port init, clock init, and GPIO.
 

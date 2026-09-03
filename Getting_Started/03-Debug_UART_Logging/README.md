@@ -120,7 +120,8 @@ tdf.py flash
 
 (See [01-Hello_Blink's Solution](../01-Hello_Blink/#solution) for what
 `tdf.py` is and how to get it on `PATH` via `./install.sh` + `source
-./export.sh`.)
+./export.sh` — on Windows, `install.ps1` + `. .\export.ps1`, or
+`install.bat` + `export.bat`.)
 
 Same shared vendor SDK as Tutorials 01/02 ([`Generation/`](../../Generation/)
 at the repo root), same CMake build shape (see the same section for why

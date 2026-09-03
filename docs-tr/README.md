@@ -339,9 +339,28 @@ derleme/flaşlama CLI'ını paylaşır: [`tools/tdf.py`](../tools/tdf.py)
 aynı rol). Yalnızca ilk seferde:
 
 ```sh
+# macOS / Linux
 ./install.sh
 source ./export.sh
 ```
+
+```powershell
+# Windows (PowerShell)
+.\install.ps1
+. .\export.ps1
+```
+
+```bat
+:: Windows (cmd.exe)
+install.bat
+export.bat
+```
+
+`tdf.py`'nin kendisi düz Python'dır ve üç platformda da aynı çalışır —
+işletim sistemine özgü tek parça bu kurulum betikleridir (toolchain'i
+kontrol eder ve `tdf_venv/` + `PATH`'i bağlar). Windows'ta Git Bash veya
+WSL gerekmez. `python tools\tdf.py build` hiçbir kurulum adımı olmadan
+çalışır.
 
 Ardından, herhangi bir eğitimin `Sw/` dizininden:
 
@@ -358,7 +377,7 @@ tdf.py help                    # komut özeti
 tdf.py help flash              # bir komutun ayrıntılı yardımı
 ```
 
-`source ./export.sh` bu komut adları için tab tamamlamayı da kurar (bash ve zsh).
+`source ./export.sh` (bash/zsh) ve `. .\export.ps1` (PowerShell) bu komut adları için tab tamamlamayı da kurar.
 
 Her komutun gerçekte ne yaptığı, neden elle yazılmış bir Makefile
 yerine CMake kullanıldığı, ve Windows'a özgü notlar için
