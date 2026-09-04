@@ -115,7 +115,7 @@ LED driver works, too.)
 ```sh
 # macOS / Linux
 ./install.sh          # checks for / offers to install arm-none-eabi-gcc, cmake, ninja
-source ./export.sh     # puts tdf.py on PATH for this shell session (optional but recommended)
+source ./export.sh     # puts tdf on PATH for this shell session (optional but recommended)
 ```
 
 ```powershell
@@ -134,11 +134,13 @@ Then, from `Sw/`:
 
 ```sh
 cd Sw
-tdf.py build
-tdf.py flash
+tdf build
+tdf flash
 ```
 
-**What `tdf.py` actually is:** a thin Python wrapper at [`tools/tdf.py`](../../tools/tdf.py) — the same role `idf.py` plays for ESP-IDF. It owns no OpenOCD or compiler logic itself; `tdf.py build` is exactly `cmake -G Ninja -B build -DCMAKE_TOOLCHAIN_FILE=<repo>/cmake/toolchain-arm-none-eabi.cmake && cmake --build build`, and `tdf.py flash` adds `cmake --build build --target flash` after it. It self-locates the repo from its own file path, so `python tools/tdf.py build` (`python tools\tdf.py build` on Windows) works from anywhere, with or without `export.sh` — that script only adds the convenience of typing bare `tdf.py` (or `tdf`, via the `tools/tdf.cmd` shim on Windows). There's also `tdf.py clean` (removes `build/`) and `tdf.py clean-device` (mass-erases the connected board's chip flash — asks first). `tdf.py monitor`, added once there was a UART to actually read (see [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution)), resets the board over SWD and streams the log — it's the one subcommand that isn't pure CMake delegation, since it also needs `pyserial`, installed into a dedicated `tdf_venv/` by `install.sh` / `install.ps1` / `install.bat` and activated by the matching `export.*`.
+(`tdf.py` still works as an alias.)
+
+**What `tdf.py` actually is:** a thin Python wrapper at [`tools/tdf.py`](../../tools/tdf.py) — the same role `idf.py` plays for ESP-IDF. It owns no OpenOCD or compiler logic itself; `tdf build` is exactly `cmake -G Ninja -B build -DCMAKE_TOOLCHAIN_FILE=<repo>/cmake/toolchain-arm-none-eabi.cmake && cmake --build build`, and `tdf flash` adds `cmake --build build --target flash` after it. It self-locates the repo from its own file path, so `python tools/tdf.py build` (`python tools\tdf.py build` on Windows) works from anywhere, with or without `export.sh` — that script only adds the convenience of typing bare `tdf` (or `tdf.py`; on Windows, `tools/tdf.cmd`). There's also `tdf clean` (removes `build/`) and `tdf clean-device` (mass-erases the connected board's chip flash — asks first). `tdf monitor`, added once there was a UART to actually read (see [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution)), resets the board over SWD and streams the log — it's the one subcommand that isn't pure CMake delegation, since it also needs `pyserial`, installed into a dedicated `tdf_venv/` by `install.sh` / `install.ps1` / `install.bat` and activated by the matching `export.*`.
 
 It builds against this repo's shared vendor SDK ([`Generation/`](../../Generation/) at the repo root — see that folder for why it's checked in once, shared, instead of copied per tutorial) and links a single ~5 KB image: no sensors, no radios, no debug UART, just port init, clock init, and GPIO.
 

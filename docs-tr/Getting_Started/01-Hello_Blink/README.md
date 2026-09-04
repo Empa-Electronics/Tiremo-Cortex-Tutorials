@@ -124,7 +124,7 @@ yansıtır.)
 ```sh
 # macOS / Linux
 ./install.sh          # arm-none-eabi-gcc, cmake, ninja'yı kontrol eder / kurmayı teklif eder
-source ./export.sh     # bu shell oturumu için tdf.py'yi PATH'e ekler (isteğe bağlı ama önerilir)
+source ./export.sh     # bu shell oturumu için tdf'yi PATH'e ekler (isteğe bağlı ama önerilir)
 ```
 
 ```powershell
@@ -143,9 +143,11 @@ Sonra, `Sw/` içinden:
 
 ```sh
 cd Sw
-tdf.py build
-tdf.py flash
+tdf build
+tdf flash
 ```
+
+(`tdf.py` hâlâ bir takma ad olarak çalışır.)
 
 **`tdf.py` aslında ne:** [`tools/tdf.py`](../../../tools/tdf.py) içindeki
 ince bir Python sarmalayıcı — ESP-IDF için `idf.py`'nin oynadığı aynı

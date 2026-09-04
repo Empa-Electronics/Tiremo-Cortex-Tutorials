@@ -50,6 +50,7 @@ Write-Host 'Tiremo Development Framework: tools\ added to PATH (tdf.py / tdf).'
 # A `tdf` function so `tdf build` works from PowerShell even without .PY on
 # PATHEXT. Prefers the venv interpreter (pyserial for `monitor`) when present.
 function global:tdf {
+    $env:TDF_PROG = 'tdf'
     $script = Join-Path $env:TDF_PATH 'tools\tdf.py'
     $venvPy = Join-Path $env:TDF_PATH 'tdf_venv\Scripts\python.exe'
     if (Test-Path $venvPy) {
@@ -85,4 +86,4 @@ if (Test-Path $activate) {
     Write-Host "No tdf_venv\ found -- 'tdf.py monitor' needs pyserial. Run .\install.ps1 once to set it up."
 }
 
-Write-Host 'Try: cd Getting_Started\01-Hello_Blink\Sw ; tdf.py flash monitor'
+Write-Host 'Try: cd Getting_Started\01-Hello_Blink\Sw ; tdf flash monitor'

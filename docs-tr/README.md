@@ -365,19 +365,19 @@ WSL gerekmez. `python tools\tdf.py build` hiçbir kurulum adımı olmadan
 Ardından, herhangi bir eğitimin `Sw/` dizininden:
 
 ```sh
-tdf.py build              # yapılandır + derle
-tdf.py flash               # derle, sonra SWD üzerinden flaşla
-tdf.py monitor             # kartı resetle, UART log'unu akıt (renk kodlu)
-tdf.py flash monitor       # zincir: flaşla, sonra izle
-tdf.py build flash monitor
-tdf.py clean                # build/'i kaldır
-tdf.py clean-device         # kartın çip flash'ını topluca sil (önce sorar)
-tdf.py create-project <Name>   # yeni, boş bir Sw/ projesi oluştur
-tdf.py help                    # komut özeti
-tdf.py help flash              # bir komutun ayrıntılı yardımı
+tdf build              # yapılandır + derle
+tdf flash               # derle, sonra SWD üzerinden flaşla
+tdf monitor             # kartı resetle, UART log'unu akıt (renk kodlu)
+tdf flash monitor       # zincir: flaşla, sonra izle
+tdf build flash monitor
+tdf clean                # build/'i kaldır
+tdf clean-device         # kartın çip flash'ını topluca sil (önce sorar)
+tdf create-project <Name>   # yeni, boş bir Sw/ projesi oluştur
+tdf help                    # komut özeti
+tdf help flash              # bir komutun ayrıntılı yardımı
 ```
 
-`source ./export.sh` (bash/zsh) ve `. .\export.ps1` (PowerShell) bu komut adları için tab tamamlamayı da kurar.
+`tdf.py` hâlâ bir takma ad olarak çalışır. `source ./export.sh` (bash/zsh) ve `. .\export.ps1` (PowerShell) bu komut adları için tab tamamlamayı da kurar.
 
 Her komutun gerçekte ne yaptığı, neden elle yazılmış bir Makefile
 yerine CMake kullanıldığı, ve Windows'a özgü notlar için

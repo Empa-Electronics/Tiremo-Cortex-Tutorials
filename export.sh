@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Adds tools/ to PATH so `tdf.py` can be run bare, from any directory, in
-# this shell session, and activates tdf_venv/ (see install.sh) so
-# `tdf.py monitor` can find pyserial -- mirrors ESP-IDF's export.sh,
-# venv activation included.
+# Adds tools/ to PATH so `tdf` (and the `tdf.py` alias) can be run bare,
+# from any directory, in this shell session, and activates tdf_venv/ (see
+# install.sh) so `tdf monitor` can find pyserial -- mirrors ESP-IDF's
+# export.sh, venv activation included.
 #
 # The PATH addition is a convenience, not a requirement: `python3
 # <repo>/tools/tdf.py build` (or `python tools\tdf.py build` on Windows)
@@ -40,24 +40,24 @@ case ":$PATH:" in
         ;;
 esac
 
-echo "Tiremo Development Framework: tdf.py added to PATH."
+echo "Tiremo Development Framework: tdf added to PATH (tdf.py still works)."
 
-# Tab-complete tdf.py command names (build / flash / monitor / ...) so
-# `tdf.py flash <TAB>` offers monitor, and pipelines like
-# `tdf.py build flash monitor` can be typed without memorizing the list.
+# Tab-complete tdf / tdf.py command names (build / flash / monitor / ...) so
+# `tdf flash <TAB>` offers monitor, and pipelines like
+# `tdf build flash monitor` can be typed without memorizing the list.
 if [ -n "${ZSH_VERSION:-}" ]; then
     fpath=("$TDF_PATH/tools/completions" $fpath)
     if typeset -f compdef >/dev/null 2>&1; then
         # shellcheck disable=SC1091
         . "$TDF_PATH/tools/completions/_tdf"
-        echo "tdf.py tab completion enabled (zsh)."
+        echo "tdf tab completion enabled (zsh)."
     else
-        echo "tdf.py tab completion: run \`autoload -Uz compinit && compinit\`, then source export.sh again."
+        echo "tdf tab completion: run \`autoload -Uz compinit && compinit\`, then source export.sh again."
     fi
 elif [ -n "${BASH_VERSION:-}" ]; then
     # shellcheck disable=SC1091
     . "$TDF_PATH/tools/completions/tdf.bash"
-    echo "tdf.py tab completion enabled (bash)."
+    echo "tdf tab completion enabled (bash)."
 fi
 
 # Activate tdf_venv/ (created by install.sh) so `python3`/`pip` -- and
@@ -70,15 +70,15 @@ if [ -f "$TDF_PATH/tdf_venv/bin/activate" ]; then
     export VIRTUAL_ENV_DISABLE_PROMPT
     # shellcheck disable=SC1091
     . "$TDF_PATH/tdf_venv/bin/activate"
-    echo "tdf_venv activated (pyserial available for 'tdf.py monitor')."
+    echo "tdf_venv activated (pyserial available for 'tdf monitor')."
 elif [ -f "$TDF_PATH/tdf_venv/Scripts/activate" ]; then
     VIRTUAL_ENV_DISABLE_PROMPT=1
     export VIRTUAL_ENV_DISABLE_PROMPT
     # shellcheck disable=SC1091
     . "$TDF_PATH/tdf_venv/Scripts/activate"
-    echo "tdf_venv activated (pyserial available for 'tdf.py monitor')."
+    echo "tdf_venv activated (pyserial available for 'tdf monitor')."
 else
-    echo "No tdf_venv/ found -- 'tdf.py monitor' needs pyserial. Run ./install.sh once to set it up."
+    echo "No tdf_venv/ found -- 'tdf monitor' needs pyserial. Run ./install.sh once to set it up."
 fi
 
-echo "Try: cd Getting_Started/01-Hello_Blink/Sw && tdf.py flash monitor"
+echo "Try: cd Getting_Started/01-Hello_Blink/Sw && tdf flash monitor"
