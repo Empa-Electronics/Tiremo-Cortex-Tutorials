@@ -19,6 +19,12 @@ release.
 
 ### Added
 
+- `install.sh` on macOS now checks for (and offers to install) the Homebrew
+  libraries the bundled OpenOCD links against: `libftdi hidapi libusb
+  capstone`. Without them, `tdf.py flash` dies at load time (`dyld: Library
+  not loaded: libftdi1.2.dylib`).
+
+
 - Native Windows setup scripts alongside the bash ones: `install.ps1` /
   `export.ps1` (PowerShell) and `install.bat` / `export.bat` (cmd.exe),
   plus a `tools/tdf.cmd` shim so bare `tdf` works, and PowerShell tab
