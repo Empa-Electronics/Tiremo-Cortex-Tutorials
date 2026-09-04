@@ -32,13 +32,14 @@ Platform documentation (not this firmware repo) is
 | [04](./Feature_Tutorials/04-Shadow_Get_Apply_Report/) / [05](./Feature_Tutorials/05-Live_Shadow_Delta_Handling/) shadow | [Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction), [firmware integration](https://docs.tiremo.ai/device-state-controller/device-integration) |
 | [06 Telemetry and alarms](./Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) | [Phase 3 publish topics](https://docs.tiremo.ai/device-provisioning/third-phase), [architecture & data flow](https://docs.tiremo.ai/introduction/phase-1), [low-rate telemetry](https://docs.tiremo.ai/use-cases/scenario-low-rate-telemetry) |
 | [07 Tiremo Jobs](./Feature_Tutorials/07-Tiremo_Jobs/) | [Jobs introduction](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction), [job templates](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-1-definition) |
+| [08 OTA Firmware Update](./Feature_Tutorials/08-OTA_Firmware_Update/) | [Jobs introduction](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction), [job templates](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-1-definition) |
 
 Also: [Developer Guide](https://docs.tiremo.ai/developer-guide), [PoC guide](https://docs.tiremo.ai/poc-guide), [platform FAQ](https://docs.tiremo.ai/faq), [product dictionary](https://docs.tiremo.ai/product-dictionary/).
 
 This section covers device identity, the minimal JSON helpers this
 firmware relies on instead of a full parser library, fleet provisioning
 by claim certificate, the device shadow control loop, telemetry and
-alarms, and Tiremo Jobs.
+alarms, Tiremo Jobs, and OTA firmware updates.
 
 - The [**Feature Tutorials**](./Feature_Tutorials/) cover one concept each — a single driver, a single AT command sequence, a single cloud primitive.
 

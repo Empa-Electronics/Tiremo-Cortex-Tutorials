@@ -1,0 +1,10 @@
+build/
+wifi_secrets.h
+aws_iot_config.h
+
+# Any private key or issued/claim certificate. The committed placeholders
+# (*.example) and Amazon's public Root CA stay tracked.
+certs/*.pem
+certs/*.key
+!certs/*.pem.example
+!certs/root_ca.pem
