@@ -8,8 +8,10 @@
 #   pyserial           -- only `tdf.py monitor` uses it; installed into a
 #                         private venv at tdf_venv/, not system-wide (PEP 668)
 #
-# OpenOCD is not checked -- it's bundled in
+# OpenOCD itself is bundled in
 # Generation/AUDK32_A34xxxx-1.0.12/Tool/OpenOCD/ for Linux/macOS/Windows.
+# The macOS binary is linked against Homebrew libftdi/hidapi/libusb/capstone,
+# so those are checked (and offered) on Darwin.
 #
 # pyserial goes in a dedicated venv rather than a plain `pip install
 # pyserial`, because most current Python installs (Homebrew, most Linux
@@ -86,6 +88,21 @@ if [ -n "$VPY" ] && "$VPY" -c "import serial" >/dev/null 2>&1; then
     PYSERIAL_MISSING=0
 fi
 
+# Bundled openocd.darwin is linked to these Homebrew dylibs (absolute
+# /opt/homebrew/opt/... install names). Linux/Windows OpenOCD ships its
+# own libs; only Darwin needs this check.
+OPENOCD_BREW_LIBS=(libftdi hidapi libusb capstone)
+OPENOCD_LIBS_MISSING=()
+if [ "$HOST_OS" = Darwin ]; then
+    BREW_PREFIX=""
+    [ "$PKG" = brew ] && BREW_PREFIX="$(brew --prefix 2>/dev/null)" || true
+    for pkg in "${OPENOCD_BREW_LIBS[@]}"; do
+        if [ -z "$BREW_PREFIX" ] || [ ! -e "$BREW_PREFIX/opt/$pkg" ]; then
+            OPENOCD_LIBS_MISSING+=("$pkg")
+        fi
+    done
+fi
+
 echo "Checking for required tools..."
 if [ -n "$PYTHON" ]; then
     pyver="$("$PYTHON" --version 2>&1)"
@@ -106,6 +123,13 @@ if [ "$PYSERIAL_MISSING" -eq 0 ]; then
     echo "  [x] pyserial -- $version, in tdf_venv/ (used by: tdf.py monitor)"
 else
     echo "  [ ] pyserial -- not found in tdf_venv/ (used by: tdf.py monitor)"
+fi
+if [ "$HOST_OS" = Darwin ]; then
+    if [ ${#OPENOCD_LIBS_MISSING[@]} -eq 0 ]; then
+        echo "  [x] openocd runtime libs -- ${OPENOCD_BREW_LIBS[*]} (used by: tdf.py flash)"
+    else
+        echo "  [ ] openocd runtime libs -- missing: ${OPENOCD_LIBS_MISSING[*]} (used by: tdf.py flash)"
+    fi
 fi
 
 confirm_and_run() {
@@ -193,6 +217,25 @@ if [ ${#MISSING[@]} -gt 0 ]; then
     PYTHON="$(find_python)"
 fi
 
+# --- macOS OpenOCD Homebrew dylibs (needed to actually run tdf.py flash) -
+if [ "$HOST_OS" = Darwin ] && [ ${#OPENOCD_LIBS_MISSING[@]} -gt 0 ]; then
+    echo
+    if [ "$PKG" != brew ]; then
+        echo "error: Homebrew not found. Install it from https://brew.sh, then:" >&2
+        echo "       brew install ${OPENOCD_BREW_LIBS[*]}" >&2
+    else
+        confirm_and_run "brew install ${OPENOCD_BREW_LIBS[*]}" \
+            brew install "${OPENOCD_BREW_LIBS[@]}" || true
+        OPENOCD_LIBS_MISSING=()
+        BREW_PREFIX="$(brew --prefix 2>/dev/null)" || BREW_PREFIX=""
+        for pkg in "${OPENOCD_BREW_LIBS[@]}"; do
+            if [ -z "$BREW_PREFIX" ] || [ ! -e "$BREW_PREFIX/opt/$pkg" ]; then
+                OPENOCD_LIBS_MISSING+=("$pkg")
+            fi
+        done
+    fi
+fi
+
 # --- venv + pyserial (needs a working python3) --------------------------
 if [ "$PYSERIAL_MISSING" -eq 1 ]; then
     echo
@@ -234,7 +277,8 @@ fi
 # --- final status ------------------------------------------------------
 echo
 VPY="$(venv_python)"
-if [ ${#MISSING[@]} -eq 0 ] && [ -n "$VPY" ] && "$VPY" -c "import serial" >/dev/null 2>&1; then
+if [ ${#MISSING[@]} -eq 0 ] && [ ${#OPENOCD_LIBS_MISSING[@]} -eq 0 ] \
+    && [ -n "$VPY" ] && "$VPY" -c "import serial" >/dev/null 2>&1; then
     echo "All required tools are installed."
     echo "Next:  source ./export.sh   then   cd Getting_Started/01-Hello_Blink/Sw   then   tdf.py flash monitor"
 else
