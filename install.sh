@@ -280,7 +280,7 @@ VPY="$(venv_python)"
 if [ ${#MISSING[@]} -eq 0 ] && [ ${#OPENOCD_LIBS_MISSING[@]} -eq 0 ] \
     && [ -n "$VPY" ] && "$VPY" -c "import serial" >/dev/null 2>&1; then
     echo "All required tools are installed."
-    echo "Next:  source ./export.sh   then   cd Getting_Started/01-Hello_Blink/Sw   then   tdf.py flash monitor"
+    echo "Next:  source ./export.sh   then   cd Getting_Started/01-Hello_Blink/Sw   then   tdf flash monitor"
 else
     echo "Re-run ./install.sh to confirm everything is now present"
     echo "(open a new shell first if a package manager just changed your PATH)."

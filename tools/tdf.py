@@ -14,18 +14,20 @@ happens.
 Run from inside a tutorial's Sw/ directory (wherever CMakeLists.txt
 lives):
 
-    tdf.py build                       configure (if needed) + build
-    tdf.py build -DTIREMO_DEBUG_LEVEL=2   (extra CMake cache vars, forwarded as-is)
-    tdf.py flash                       build (if needed), then flash over SWD
-    tdf.py monitor                     drain stale UART, reset over SWD, then
+    tdf build                       configure (if needed) + build
+    tdf build -DTIREMO_DEBUG_LEVEL=2   (extra CMake cache vars, forwarded as-is)
+    tdf flash                       build (if needed), then flash over SWD
+    tdf monitor                     drain stale UART, reset over SWD, then
                                         stream color-coded log output (Ctrl+C to exit)
-    tdf.py flash monitor               chain: flash, then monitor (idf.py-style)
-    tdf.py build flash monitor         chain: build, flash, then monitor
-    tdf.py clean                       remove build/
-    tdf.py clean-device                mass-erase the connected board's chip flash
-    tdf.py create-project <name>       scaffold a new, empty buildable Sw/ project
-    tdf.py help                        this overview
-    tdf.py help flash                  detailed help for one command
+    tdf flash monitor               chain: flash, then monitor (idf.py-style)
+    tdf build flash monitor         chain: build, flash, then monitor
+    tdf clean                       remove build/
+    tdf clean-device                mass-erase the connected board's chip flash
+    tdf create-project <name>       scaffold a new, empty buildable Sw/ project
+    tdf help                        this overview
+    tdf help flash                  detailed help for one command
+
+`tdf.py` is still accepted as an alias.
 
 Tab-complete command names after `source ./export.sh` (bash or zsh), or
 `. .\export.ps1` (PowerShell).
@@ -55,9 +57,9 @@ whichever modules you need from an existing tutorial's `Sw/`.
 Self-locating: this file lives at <repo>/tools/tdf.py, so it finds the
 shared toolchain file from its own path -- no environment variables
 required. Run `. ./export.sh` (from the repo root, once per shell
-session) if you'd rather type bare `tdf.py` than the full path to this
-script; it is a convenience, not a requirement -- `python tools/tdf.py
-build` works identically without ever running export.sh.
+session) if you'd rather type bare `tdf` (or `tdf.py`) than the full
+path to this script; it is a convenience, not a requirement -- `python
+tools/tdf.py build` works identically without ever running export.sh.
 """
 
 import argparse
@@ -71,6 +73,19 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TOOLCHAIN_FILE = REPO_ROOT / "cmake" / "toolchain-arm-none-eabi.cmake"
 BUILD_DIR = Path("build")
+
+
+def _prog():
+    """Name the user typed: `tdf` via the shim, or `tdf.py` as an alias."""
+    env = os.environ.get("TDF_PROG")
+    if env:
+        return env
+    name = Path(sys.argv[0]).name
+    if name.lower() in ("tdf", "tdf.cmd", "tdf.exe"):
+        return "tdf"
+    return name
+
+
 NEW_PROJECT_TEMPLATE_DIR = REPO_ROOT / "tools" / "templates" / "new_project"
 _PROJECT_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
@@ -134,9 +149,9 @@ def require_project_dir():
     if not Path("CMakeLists.txt").exists():
         die(
             "no CMakeLists.txt in the current directory.\n"
-            "       Run tdf.py from inside a tutorial's Sw/ directory, e.g.:\n"
+            "       Run tdf from inside a tutorial's Sw/ directory, e.g.:\n"
             "         cd Getting_Started/01-Hello_Blink/Sw\n"
-            "         tdf.py build"
+            f"         {_prog()} build"
         )
     if not TOOLCHAIN_FILE.exists():
         die(f"toolchain file not found: {TOOLCHAIN_FILE}\n"
@@ -344,28 +359,29 @@ def cmd_create_project(args):
     shutil.copy(NEW_PROJECT_TEMPLATE_DIR / "Src" / "prv_user_code.c", sw_dir / "Src" / "prv_user_code.c")
 
     log(f"created {sw_dir}")
-    log(f"next: cd {sw_dir} && tdf.py flash monitor")
+    log(f"next: cd {sw_dir} && {_prog()} flash monitor")
 
 
 def print_overview():
+    p = _prog()
     cmds = "\n".join(f"  {name:<18} {COMMANDS[name][0]}" for name in COMMANDS)
     print(
-        f"""tdf.py -- Tiremo Development Framework
+        f"""{p} -- Tiremo Development Framework
 
 Build, flash, and monitor Tiremo Cortex tutorial firmware from a
 tutorial Sw/ directory (where CMakeLists.txt lives).
 
 Usage:
-  tdf.py <command> [command ...] [options]
-  tdf.py help [command]
+  {p} <command> [command ...] [options]
+  {p} help [command]
 
 Commands:
 {cmds}
 
 Pipeline (run left to right, idf.py-style):
-  tdf.py flash monitor
-  tdf.py build flash monitor
-  tdf.py build -DTIREMO_DEBUG_LEVEL=2 flash monitor --port /dev/cu.usbmodemXXXX
+  {p} flash monitor
+  {p} build flash monitor
+  {p} build -DTIREMO_DEBUG_LEVEL=2 flash monitor --port /dev/cu.usbmodemXXXX
 
 Options (may appear before, between, or after commands):
   -h, --help             this page
@@ -378,8 +394,9 @@ Options (may appear before, between, or after commands):
   --dir PARENT_DIR       create-project parent directory
 
 Tab completion: source ./export.sh (bash/zsh) or ". ./export.ps1"
-               (PowerShell), then  tdf.py <Tab>
-More on one command: tdf.py help flash
+               (PowerShell), then  {p} <Tab>
+More on one command: {p} help flash
+`tdf.py` is still accepted as an alias.
 """,
         end="",
     )
@@ -392,6 +409,7 @@ def print_command_help(topic):
             f"no help for {topic!r}\n"
             "       commands: " + ", ".join(COMMANDS)
         )
+    page = page.replace("tdf.py", _prog())
     print(page, end="" if page.endswith("\n") else "\n")
 
 
@@ -599,7 +617,7 @@ def parse_pipeline(argv):
         if len(commands) != 1:
             die("create-project cannot be chained with other commands")
         if not args.name:
-            die("create-project needs a project name, e.g. tdf.py create-project MyDemo")
+            die(f"create-project needs a project name, e.g. {_prog()} create-project MyDemo")
     return commands, args
 
 

@@ -7,6 +7,7 @@ rem
 rem Prefers tdf_venv\ (pyserial, for `tdf.py monitor`) when it exists, so
 rem `tdf monitor` works even if you never ran export.bat / export.ps1.
 setlocal
+set "TDF_PROG=tdf"
 set "TDF_DIR=%~dp0"
 set "TDF_VENV_PY=%TDF_DIR%..\tdf_venv\Scripts\python.exe"
 

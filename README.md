@@ -358,19 +358,19 @@ on Windows. `python tools\tdf.py build` works with no setup step at all.
 Then, from any tutorial's `Sw/` directory:
 
 ```sh
-tdf.py build             # configure + build
-tdf.py flash              # build, then flash over SWD
-tdf.py monitor            # reset the board, stream the UART log (color-coded)
-tdf.py flash monitor      # chain: flash, then monitor
-tdf.py build flash monitor
-tdf.py clean              # remove build/
-tdf.py clean-device       # mass-erase the board's chip flash (asks first)
-tdf.py create-project <Name>   # scaffold a new, empty Sw/ project
-tdf.py help                    # command overview
-tdf.py help flash              # detailed help for one command
+tdf build             # configure + build
+tdf flash              # build, then flash over SWD
+tdf monitor            # reset the board, stream the UART log (color-coded)
+tdf flash monitor      # chain: flash, then monitor
+tdf build flash monitor
+tdf clean              # remove build/
+tdf clean-device       # mass-erase the board's chip flash (asks first)
+tdf create-project <Name>   # scaffold a new, empty Sw/ project
+tdf help                    # command overview
+tdf help flash              # detailed help for one command
 ```
 
-`source ./export.sh` (bash/zsh) and `. .\export.ps1` (PowerShell) also install tab completion for those command names.
+`tdf.py` still works as an alias. `source ./export.sh` (bash/zsh) and `. .\export.ps1` (PowerShell) also install tab completion for those command names.
 
 See [01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
 for the full story — what each command actually does, why CMake instead

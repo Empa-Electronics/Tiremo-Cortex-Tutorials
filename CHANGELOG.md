@@ -24,6 +24,10 @@ release.
   capstone`. Without them, `tdf.py flash` dies at load time (`dyld: Library
   not loaded: libftdi1.2.dylib`).
 
+- Unix `tools/tdf` shim so `tdf flash` works after `source ./export.sh`
+  (same role as `tools/tdf.cmd` on Windows). `tdf.py` remains a working
+  alias. Help text follows whichever name you typed.
+
 
 - Native Windows setup scripts alongside the bash ones: `install.ps1` /
   `export.ps1` (PowerShell) and `install.bat` / `export.bat` (cmd.exe),
