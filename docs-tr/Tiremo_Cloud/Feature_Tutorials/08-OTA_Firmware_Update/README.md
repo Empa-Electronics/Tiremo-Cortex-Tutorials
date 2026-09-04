@@ -116,7 +116,13 @@ bir dosya adı değil, ön-imzalı bir URL'nin arkasında taşır:
 CRC-32'nin base64 kodudur (AWS'in kendi nesne sağlama toplamları için
 kullandığı kodlamanın aynısı), `fileSizeKB` ise KB'ye yuvarlanmıştır —
 tam değil, bu yüzden kart onu bir eşitlik kontrolü değil bir üst sınır
-olarak ele alır.
+olarak ele alır. `operationInfo.firmwareName`, üretici yazılımı
+**deposunun** (repository) kimliğidir; `firmwareVersion` ise onun
+içindeki belirli **sürümdür** — iş oluştururken (aşağıda) seçtiğiniz
+**Repository Name** / **Version Name** alanlarıyla aynı iki isim. Bir
+deponun **+ Add New Version**'ı, yeni bir `OtaFirmwareUpdate.bin`
+derlemesinin bir cihaza hedeflenebilmeden önce yüklendiği ve
+adlandırıldığı yerdir.
 
 Yerel bir sunucuya karşı tezgah testi için düz bir iş belgesi de
 çalışır — her iki biçim de aynı ayrıştırıcı tarafından kabul edilir:
@@ -211,15 +217,28 @@ ile kurulmuş olmalı).
 
 *Şekil: Tiremo UI — Jobs listesinde **Create Job**.*
 
-**3. Adım 1 / 3 — ad, belge, hedef.** İşe ad verin, **Job Document**'i
-üretici-yazılımı-güncelleme şablonuna ayarlayın (`operationInfo`
-`firmwareUpdateType: FOTA` bildirir), gönderilecek üretici yazılımı
-sürümünü/depo girdisini seçin, hedef **Device** (bu kartın cihaz
-tanımlayıcısı), sonra **Next**.
+**3. Adım 1 / 3 — ad, belge, üretici yazılımı, hedef.** İşe ad verin.
+**Job Document**'i **Firmware Update** olarak ayarlayın — bir
+**Firmware Configuration** paneli açılır: göndereceğiniz **Repository
+Name**'i (üretici yazılımı deposu) ve içindeki **Version Name**'i seçin
+(**+ Add New Version**, yeni bir `OtaFirmwareUpdate.bin` derlemesinin
+yüklenip adlandırıldığı yerdir). **Target Selection** altında,
+**Product**'a — *"Your job deploys to a single product"* (asıl anlamı
+"o üründeki her cihaz") — karşı **Device**'i — *"Your job deploys to
+one or more devices from a selected product"* — seçin. **Select
+Product**'ı, sonra **Select Device(s)** altında bu kartın cihaz
+tanımlayıcısını seçin. Sonra **Next**.
 
-![Tiremo UI: iş oluşturma adım 1](../../../../Tiremo_Cloud/figures/tiremo_ui_job_create_step1.png)
+> **Select Device(s)**'i boş bırakmak, yalnızca bu kartı değil, seçilen
+> üründeki *her* cihazı hedefler — UI bunu tam orada sayıyla belirtir
+> ("N devices will be affected"). Paylaşılan bir üründe Next'e
+> tıklamadan önce okumaya değer.
 
-*Şekil: Tiremo UI — üretici-yazılımı-güncelleme belgesi, Device hedefi, **Next**.*
+![Tiremo UI: iş oluşturma adım 1, Firmware Update](../../../../Tiremo_Cloud/figures/tiremo_ui_job_create_step1_firmware_update.png)
+
+*Şekil: Tiremo UI — **Firmware Update** iş belgesi, **Firmware
+Configuration** (Repository Name / Version Name), **Target Selection**
+(Device, Select Product, Select Device(s)), sonra **Next**.*
 
 **4. Adım 2 / 3 — varsayılanlar.** **Use Provided Configuration**,
 **Snapshot**, boş zamanlama (hemen başlar), **Next**.

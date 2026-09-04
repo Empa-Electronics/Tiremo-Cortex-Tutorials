@@ -102,7 +102,12 @@ pre-signed URL, not a bare filename:
 `s3Path` is the download URL, `checksum.value` is the CRC-32 base64-encoded
 big-endian (the same encoding AWS uses for its own object checksums),
 and `fileSizeKB` is a KB-rounded size — not exact, so the board treats it
-as an upper bound rather than an equality check.
+as an upper bound rather than an equality check. `operationInfo.firmwareName`
+is the firmware **repository**'s id and `firmwareVersion` the specific
+**version** within it — the same two names as the **Repository Name** /
+**Version Name** fields you pick when creating the job (below); a
+repository's **+ Add New Version** is where a new `OtaFirmwareUpdate.bin`
+build gets uploaded and named before it can be targeted at a device.
 
 For bench testing against a local server instead, a flat job document
 works too — both shapes are accepted by the same parser:
@@ -197,15 +202,28 @@ already be in the ready loop, provisioned per
 
 *Figure: Tiremo UI — **Create Job** on the Jobs list.*
 
-**3. Step 1 of 3 — name, document, target.** Name the job, set **Job
-Document** to the firmware-update template (its `operationInfo` reports
-`firmwareUpdateType: FOTA`), pick the firmware version/repository entry
-to ship, target **Device** (this board's device identifier), then
-**Next**.
+**3. Step 1 of 3 — name, document, firmware, target.** Name the job.
+Set **Job Document** to **Firmware Update** — a **Firmware
+Configuration** panel appears: pick the **Repository Name** (the
+firmware artifact repository to ship from) and the **Version Name**
+within it (**+ Add New Version** is where a new
+`OtaFirmwareUpdate.bin` build gets uploaded and named). Under **Target
+Selection**, choose **Device** — *"Your job deploys to one or more
+devices from a selected product"* — over **Product** — *"Your job
+deploys to a single product"*, its stated meaning is really "every
+device on that product." Pick **Select Product**, then this board's
+device identifier under **Select Device(s)**. Then **Next**.
 
-![Tiremo UI: create job step 1](../../figures/tiremo_ui_job_create_step1.png)
+> Leaving **Select Device(s)** empty deploys to *every* device on the
+> selected product, not just this board — the UI names the count right
+> there ("N devices will be affected"). Worth reading before clicking
+> Next on a shared product.
 
-*Figure: Tiremo UI — firmware-update document, Device target, then **Next**.*
+![Tiremo UI: create job step 1, Firmware Update](../../figures/tiremo_ui_job_create_step1_firmware_update.png)
+
+*Figure: Tiremo UI — **Firmware Update** job document, **Firmware
+Configuration** (Repository Name / Version Name), **Target Selection**
+(Device, Select Product, Select Device(s)), then **Next**.*
 
 **4. Step 2 of 3 — leave the defaults.** **Use Provided Configuration**,
 **Snapshot**, empty schedule (starts immediately), then **Next**.
