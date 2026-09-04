@@ -226,7 +226,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Device identity, the minimal JSON helpers this firmware relies on instead of a full parser library, fleet provisioning by claim certificate, the device shadow control loop, telemetry and alarms, and Tiremo Jobs.
+                Device identity, the minimal JSON helpers this firmware relies on instead of a full parser library, fleet provisioning by claim certificate, the device shadow control loop, telemetry and alarms, Tiremo Jobs, and OTA firmware updates.
             </td>
         </tr>
         <tr>
@@ -259,6 +259,10 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="./Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/">Tiremo Jobs</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="./Tiremo_Cloud/Feature_Tutorials/08-OTA_Firmware_Update/">OTA Firmware Update</a></td>
             <td></td>
         </tr>
     </tbody>

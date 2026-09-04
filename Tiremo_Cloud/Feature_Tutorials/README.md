@@ -51,6 +51,10 @@ Feature tutorials cover one concept each — a single driver, a single AT comman
  <td align="center"><a href="./07-Tiremo_Jobs/">Tiremo Jobs</a></td>
  <td>Accept a health-check job over MQTT (`notify` → `start-next` → `update SUCCEEDED`). OTA-shaped jobs are REJECTED.</td>
  </tr>
+ <tr>
+ <td align="center"><a href="./08-OTA_Firmware_Update/">OTA Firmware Update</a></td>
+ <td>Accept a Firmware-Update job, download the new image over a raw TCP/SSL tunnel, verify it, and swap to it on the A34G43x's A/B code-flash banks.</td>
+ </tr>
  </table>
 
 <p align="center"><img alt="" src="../../images/banner.png" width="100%"></p>

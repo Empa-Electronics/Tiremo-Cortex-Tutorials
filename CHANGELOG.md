@@ -19,6 +19,28 @@ release.
 
 ### Added
 
+- New tutorial [`08-OTA_Firmware_Update`](Tiremo_Cloud/Feature_Tutorials/08-OTA_Firmware_Update/)
+  in Tiremo Cloud: the Firmware-Update job [`07-Tiremo_Jobs`](Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/)
+  rejects is now real. On the A34G43x, code flash runs as two hardware
+  banks (CFMC multi-bank); an update writes the inactive bank, verifies
+  it against the job's CRC-32, points the boot-bank selection at it (a
+  CFMC UserInfo command the boot ROM only re-reads after an SCU software
+  reset, not a CMSIS system reset), and resets. A new image gets one
+  boot to report its job result before an automatic rollback. Tiremo
+  Cloud's firmware-update job document carries the image behind a
+  pre-signed URL that runs well past what the ESP32 module's AT command
+  line or its own HTTPS client can handle (a second TLS session
+  collides with the one MQTT already holds); the download instead uses
+  a raw TCP/SSL socket in transparent passthrough mode, with a
+  hand-built HTTP request and response parse over that tunnel. A
+  hand-written job document (flat `url`/`crc32`/`size` keys, for
+  bench-testing against a local HTTP server) is accepted by the same
+  parser. Confirmed on a real ABOV A34G43A Starter Kit against a real
+  Tiremo Cloud tenant: a queued job's image downloaded, verified, and
+  booted, the job reported **Succeeded**, and neither an incomplete
+  download nor a boot-bank switch that failed to take ever left the
+  board unbootable.
+
 - `install.sh` on macOS now checks for (and offers to install) the Homebrew
   libraries the bundled OpenOCD links against: `libftdi hidapi libusb
   capstone`. Without them, `tdf.py flash` dies at load time (`dyld: Library

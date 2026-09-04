@@ -231,7 +231,7 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td colspan="2" height="48">
-                Cihaz kimliği, bu üretici yazılımının tam bir ayrıştırma kütüphanesi yerine kullandığı minimal JSON yardımcıları, iddia sertifikası ile filo kurulumu, cihaz shadow kontrol döngüsü, telemetri ve alarmlar ve Tiremo Jobs.
+                Cihaz kimliği, bu üretici yazılımının tam bir ayrıştırma kütüphanesi yerine kullandığı minimal JSON yardımcıları, iddia sertifikası ile filo kurulumu, cihaz shadow kontrol döngüsü, telemetri ve alarmlar, Tiremo Jobs ve OTA üretici yazılımı güncellemeleri.
             </td>
         </tr>
         <tr>
@@ -264,6 +264,10 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
         </tr>
         <tr>
             <td><a href="../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/">Tiremo Jobs</a></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="../Tiremo_Cloud/Feature_Tutorials/08-OTA_Firmware_Update/">OTA Firmware Update</a></td>
             <td></td>
         </tr>
     </tbody>
