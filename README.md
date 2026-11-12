@@ -66,6 +66,15 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 
 [Hardware Overview](./Hardware.md) — board block diagram, host connection diagram, and pinout reference. No firmware, just the board itself.
 
+## Related Repositories
+
+[CRA-ready ESP-AT](https://github.com/Empa-Electronics/Cra-Ready-Esp-At) — builds
+Espressif's ESP-AT firmware, the AT command set these tutorials talk to on the
+ESP32 module, with the security features the EU **Cyber Resilience Act (CRA)**
+and the RED Delegated Act (EN 18031) require: Secure Boot v2, flash and NVS
+encryption, encrypted BLE, and hardened defaults. The host side keeps sending
+the same AT commands.
+
 ## Release Notes
 
 [Change Log](./CHANGELOG.md)

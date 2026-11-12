@@ -22,6 +22,8 @@ Bring up the ESP32 AT-command transport, join WiFi with retries, sync time over 
 
 - The [**Design Tutorials**](./Design_Tutorials/) combine several feature tutorials into one working subsystem.
 
+To run these tutorials against an ESP32 module secured for the EU Cyber Resilience Act (Secure Boot v2, flash and NVS encryption, encrypted BLE), see [CRA-ready ESP-AT](https://github.com/Empa-Electronics/Cra-Ready-Esp-At). It builds the module's AT firmware with those protections, and the AT commands these tutorials send stay the same.
+
 <p align="center"><img alt="" src="../images/banner.png" width="100%"></p>
 
 <p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
