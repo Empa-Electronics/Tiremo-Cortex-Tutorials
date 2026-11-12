@@ -71,6 +71,15 @@ git clone https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials.git
 
 [Donanım Genel Bakış](./Hardware.md) — kart blok diyagramı, host bağlantı diyagramı, ve pin haritası referansı. Üretici yazılımı yok, yalnızca kartın kendisi.
 
+## İlgili Depolar
+
+[CRA-ready ESP-AT](https://github.com/Empa-Electronics/Cra-Ready-Esp-At) — bu
+eğitimlerin ESP32 modülünde konuştuğu AT komut setini sağlayan Espressif
+ESP-AT üretici yazılımını, AB **Siber Dayanıklılık Yasası (CRA)** ve RED
+Yetkilendirilmiş Tüzüğü (EN 18031) tarafından istenen güvenlik özellikleriyle
+derler: Secure Boot v2, flash ve NVS şifreleme, şifreli BLE ve sıkılaştırılmış
+varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
+
 ## Sürüm Notları
 
 [Değişiklik Günlüğü](../CHANGELOG.md)
