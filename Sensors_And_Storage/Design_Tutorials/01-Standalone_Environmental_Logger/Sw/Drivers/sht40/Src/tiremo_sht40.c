@@ -75,22 +75,27 @@ TIREMO_SHT40_Status_t TIREMO_SHT40_Read(TIREMO_SHT40_Reading_t *pReading)
     /* Write the command, then STOP. The SHT4x does *not* use a repeated
      * START (that's the LIS2DE12 tutorial). Conversion happens while
      * the bus is idle; a read before it's done NACKs. */
-    if (TIREMO_HAL_I2C_Transmit(TIREMO_BOARD_SHT40_I2C_BUS,
-                                TIREMO_BOARD_SHT40_I2C_ADDRESS,
-                                &command,
-                                1U,
-                                true) != TIREMO_HAL_I2C_STATUS_OK)
+    /* WriteRead() (with a timeout) instead of the vendor HAL_I2C_Transmit
+     * / HAL_I2C_Receive, whose status poll waits forever and froze the
+     * board whenever the bus was in a bad state. */
+    if (TIREMO_HAL_I2C_WriteRead(TIREMO_BOARD_SHT40_I2C_BUS,
+                                 TIREMO_BOARD_SHT40_I2C_ADDRESS,
+                                 &command,
+                                 1U,
+                                 NULL,
+                                 0U) != TIREMO_HAL_I2C_STATUS_OK)
     {
         return TIREMO_SHT40_STATUS_ERROR;
     }
 
     TIREMO_SysTick_DelayMs(TIREMO_SHT40_MEASURE_WAIT_MS);
 
-    if (TIREMO_HAL_I2C_Receive(TIREMO_BOARD_SHT40_I2C_BUS,
-                               TIREMO_BOARD_SHT40_I2C_ADDRESS,
-                               response,
-                               sizeof(response),
-                               true) != TIREMO_HAL_I2C_STATUS_OK)
+    if (TIREMO_HAL_I2C_WriteRead(TIREMO_BOARD_SHT40_I2C_BUS,
+                                 TIREMO_BOARD_SHT40_I2C_ADDRESS,
+                                 NULL,
+                                 0U,
+                                 response,
+                                 sizeof(response)) != TIREMO_HAL_I2C_STATUS_OK)
     {
         return TIREMO_SHT40_STATUS_ERROR;
     }

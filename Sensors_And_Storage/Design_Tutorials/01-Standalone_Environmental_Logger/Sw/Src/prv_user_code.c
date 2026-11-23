@@ -177,8 +177,8 @@ void PRV_USER_Code(void)
         TIREMO_LOG_WARN("MIC: init/start failed");
     }
 
-    /* After sensor init so tdf.py monitor's reset-then-open window
-     * usually still catches the replay (same edge case as tutorial 04). */
+    /* Replay the stored history once all sensors are up, before the first
+     * new sample is appended. */
     DumpHistory();
 
     lastSampleMs = TIREMO_SysTick_GetMs();
