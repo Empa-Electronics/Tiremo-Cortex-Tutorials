@@ -69,7 +69,8 @@ typedef enum
  * Messages above this level are compiled out. Runtime
  * TIREMO_Debug_SetLevel() can only go equal or quieter.
  *
- * Override from the Makefile, e.g. `-DTIREMO_DEBUG_LEVEL=2` (WARN).
+ * Override at CMake configure time, e.g. `tdf build -DTIREMO_DEBUG_LEVEL=2`
+ * (WARN). See this tutorial's CMakeLists.txt.
  */
 #ifndef TIREMO_DEBUG_LEVEL
 #define TIREMO_DEBUG_LEVEL    TIREMO_DEBUG_LEVEL_INFO

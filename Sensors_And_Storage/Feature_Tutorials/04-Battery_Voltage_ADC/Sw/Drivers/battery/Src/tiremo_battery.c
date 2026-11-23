@@ -4,6 +4,11 @@
  *
  * AVDD (mV) = (VCORE_REF_MV * ADC_FULL_SCALE) / vcoreRaw
  *
+ * AVDD here is the MCU's analog supply (VDDA). On the Tiremo Cortex board
+ * VDDA comes from the LDK130M-R adjustable LDO set to 2.7 V, not from the
+ * battery directly. Verified on hardware: VDDA measured 2.69 V with a
+ * multimeter, this driver reported 2694 mV (raw = 1520).
+ *
  * Copyright (c) 2026 Tiremo
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
