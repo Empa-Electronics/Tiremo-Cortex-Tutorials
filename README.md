@@ -102,6 +102,10 @@ the same AT commands.
             <td><a href="./Getting_Started/03-Debug_UART_Logging/">Debug UART Logging</a></td>
             <td><a href="./Getting_Started/04-Button_Read_And_Debounce/">Button Read & Debounce</a></td>
         </tr>
+        <tr>
+            <td><a href="./Getting_Started/05-Ten_LED_Pattern_Driver/">Ten-LED Pattern Driver</a></td>
+            <td></td>
+        </tr>
     </tbody>
 </table>
 
@@ -333,12 +337,12 @@ the same AT commands.
 
 ## Solutions
 
-Most tutorials don't have a written solution yet — this repository is
-still mostly a curriculum scaffold (structure, learning goals, step
-outlines), not a finished course. Each tutorial ships its own worked
-solution, when one exists, in a local `Sw/` folder next to its
-`README.md`; check that tutorial's own **Solution** section for current
-status.
+Every firmware tutorial ships a complete, buildable solution in a local
+`Sw/` folder next to its `README.md`; that tutorial's own **Solution**
+section shows how to build and flash it and what the output should look
+like. (The four [Intelligence Feature Tutorials](Intelligence/Feature_Tutorials/)
+are walkthroughs of the Tiremo Intelligence web UI, so they have no
+`Sw/` folder.)
 
 Buildable tutorials share one copy of the ABOV vendor SDK, checked into
 this repo once at [`Generation/`](Generation/), and one build/flash CLI:
@@ -368,7 +372,8 @@ only per-OS pieces are these setup scripts (which check for the
 toolchain and wire up `tdf_venv/` + `PATH`). No Git Bash or WSL needed
 on Windows. `python tools\tdf.py build` works with no setup step at all.
 
-Then, from any tutorial's `Sw/` directory:
+Then, from any tutorial's `Sw/` directory (for example
+`cd Getting_Started/01-Hello_Blink/Sw` from the repo root):
 
 ```sh
 tdf build             # configure + build
@@ -383,7 +388,7 @@ tdf help                    # command overview
 tdf help flash              # detailed help for one command
 ```
 
-`tdf.py` still works as an alias. `source ./export.sh` (bash/zsh) and `. .\export.ps1` (PowerShell) also install tab completion for those command names.
+On macOS/Linux, `tdf.py` also works as an alias; on Windows, use `tdf`. `source ./export.sh` (bash/zsh) and `. .\export.ps1` (PowerShell) also install tab completion for those command names.
 
 See [01-Hello_Blink's Solution](Getting_Started/01-Hello_Blink/#solution)
 for the full story — what each command actually does, why CMake instead
