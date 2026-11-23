@@ -17,7 +17,7 @@
 
 # SHT40 Temperature / Humidity
 
-***Board: Tiremo Cortex (ESP32) · Section: Sensors & Local Storage / Feature Tutorials · Difficulty: Easy***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Sensors & Local Storage / Feature Tutorials · Difficulty: Easy***
 
 ## Introduction
 
@@ -33,8 +33,8 @@ SHT40 is the first real sensor driver in the stack, and the simplest — a singl
 ## Prerequisites
 
 - [01-I2C_Bus_Bringup](../01-I2C_Bus_Bringup/) — this tutorial reuses that `Sw/`'s SysTick, debug UART, I2C HAL, and `PRV_I2C_Init()` unchanged
-- `tdf.py monitor` to watch the readings (see [Getting_Started/04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution) for setup)
-- An ABOV A34G43A Starter Kit connected over its onboard SWD debugger, with the SHT40 present on I2C2
+- To watch the readings: `tdf monitor` (see [Getting_Started/04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution) for setup) or any serial terminal (Tera Term, PuTTY, screen, minicom, …) at 115200 8N1 on the board's USB serial port
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../../Hardware.md)) connected to your PC with a USB cable, with the SHT40 present on I2C2. The board's onboard CMSIS-DAP debug probe handles SWD flashing; no separate programmer is needed.
 
 ## Understanding the SHT4x Protocol
 
@@ -98,38 +98,51 @@ stays one function you can read top to bottom.
 [`Sw/`](./Sw/) has a real, buildable implementation:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-(See [Getting_Started/01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)
-for what `tdf.py` is, and [04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution)
-for `monitor` specifically.)
+(Run from the repo root. See [Getting_Started/01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)
+for what `tdf` is, and [04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution)
+for `monitor` specifically. On macOS/Linux, `tdf.py` also works as an
+alias; on Windows, use `tdf`. Close any other terminal on the board's
+serial port before running `tdf monitor` — only one program can open
+it at a time.)
 
 Same shared vendor SDK and CMake shape as
 [01-I2C_Bus_Bringup](../01-I2C_Bus_Bringup/) — `GEN_DIR` still uses
 `../../../../Generation/...`. No new vendor sources: I2C2 is already
 up. What's new is `Drivers/sht40`, this repo's first I2C device driver
-(Tutorial 04's button and Tutorial 05's LED bank were GPIO).
+(the button and LED drivers in `Getting_Started` 04 and 05 were GPIO).
 
-**Genuinely verified, for real, on the connected board:** `tdf.py
-build` compiles and links clean (`.text` 15660 bytes). `tdf.py flash`
-completed a full program-and-verify cycle over SWD (`** Verified OK
-**`). `tdf.py monitor` then showed, straight from the real hardware:
+**Confirmed on real hardware:** `tdf build` compiles and links without
+errors on macOS and Windows 11 (`.text` about 15.5 KB; the exact size
+varies slightly with the toolchain version, and the linker prints the
+same expected, harmless `_close` / `_lseek` / `_read` / `_write is not
+implemented` warnings explained in [01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)).
+`tdf flash` completed a full program-and-verify cycle over SWD on a
+real, connected Tiremo Cortex board (`** Verified OK **`), and the log
+looks like this:
 
 ```text
-[INFO] SHT40 T: 33.282 C
-[INFO] SHT40 RH: 52.431 %RH
+[INFO] SHT40_Temperature_Humidity: boot
+[INFO] SHT40 T: 27.410 C
+[INFO] SHT40 RH: 34.559 %RH
+[INFO] SHT40 T: 27.375 C
+[INFO] SHT40 RH: 34.393 %RH
+[INFO] SHT40 T: 27.367 C
+[INFO] SHT40 RH: 34.281 %RH
 ```
 
-repeating every 1 second, with T/RH wandering only in the last digit
-or two across successive samples — CRC-valid, stable within sensor
-noise. ~33 °C is warmer than a typical room; that's the kit itself
-(MCU + sensor on one board), not a conversion bug: humidity sitting
-near 52 %RH at the same time is physically consistent, and a CRC
-failure would have logged `SHT40: read failed (NACK or CRC)` instead.
+with a new T/RH pair every second. Between successive samples the
+values only wander in the last digit or two — that's normal sensor
+noise. Your exact values depend on the room and on the board's own
+warm-up. To see the sensor react, breathe gently on it: both
+temperature and humidity rise within a few readings and then settle
+back. If a read fails (NACK or a CRC mismatch), the log shows a yellow
+`[WARN] SHT40: read failed (NACK or CRC)` line instead.
 
 ## Walkthrough
 
@@ -174,29 +187,27 @@ stuck-bus recovery the HAL already had, not a new protocol.
 [`Sw/Src/prv_user_code.c`](./Sw/Src/prv_user_code.c) samples once at
 boot, then every `READ_INTERVAL_MS` (1000 ms) with the same
 `(now - last) >= interval` idiom as every tutorial since
-`02-SysTick_Timing`. Repeating the read — rather than logging once and
-going silent — means the result is still there even if `tdf.py
-monitor`'s reset-then-connect window tears the first boot line (a
-real, documented edge case since
-[04-Button_Read_And_Debounce](../../../Getting_Started/04-Button_Read_And_Debounce/#solution);
-observed again on this tutorial's first monitor attach).
+`02-SysTick_Timing`. Reading continuously — rather than logging once
+and going silent — means you can open a serial terminal at any time and
+see current values, and you can watch the sensor respond to changes
+(breath, a warm finger) live.
 
 ### 5. Build, flash, and watch
 
 ```sh
-tdf.py build
-tdf.py flash
-tdf.py monitor
+tdf build
+tdf flash
+tdf monitor
 ```
 
-See **Solution** above for what's actually confirmed on real hardware
-here.
+(Or chained in one command: `tdf build flash monitor`.) See
+**Solution** above for what the output should look like.
 
 ## Done When
 
-`tdf.py monitor` shows a plausible room temperature and humidity once
-per second, stable within sensor noise across repeated reads —
-genuinely confirmed on real hardware, see **Solution**.
+`tdf monitor` shows a temperature and humidity pair once per second,
+with no `read failed` lines; successive values are stable within sensor
+noise, and both rise when you breathe on the sensor.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

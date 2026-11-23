@@ -17,7 +17,7 @@
 
 # SHT40 Temperature / Humidity
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Sensors & Local Storage / Feature Tutorials · Zorluk: Kolay***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Sensors & Local Storage / Feature Tutorials · Zorluk: Kolay***
 
 > Bu sayfa [İngilizce orijinalinin](../../../../Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır (`Sw/` klasörü yalnızca
@@ -42,8 +42,8 @@ zaten kanıtladı; bu eğitim o adresteki asıl SHT4x protokolünü öğretir.
 ## Ön Koşullar
 
 - [01-I2C_Bus_Bringup](../../../../Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/README.md) — bu eğitim o `Sw/`'nin SysTick'ini, debug UART'ını, I2C HAL'ini ve `PRV_I2C_Init()`'ini değişmeden yeniden kullanır
-- Okumaları izlemek için `tdf.py monitor` (kurulum için [Getting_Started/04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution) bakın)
-- SHT40'ın I2C2 üzerinde bulunduğu, SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
+- Okumaları izlemek için: `tdf monitor` (kurulum için [Getting_Started/04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#çözüm) bakın) ya da kartın USB seri portunda 115200 8N1'de herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …)
+- Bilgisayarınıza USB kablosuyla bağlı, SHT40'ın I2C2 üzerinde bulunduğu bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
 ## SHT4x Protokolünü Anlamak
 
@@ -107,39 +107,51 @@ olarak kalması için tek atımlık API'yi tutar.
 [`Sw/`](../../../../Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/Sw/) gerçek, derlenebilir bir uygulamaya sahip:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-(`tdf.py`'nin ne olduğu için [Getting_Started/01-Hello_Blink'in Çözüm bölümüne](../../../../Getting_Started/01-Hello_Blink/README.md#solution),
-özellikle `monitor` için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution)
-bakın.)
+(Depo kökünden çalıştırın. `tdf`'nin ne olduğu için [Getting_Started/01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#çözüm),
+özellikle `monitor` için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#çözüm)
+bakın. macOS/Linux'ta `tdf.py` takma ad olarak da çalışır; Windows'ta
+`tdf` kullanın. `tdf monitor`'ü çalıştırmadan önce kartın seri portundaki
+diğer terminalleri kapatın — portu aynı anda yalnızca bir program
+açabilir.)
 
 [01-I2C_Bus_Bringup](../../../../Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/README.md)
 ile aynı paylaşılan satıcı SDK'sı ve aynı CMake şekli — `GEN_DIR` hâlâ
 `../../../../Generation/...` kullanır. Yeni satıcı kaynağı yok: I2C2
 zaten ayakta. Yeni olan `Drivers/sht40`, bu deponun ilk I2C cihaz
-sürücüsü (Eğitim 04'ün butonu ve Eğitim 05'in LED bankası GPIO idi).
+sürücüsü (`Getting_Started` 04 ve 05'teki buton ve LED sürücüleri GPIO idi).
 
-**Bağlı kartta, gerçekten, gerçek hayatta doğrulandı:** `tdf.py build`
-temiz şekilde derlenip bağlanıyor (`.text` 15660 bayt). `tdf.py flash`,
-SWD üzerinden tam bir programlama-ve-doğrulama döngüsünü tamamladı
-(`** Verified OK **`). Ardından `tdf.py monitor`, doğrudan gerçek
-donanımdan şunu gösterdi:
+**Gerçek donanımda doğrulandı:** `tdf build`, macOS'ta ve Windows 11'de
+hatasız derlenip bağlanıyor (`.text` yaklaşık 15,5 KB; kesin boyut
+toolchain sürümüne göre biraz değişir, ve linker
+[01-Hello_Blink'in Çözüm bölümünde](../../../Getting_Started/01-Hello_Blink/README.md#çözüm)
+açıklanan beklenen ve zararsız `_close` / `_lseek` / `_read` / `_write is
+not implemented` uyarılarını basar). `tdf flash`, gerçek, bağlı bir
+Tiremo Cortex kartına karşı SWD üzerinden tam bir programlama-ve-doğrulama
+döngüsünü tamamladı (`** Verified OK **`) ve log şöyle görünür:
 
 ```text
-[INFO] SHT40 T: 33.282 C
-[INFO] SHT40 RH: 52.431 %RH
+[INFO] SHT40_Temperature_Humidity: boot
+[INFO] SHT40 T: 27.410 C
+[INFO] SHT40 RH: 34.559 %RH
+[INFO] SHT40 T: 27.375 C
+[INFO] SHT40 RH: 34.393 %RH
+[INFO] SHT40 T: 27.367 C
+[INFO] SHT40 RH: 34.281 %RH
 ```
 
-her 1 saniyede tekrarlanarak, ardışık örneklerde T/RH yalnızca son
-bir-iki basamakta gezinerek — CRC-geçerli, sensör gürültüsü içinde
-kararlı. ~33 °C tipik bir odadan daha sıcak; bu kitin kendisi (MCU +
-sensör aynı kartta), bir dönüşüm hatası değil: aynı anda nemin ~52 %RH
-civarında durması fiziksel olarak tutarlı, ve bir CRC hatası bunun
-yerine `SHT40: read failed (NACK or CRC)` loglardı.
+her saniye yeni bir T/RH çifti gelir. Ardışık örnekler arasında değerler
+yalnızca son bir-iki basamakta oynar — bu normal sensör gürültüsüdür.
+Kesin değerler odaya ve kartın kendi ısınmasına bağlıdır. Sensörün
+tepki verdiğini görmek için üzerine hafifçe nefes verin: sıcaklık ve nem
+birkaç okuma içinde yükselir, sonra geri oturur. Bir okuma başarısız
+olursa (NACK ya da CRC uyuşmazlığı), log bunun yerine sarı bir
+`[WARN] SHT40: read failed (NACK or CRC)` satırı gösterir.
 
 ## Adım Adım
 
@@ -184,29 +196,27 @@ HAL'in zaten sahip olduğu sıkışık-bus kurtarması, yeni bir protokol değil
 [`Sw/Src/prv_user_code.c`](../../../../Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/Sw/Src/prv_user_code.c)
 açılışta bir kez örnekler, sonra her `READ_INTERVAL_MS` (1000 ms)
 `02-SysTick_Timing`'den beri her eğitimin kullandığı aynı
-`(now - last) >= interval` deyimiyle. Okumayı tekrarlamak — bir kez
-loglayıp susmak yerine — `tdf.py monitor`'un reset-sonra-bağlan penceresi
-ilk açılış satırını yırtsa bile sonucun hâlâ orada olduğu anlamına gelir
-([04-Button_Read_And_Debounce](../../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution)'dan
-beri belgelenmiş gerçek bir kenar durum; bu eğitimin ilk monitor
-bağlantısında yeniden gözlendi).
+`(now - last) >= interval` deyimiyle. Sürekli okumak — bir kez loglayıp
+susmak yerine — seri terminali herhangi bir anda açıp güncel değerleri
+görebilmeniz, ve sensörün değişikliklere (nefes, sıcak bir parmak)
+tepkisini canlı izleyebilmeniz anlamına gelir.
 
 ### 5. Derle, flaşla ve izle
 
 ```sh
-tdf.py build
-tdf.py flash
-tdf.py monitor
+tdf build
+tdf flash
+tdf monitor
 ```
 
-Burada gerçek donanımda neyin doğrulandığı için yukarıdaki **Çözüm**
-bölümüne bakın.
+(Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Çıktının
+nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne bakın.
 
 ## Bittiğinde
 
-`tdf.py monitor` saniyede bir, tekrarlanan okumalar boyunca sensör
-gürültüsü içinde kararlı, makul bir oda sıcaklığı ve nemi gösterir —
-gerçek donanımda doğrulandı, **Çözüm** bölümüne bakın.
+`tdf monitor` saniyede bir sıcaklık ve nem çifti gösterir ve hiç
+`read failed` satırı yoktur; ardışık değerler sensör gürültüsü içinde
+kararlıdır ve sensöre nefes verdiğinizde ikisi de yükselir.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 

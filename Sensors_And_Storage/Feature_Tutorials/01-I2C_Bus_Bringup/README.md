@@ -17,7 +17,7 @@
 
 # I2C Bus Bring-up
 
-***Board: Tiremo Cortex (ESP32) · Section: Sensors & Local Storage / Feature Tutorials · Difficulty: Easy***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Sensors & Local Storage / Feature Tutorials · Difficulty: Easy***
 
 ## Introduction
 
@@ -32,15 +32,15 @@ SHT40 and LIS2DE12 share I2C2. Before writing either sensor driver, get the bus 
 
 ## Prerequisites
 
-- [Getting_Started](../../../Getting_Started/) complete — this tutorial reuses its SysTick and debug-UART logging unchanged, and assumes `tdf.py` plus the setup scripts (`install.sh`/`export.sh`, or `install.ps1`/`export.ps1`, or `install.bat`/`export.bat`) are already run
-- `tdf.py monitor` to watch the probe results (see [Getting_Started/04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution) for setup)
-- An ABOV A34G43A Starter Kit connected over its onboard SWD debugger, with the SHT40 and LIS2DE12 present on I2C2
+- [Getting_Started](../../../Getting_Started/) complete — this tutorial reuses its SysTick and debug-UART logging unchanged, and assumes the setup scripts (`install.sh`/`export.sh`, or `install.ps1`/`export.ps1`, or `install.bat`/`export.bat`) have already been run so `tdf` is available
+- To watch the probe results: `tdf monitor` (see [Getting_Started/04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution) for setup) or any serial terminal (Tera Term, PuTTY, screen, minicom, …) at 115200 8N1 on the board's USB serial port
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../../Hardware.md)) connected to your PC with a USB cable, with the SHT40 and LIS2DE12 present on I2C2. The board's onboard CMSIS-DAP debug probe handles SWD flashing; no separate programmer is needed.
 
 ## Understanding the Probe (There's No `Probe()` to Call)
 
 [`Sw/Tiremo_Hal/Include/tiremo_hal_i2c.h`](./Sw/Tiremo_Hal/Include/tiremo_hal_i2c.h)
-(copied verbatim from the reference HAL) has exactly four functions:
-`Transmit`, `Receive`, `WriteRead`, and two recovery helpers
+(copied verbatim from the reference HAL) has exactly five functions:
+three transfer calls (`Transmit`, `Receive`, `WriteRead`) and two recovery helpers
 (`PrepareBus`/`Recover`, for a bus a slave left stuck). No `Probe()`.
 That's consistent with the rest of this HAL layer: it's a thin,
 protocol-agnostic wrapper over the vendor I2C peripheral — it has no
@@ -73,44 +73,53 @@ SHT40 and LIS2DE12 tutorials that follow this one, not here.
 
 ## Solution
 
-[`Sw/`](./Sw/) has a real, buildable implementation:
+[`Sw/`](./Sw/) has a real, buildable implementation. From the repo root:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
 (See [Getting_Started/01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)
-for what `tdf.py` is, and [04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution)
-for `monitor` specifically.)
+for what `tdf` is, and [04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution)
+for `monitor` specifically. On macOS/Linux, `tdf.py` also works as an
+alias; on Windows, use `tdf`. Close any other terminal on the board's
+serial port before running `tdf monitor` — only one program can open
+it at a time.)
 
 Same shared vendor SDK and CMake build shape as every `Getting_Started`
 tutorial, just one directory deeper — `GEN_DIR` in
 [`CMakeLists.txt`](./Sw/CMakeLists.txt) uses `../../../../Generation/...`
 (four levels, not three) to reach the repo root from
-`Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/Sw/`. New
-vendor sources this tutorial needed: `user_i2c.c`/`user_i2c_isr.c`
+`Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/Sw/`. On top
+of the UART/debug sources from `Getting_Started/03`, the new vendor
+sources this tutorial adds are `user_i2c.c`/`user_i2c_isr.c`
 (vendor-generated `PRV_I2C_Init()`, brings up `I2C_ID_2` at 100 kHz
-master mode) and `hal_i2c.c` — found by reading `tiremo_hal_i2c.c`'s
-own includes and vendor bring-up comments, not by guessing.
+master mode) and `hal_i2c.c`.
 
-**Genuinely verified, for real, on the connected board:** `tdf.py
-build` compiles and links clean (`.text` 14532 bytes). `tdf.py flash`
-completed a full program-and-verify cycle over SWD (`** Verified OK
-**`). `tdf.py monitor` then showed, straight from the real hardware:
+**Confirmed on real hardware:** `tdf build` compiles and links without
+errors on macOS and Windows 11 (`.text` about 14.5 KB; the exact size
+varies slightly with the toolchain version, and the linker prints the
+same expected, harmless `_close` / `_lseek` / `_read` / `_write is not
+implemented` warnings explained in [01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)).
+`tdf flash` completed a full program-and-verify cycle over SWD on a
+real, connected Tiremo Cortex board (`** Verified OK **`), and the log
+looks like this:
 
 ```text
+[INFO] I2C_Bus_Bringup: boot
+[INFO] SHT40 (0x44): ACK
+[INFO] LIS2DE12 (0x19): ACK
 [INFO] SHT40 (0x44): ACK
 [INFO] LIS2DE12 (0x19): ACK
 ```
 
-repeating every 5 seconds. **Both sensors genuinely ACK on I2C2** —
-this tutorial's entire "Done When" criterion, confirmed on real
-hardware, not simulated or assumed. If a sensor were missing or the bus
-miswired, the same log would show `NACK -- not responding` for that
-address at `WARN` level instead.
+with a new `ACK` pair every 5 seconds: both sensors answer on I2C2. If
+a sensor were missing or the bus miswired, the same log would show a
+yellow `[WARN] ... NACK -- not responding` line for that address
+instead.
 
 ## Walkthrough
 
@@ -123,10 +132,13 @@ narrow: just `TIREMO_BOARD_SHT40_I2C_BUS`/`_ADDRESS` and
 LED/button macros carried forward from `Getting_Started`; this tutorial
 doesn't use them.
 
-The LIS2DE12 address is worth a specific callout: ST's own datasheet
-gives the *8-bit* write address (`0x33` with `SA0` = 1), but this HAL's
-`address` parameter is always 7-bit — `0x33 >> 1 = 0x19`, which is what
-`board_config.h` actually holds. Getting this shift wrong is a classic,
+The LIS2DE12 address is worth a specific callout: with `SA0` = 1, ST's
+datasheet lists the *8-bit* addresses `0x32` (write) and `0x33` (read),
+but this HAL's `address` parameter is always 7-bit — both shift down to
+`0x32 >> 1 = 0x33 >> 1 = 0x19`, which is what `board_config.h` actually
+holds. (Don't confuse the `0x33` read address with the chip's
+`WHO_AM_I` register value, which also happens to be `0x33` — see
+[03-LIS2DE12_Accelerometer](../03-LIS2DE12_Accelerometer/).) Getting this shift wrong is a classic,
 silent way to probe the wrong address and see a false NACK.
 
 ### 2. Entry point — `PRV_I2C_Init()`
@@ -167,29 +179,27 @@ called once immediately at boot, then every `PROBE_INTERVAL_MS`
 (5000 ms) from the main loop using the same non-blocking
 `(now - last) >= interval` idiom every tutorial since
 `02-SysTick_Timing` has used. Repeating the probe — rather than logging
-once and going silent — means the result is still there to see even if
-`tdf.py monitor`'s reset-then-connect window misses the very first
-boot line (a real, documented edge case since
-[04-Button_Read_And_Debounce](../../../Getting_Started/04-Button_Read_And_Debounce/#solution)).
+once and going silent — means you can open a serial terminal at any
+time (not only right after boot) and still see the current bus state,
+and it shows a sensor dropping off or coming back while the board runs.
 
 ### 4. Build, flash, and watch
 
 ```sh
-tdf.py build
-tdf.py flash
-tdf.py monitor
+tdf build
+tdf flash
+tdf monitor
 ```
 
-Same OS-detection, same bundled-OpenOCD flow as every prior tutorial —
-see [01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution).
-See **Solution** above for what's actually confirmed on real hardware
-here.
+(Or chained in one command: `tdf build flash monitor`.) Same
+OS-detection, same bundled-OpenOCD flow as every prior tutorial — see
+[01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution).
+See **Solution** above for what the output should look like.
 
 ## Done When
 
-`tdf.py monitor` shows `SHT40 (0x44): ACK` and `LIS2DE12 (0x19): ACK`,
-repeating every 5 s — genuinely confirmed on real hardware, see
-**Solution**.
+`tdf monitor` shows `SHT40 (0x44): ACK` and `LIS2DE12 (0x19): ACK`,
+repeating every 5 s, with no `NACK` lines.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 
