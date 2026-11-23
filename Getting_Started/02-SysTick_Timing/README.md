@@ -17,7 +17,7 @@
 
 # SysTick Timing
 
-***Board: Tiremo Cortex (ESP32) · Section: Getting Started / Getting Started · Difficulty: Easy***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Getting Started · Difficulty: Easy***
 
 ## Introduction
 
@@ -27,13 +27,13 @@ Every later tutorial — WiFi retries, MQTT polling, alarm debouncing — needs 
 
 - `TIREMO_SysTick_Init()` / `TIREMO_SysTick_GetMs()` / `TIREMO_SysTick_DelayMs()`
 - Why elapsed-time math (`now - last >= interval`) is safer than nested delays, and how it survives the millisecond counter wrapping around
-- The same `Tiremo_Hal` (vendor-facing) / `Common` (application-facing) split Tutorial 01 introduced for GPIO, applied to timing
+- A new `Common` (application-facing) layer on top of `Tiremo_Hal` (vendor-facing): Tutorial 01 introduced `Tiremo_Hal` for GPIO; this tutorial adds `Common/` for the first time, starting with timing
 
 ## Prerequisites
 
 - [01-Hello_Blink](../01-Hello_Blink/) — this tutorial reuses its GPIO HAL and board_config.h pattern unchanged
 - `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` (see [01-Hello_Blink's Prerequisites](../01-Hello_Blink/#prerequisites) — identical here, including why Windows needs no Git Bash/WSL with this build system)
-- An ABOV A34G43A Starter Kit connected over its onboard SWD debugger
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../Hardware.md)) connected to your PC with a USB cable. The board's onboard CMSIS-DAP debug probe handles SWD flashing; no separate programmer is needed.
 
 ## Understanding Non-Blocking Timing
 
@@ -62,14 +62,17 @@ CMSIS-based file plus the millisecond-counter logic on top of it.
 **The application side** ([`Common/Src/tiremo_systick.c`](./Sw/Common/Src/tiremo_systick.c))
 is what every later tutorial actually calls. It registers a callback with
 the hardware layer above, and on every 1 ms interrupt increments a
-free-running counter:
+free-running counter (simplified here; the real handler also counts down
+`TIREMO_SysTick_DelayMs()`'s delay and calls the `TIREMO_SysTick_OnTick1ms()` hook described below):
 
 ```c
 static volatile uint32_t s_msTick = 0U;
 
 static void prvSysTickHandleTick(void)
 {
+    /* ... */
     s_msTick++;
+    /* ... */
 }
 
 uint32_t TIREMO_SysTick_GetMs(void)
@@ -105,35 +108,38 @@ throughout its connection-retry and telemetry-interval logic.
 
 ## Solution
 
-[`Sw/`](./Sw/) has a real, buildable implementation:
+[`Sw/`](./Sw/) has a real, buildable implementation. From the repo root:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
+cd Getting_Started/02-SysTick_Timing/Sw
+tdf build
+tdf flash
 ```
 
 (First time in a new shell, from the repo root: `source export.sh`
 (bash/zsh), `. .\export.ps1` (PowerShell), or `export.bat` (cmd.exe) puts
-`tdf.py` on `PATH` — see [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)
-for what `tdf.py` actually is, and why this repo uses it instead of raw
-`cmake`/`make` invocations.)
+`tdf` on `PATH`. On macOS/Linux, `tdf.py` also works as an alias; on
+Windows, use `tdf`, or `python ..\..\..\tools\tdf.py build` from `Sw\`
+without the export step. See [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)
+for what `tdf` actually is, and why this repo uses it instead of raw
+`cmake` invocations.)
 
 Same shared vendor SDK as Tutorial 01 ([`Generation/`](../../Generation/)
-at the repo root), same CMake shape (this tutorial, along with 01 and
-03, moved from a hand-written Makefile to CMake — see the same section
-for why) — this time linking a single ~5.5 KB image with the SysTick
-layer added on top of Tutorial 01's GPIO HAL.
+at the repo root), same CMake build as every tutorial in this repo (see
+[01-Hello_Blink's Solution](../01-Hello_Blink/#solution) for why CMake) —
+this time linking a single ~5.5 KB image with the SysTick layer added on
+top of Tutorial 01's GPIO HAL.
 
-**Confirmed on real hardware.** `tdf.py build` compiles and links
-clean, `tdf.py flash` completed a full
-program-and-verify cycle over SWD against a real, connected ABOV
-A34G43A Starter Kit, and — checked visually on the board — both LEDs
+**Confirmed on real hardware.** `tdf build` compiles and links without
+errors on macOS and Windows 11. The linker prints the same expected,
+harmless `_close` / `_lseek` / `_read` / `_write is not implemented`
+warnings explained in [01-Hello_Blink's Solution](../01-Hello_Blink/#solution).
+`tdf flash` completed a full program-and-verify cycle over SWD on a
+real, connected Tiremo Cortex board (`** Verified OK **`), and both LEDs
 blink at clearly different rates. `LED1_INTERVAL_MS` /
-`LED2_INTERVAL_MS` in `Sw/Src/prv_user_code.c` ended up tuned to `1000`
-/ `5000` (2 s and 10 s full cycles) rather than this write-up's original
-guess of `500` / `300` — a much bigger gap made the two rates
-unmistakable at a glance, which a subtler difference didn't.
+`LED2_INTERVAL_MS` in `Sw/Src/prv_user_code.c` are set to `1000` /
+`5000` (2 s and 10 s full cycles) so the two rates are easy to tell
+apart at a glance.
 
 ## Walkthrough
 
@@ -215,18 +221,18 @@ a real Make bug) was most of the difficulty — here it was the easy part.
 ### 5. Flash
 
 ```sh
-tdf.py build
-tdf.py flash
+tdf build
+tdf flash
 ```
 
 Same OS-detection, same bundled-OpenOCD flow as Tutorial 01, just
-reached through `tdf.py` instead of typing the full `cmake --build
+reached through `tdf` instead of typing the full `cmake --build
 build --target flash` — see the **Solution** section above for
 confirmation this actually reached real hardware.
 
 ## Done When
 
-Two LEDs blink at independent, visibly different rates from a single non-blocking loop, with no debugger attached. **Confirmed** — see Solution above.
+Two LEDs blink at independent, visibly different rates from a single non-blocking loop, with no debugger attached: LED1 toggles every second (2 s full cycle) and LED2 every 5 seconds (10 s full cycle).
 
 <p align="center"><img alt="" src="../../images/banner.png" width="100%"></p>
 

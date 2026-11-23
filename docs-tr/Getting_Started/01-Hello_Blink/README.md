@@ -17,7 +17,7 @@
 
 # Hello Blink
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Getting Started / Getting Started · Zorluk: Kolay***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Getting Started · Zorluk: Kolay***
 
 > Bu sayfa [İngilizce orijinalinin](../../../Getting_Started/01-Hello_Blink/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır (`Sw/` klasörü yalnızca
@@ -39,11 +39,11 @@ yakıp söndürür.
 
 ## Ön Koşullar
 
-- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` — eksik olanları görmek ve kurulum komutlarını almak için depo kökünden [`./install.sh`](../../../install.sh) (macOS/Linux), [`install.ps1`](../../../install.ps1) (Windows PowerShell) ya da [`install.bat`](../../../install.bat) (Windows cmd.exe) çalıştırın (burada Arm GNU Toolchain 15.2.1, CMake 4.3, Ninja 1.13'e karşı derlenip test edildi; makul ölçüde güncel herhangi bir sürüm çalışmalı)
+- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` — eksik olanları görmek ve kurulum komutlarını almak için depo kökünden [`./install.sh`](../../../install.sh) (macOS/Linux), [`install.ps1`](../../../install.ps1) (Windows PowerShell) ya da [`install.bat`](../../../install.bat) (Windows cmd.exe) çalıştırın (Arm GNU Toolchain 14.2.1 ve 15.2.1, CMake 4.3 ve 4.4, Ninja 1.13 ile derlenip test edildi; makul ölçüde güncel herhangi bir sürüm çalışmalı)
 - **Windows:** aşağıdaki komutlar cmd.exe, PowerShell, bash ya da zsh'de aynı şekilde çalışır — Git Bash veya WSL gerekmez. (Bu deponun daha önceki bir sürümü `build.sh`/`flash.sh` bash betikleri kullanıyordu ve bunlardan birini gerektiriyordu; CMake'e geçiş özellikle bu gereksinimi kaldırmak için yapıldı — bkz. aşağıdaki [Çözüm](#çözüm).) Kurulum betiklerinin artık yerel sürümleri var: PowerShell için `install.ps1` / `export.ps1` (ikincisini nokta ile kaynak alın: `. .\export.ps1`), cmd.exe için `install.bat` / `export.bat`. PowerShell `.ps1` betiklerini engellerse bir kez çalıştırın: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
-- SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
+- Bilgisayarınıza USB kablosuyla bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
-> **Windows: derleme doğrulandı, donanımda flaşlama hâlâ bekliyor.** `tdf.py build`, Windows 11'de uçtan uca çalışıyor (Arm GNU Toolchain 14.2.1, CMake 4.4.0, Ninja 1.13.2, `install.ps1` + winget ile kuruldu) — her kaynak derleniyor ve `HelloBlink`, macOS derlemesiyle eşleşen 5156 baytlık bir `.text` imajına bağlanıyor. Windows kurulum betikleri (`install.ps1`/`.bat`, `export.ps1`/`.bat`) ve `tools/tdf.cmd` sarmalayıcısı yerindedir. `tdf.py flash`, paketlenmiş `win32` OpenOCD'yi `CMAKE_HOST_SYSTEM_NAME` ile seçer ama Windows'ta gerçek bir karta karşı henüz denenmedi — flaşlarsanız lütfen geri bildirim verin.
+> **Windows: derleme ve flaşlama doğrulandı.** `tdf build` ve `tdf flash`, Windows 11'de uçtan uca çalışıyor (Arm GNU Toolchain 14.2.1, CMake 4.3.2 / 4.4.0, Ninja 1.13.2): her kaynak derleniyor, `HelloBlink` 5156 baytlık bir `.text` imajına bağlanıyor (macOS derlemesiyle aynı boyut) ve paketlenmiş `win32` OpenOCD kartı, üzerindeki CMSIS-DAP hata ayıklayıcısı üzerinden programlayıp doğruluyor (`** Verified OK **`).
 
 ## GPIO HAL'ı Anlamak
 
@@ -62,7 +62,8 @@ typedef enum { TIREMO_HAL_GPIO_PORT_A = 0, ..., TIREMO_HAL_GPIO_PORT_G } TIREMO_
 typedef enum { TIREMO_HAL_GPIO_PIN_0 = 0, ..., TIREMO_HAL_GPIO_PIN_15 } TIREMO_HAL_GPIO_Pin_t;
 ```
 
-Hello Blink bundan tam olarak üç fonksiyon kullanır
+Hello Blink bundan doğrudan üç fonksiyon çağırır (`TogglePin` içeride
+dördüncü bir fonksiyonu, `TIREMO_HAL_GPIO_ReadPin()`'i de kullanır — bkz. aşağısı)
 ([`Tiremo_Hal/Src/tiremo_hal_gpio.c`](../../../Getting_Started/01-Hello_Blink/Sw/Tiremo_Hal/Src/tiremo_hal_gpio.c)):
 
 ```c
@@ -139,15 +140,15 @@ install.bat
 export.bat
 ```
 
-Sonra, `Sw/` içinden:
+Sonra, depo kökünden bu eğitimin `Sw/` klasörüne geçip derleyin ve flaşlayın:
 
 ```sh
-cd Sw
+cd Getting_Started/01-Hello_Blink/Sw
 tdf build
 tdf flash
 ```
 
-(`tdf.py` hâlâ bir takma ad olarak çalışır.)
+macOS/Linux'ta `tdf.py`, `tdf` için takma ad olarak da çalışır. Windows'ta `tdf` kullanın. `export` adımını atladıysanız betiği doğrudan çağırın, ör. `Sw\` içinden `python ..\..\..\tools\tdf.py build`.
 
 **`tdf.py` aslında ne:** [`tools/tdf.py`](../../../tools/tdf.py) içindeki
 ince bir Python sarmalayıcı — ESP-IDF için `idf.py`'nin oynadığı aynı
@@ -194,13 +195,17 @@ CMake'in kendi çağrısının bile bir öğrenme eğrisi var yine de
 eğitim için ezberlemesi ya da yeniden yazması gereken bir şey değil) —
 `tdf.py`'nin var olma sebebi de bu.
 
-**Dürüstlük notu:** `tdf.py build` temiz şekilde derlenip bağlanıyor
-(bu makinede doğrulandı, Arm GNU Toolchain 15.2.1, CMake 4.3.3, Ninja
-1.13.2, macOS/arm64 — eski Make tabanlı derlemeyle aynı `.text`/`.data`/`.bss`
-boyutları). `tdf.py flash`, gerçek, bağlı bir ABOV
-A34G43A Starter Kit'e karşı SWD üzerinden tam bir programlama-ve-doğrulama
-döngüsünü tamamladı (`** Verified OK **`) — bu eğitim artık gerçekten
-flaşlanmış durumda, sadece bağlanmış değil. `tdf.py clean-device` de
+**Dürüstlük notu:** `tdf build`, macOS/arm64'te (Arm GNU Toolchain
+15.2.1, CMake 4.3.3, Ninja 1.13.2) ve Windows 11'de (Arm GNU Toolchain
+14.2.1, CMake 4.3.2, Ninja 1.13.2) hatasız derlenip bağlanıyor ve iki
+platformda da `.text`/`.data`/`.bss` boyutları aynı. Linker,
+`_close`, `_lseek`, `_read` ve `_write is not implemented and will always
+fail` uyarıları basar: bunlar beklenen uyarılardır, newlib'in `nosys`
+stub'larından gelir (toolchain dosyasındaki `--specs=nosys.specs`) ve bu
+üretici yazılımı dosya G/Ç'si kullanmadığı için zararsızdır. `tdf flash`,
+hem macOS'ta hem Windows'ta gerçek, bağlı bir Tiremo Cortex kartına karşı
+SWD üzerinden tam bir programlama-ve-doğrulama döngüsünü tamamladı
+(`** Verified OK **`). `tdf.py clean-device` de
 gerçekten denendi: kartı sildi (silme sonrası halt durumunun
 `pc: 0xfffffffe` — klasik boş-flash imzası — okunmasıyla doğrulandı),
 sonra `tdf.py flash` onu normal önyüklemeye geri getirdi.
@@ -313,8 +318,8 @@ yerine her eğitim tarafından paylaşılır.
 ### 5. Flaşlama
 
 ```sh
-tdf.py build   # -> build/HelloBlink (.elf) + .bin, boyut raporu
-tdf.py flash
+tdf build   # -> build/HelloBlink (.elf) + .bin, boyut raporu
+tdf flash
 ```
 
 `CMakeLists.txt`'teki `flash` özel hedefi (`tdf.py flash`'ın arkasında
@@ -332,8 +337,10 @@ Dürüstlük notuna bakın.
 
 ## Ne Zaman Tamamlanmış Sayılır
 
-Taze bir flaşlamadan sonra, hiçbir debugger bağlı değilken LED1 1 Hz'de
-yanıp söner.
+Taze bir flaşlamadan sonra, hiçbir debugger bağlı değilken LED1 düzenli
+olarak, yaklaşık saniyede bir yanıp söner. Gecikme kalibre edilmemiş bir
+meşgul-bekleme döngüsü olduğu için tam hız değişebilir; bkz. yukarıdaki
+Dürüstlük notunda `BLINK_DELAY_LOOPS`.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

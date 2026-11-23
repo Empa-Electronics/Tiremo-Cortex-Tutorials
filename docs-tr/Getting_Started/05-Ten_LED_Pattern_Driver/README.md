@@ -17,7 +17,7 @@
 
 # Ten-LED Pattern Driver
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Getting Started / Getting Started · Zorluk: Kolay***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Getting Started · Zorluk: Kolay***
 
 > Bu sayfa [İngilizce orijinalinin](../../../Getting_Started/05-Ten_LED_Pattern_Driver/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır (`Sw/` klasörü yalnızca
@@ -48,15 +48,16 @@ edilmiş bir USER butonu (Tutorial 04) döngüyü manuel olarak ilerletir.
   `Common/`'a, uygulama koduna değil — doğrudan Tutorial 04'ün debounce
   mantığıyla karşılaştırıldı, o mantık `prv_user_code.c`'de kaldı çünkü
   tek bir çağırana özgüydü
-- Tutorial 04 ve 05'i birleştirmek: debounce edilmiş bir buton basmasının
-  yalnızca bir log satırı üretmek yerine uygulama durumunu sürmesi
+- Tutorial 04'ün debounce edilmiş butonunu bu eğitimin desen motoruyla
+  birleştirmek: bir buton basmasının yalnızca bir log satırı üretmek
+  yerine uygulama durumunu sürmesi
 
 ## Ön Koşullar
 
 - [04-Button_Read_And_Debounce](../../../Getting_Started/04-Button_Read_And_Debounce/README.md) — bu eğitim onun debounce durum makinesini ve `Drivers/button`'unu birebir yeniden kullanır
 - `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites))
-- Sahne değişikliklerini izlemek için `tdf.py monitor` (kurulum için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution) bakın — `pyserial` gerektiriyor, `./install.sh` / `install.ps1` / `install.bat`'ın oluşturduğu `tdf_venv/` üzerinden)
-- On LED'in tamamına ve USER butonuna erişilebilir, SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
+- Sahne değişikliklerini log'da izlemek için: `tdf monitor` (kurulum için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../04-Button_Read_And_Debounce/README.md#çözüm) bakın — `pyserial` gerektiriyor, `./install.sh` / `install.ps1` / `install.bat`'ın oluşturduğu `tdf_venv/` üzerinden), ya da kartın USB seri portunda 115200 8N1'de herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …). LED'lerin kendisi terminal olmadan da çalışır.
+- Bilgisayarınıza USB kablosuyla bağlı, on LED'in tamamına ve USER butonuna erişilebilen bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
 ## Desen Motorunu Anlamak (Kopyalanacak Bir Referans Yok)
 
@@ -68,9 +69,9 @@ yalnızca `TIREMO_LED_On/Off/Toggle/SetState/GetState/AllOn/AllOff`'a
 sahip. Ham, anlık, tek seferlik çağrılar. Referans üretici yazılımının
 hiçbir yerinde bir `tiremo_led_pattern.c` yok; üretim sisteminin LED
 desenleri daha üst seviye shadow state tarafından (bulut tarafında, bu
-eğitimin kapsamı dışında ve burada ele alınmıyor) sürülüyor, ve
-"2 Hz'de yanıp sön"ü çalışan bir zamanlayıcıya çeviren şey her ne ise, bu
-deponun erişimi olduğu kodda yok.
+eğitimin kapsamı dışında ve burada ele alınmıyor) sürülüyor; bu yüzden
+"2 Hz'de yanıp sön"ü çalışan bir zamanlayıcıya çeviren zamanlama katmanı
+bu eğitimde sıfırdan inşa ediliyor.
 
 Bu yüzden
 [`Sw/Common/Src/tiremo_led_pattern.c`](../../../Getting_Started/05-Ten_LED_Pattern_Driver/Sw/Common/Src/tiremo_led_pattern.c)
@@ -104,18 +105,21 @@ değer.
 
 ## Çözüm
 
-[`Sw/`](../../../Getting_Started/05-Ten_LED_Pattern_Driver/Sw/) gerçek, derlenebilir bir uygulamaya sahip:
+[`Sw/`](../../../Getting_Started/05-Ten_LED_Pattern_Driver/Sw/) gerçek, derlenebilir bir uygulamaya sahip. Depo kökünden:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Getting_Started/05-Ten_LED_Pattern_Driver/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-(`tdf.py`'nin ne olduğu için [01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#solution),
-özellikle `monitor` için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution)
-bakın.)
+(`tdf`'nin ne olduğu için [01-Hello_Blink'in Çözüm bölümüne](../01-Hello_Blink/README.md#çözüm),
+özellikle `monitor` için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../04-Button_Read_And_Debounce/README.md#çözüm)
+bakın. macOS/Linux'ta `tdf.py` takma ad olarak da çalışır; Windows'ta
+`tdf` kullanın. `tdf monitor`'ü çalıştırmadan önce kartın seri portundaki
+diğer terminalleri kapatın — portu aynı anda yalnızca bir program
+açabilir.)
 
 Önceki her eğitimle aynı paylaşılan satıcı SDK'sı ve aynı CMake derleme
 şekli. Hiç yeni satıcı kaynağı gerekmedi — on LED'in tamamı, Tutorial
@@ -124,30 +128,35 @@ yeni derleme girdileri bu eğitimin kendi `Drivers/led/Src/tiremo_led.c`'i
 (kopyalandı) ve `Common/Src/tiremo_led_pattern.c`'i (orijinal), Tutorial
 04'ün buton kaynaklarının yanına `CMakeLists.txt`'e eklendi.
 
-**Bağlı kartta, gerçekten, gerçek hayatta doğrulandı:** `tdf.py build`
-temiz şekilde derlenip bağlanıyor (`.text` 13796 bayt). `tdf.py flash`,
-SWD üzerinden tam bir programlama-ve-doğrulama döngüsünü tamamladı
-(`** Verified OK **`). Ardından, önce resetleyen `tdf.py monitor`, temiz
-bir önyükleme-canlıya log yakaladı:
+**Gerçek donanımda doğrulandı:** `tdf build`, macOS'ta ve Windows 11'de
+hatasız derlenip bağlanıyor (`.text` yaklaşık 13,5 KB; kesin boyut
+toolchain sürümüne göre biraz değişir, ve linker
+[01-Hello_Blink'in Çözüm bölümünde](../01-Hello_Blink/README.md#çözüm)
+açıklanan beklenen ve zararsız `_close` / `_lseek` / `_read` / `_write is
+not implemented` uyarılarını basar). `tdf flash`, gerçek, bağlı bir
+Tiremo Cortex kartına karşı SWD üzerinden tam bir programlama-ve-doğrulama
+döngüsünü tamamladı (`** Verified OK **`) ve taze bir önyüklemeden
+itibaren log şöyle görünür:
 
 ```text
+[INFO] Ten_LED_Pattern_Driver: boot
 [INFO] scene -> SOLID @ 3 ms
 [INFO] scene -> BLINK (auto) @ 8003 ms
 [INFO] scene -> PULSE (auto) @ 16003 ms
+[INFO] scene -> SOLID (auto) @ 24003 ms
 ```
 
-Her otomatik ilerlemede tam olarak tasarlanan 8000 ms
-`SCENE_INTERVAL_MS`, gerçek donanım zaman damgalarından doğrulandı,
-varsayılmadı. **Gerçekten doğrulanmamış olan:** on LED'in tamamının
-gerçekten görünür şekilde kademeli ve doğru kablolanmış olup olmadığı
-(fiziksel kartı göremiyorum), ve gerçek bir USER buton basmasının
-sahneyi erken ilerletip `(auto)` yerine `(button)` loglayıp
-loglamadığı — bu bir insan parmağı gerektiriyor, Tutorial 04 ile aynı
-sınırlama. Bunu kendiniz kontrol ediyorsanız: `tdf.py monitor`'ı
-çalıştırın, BLINK ve PULSE sahneleri sırasında on LED'in tamamının
-kademelendiğini izleyin (LED_1 en hızlı 300 ms'de, LED_10 en yavaş
-1650 ms'de), ve USER butonuna basarak hemen bir sonraki sahneye
-atladığını, `scene -> ... (button)` olarak loglandığını doğrulayın.
+(PULSE'tan sonra döngü SOLID'e geri döner ve her 8 saniyede bir tekrar eder.)
+
+Zaman damgaları, her otomatik ilerleme arasında tam olarak tasarlanan
+8000 ms `SCENE_INTERVAL_MS`'i gösterir. **Kartta ne görmelisiniz:** SOLID
+sırasında on LED'in tamamı yanar; BLINK ve PULSE sırasında on farklı
+hızda kademeli olarak yanıp söner (LED_1 en hızlı, 300 ms periyotla;
+LED_10 en yavaş, 1650 ms ile). Herhangi bir anda USER butonuna basarsanız
+kart hemen bir sonraki sahneye geçer: sarı bir `[WARN] USER button:
+pressed` satırını sarı bir `[WARN] scene -> ... (button) @ ... ms`
+satırı izler ve 8 saniyelik otomatik ilerleme zamanlayıcısı o andan
+itibaren yeniden başlar.
 
 ## Adım Adım
 
@@ -218,27 +227,26 @@ UART'ı sel basar ve sahne değişikliklerini izleme amacını boşa
 ### 4. Derle, flaşla, izle
 
 ```sh
-tdf.py build
-tdf.py flash
-tdf.py monitor
+tdf build
+tdf flash
+tdf monitor
 ```
 
-Önceki her eğitimle aynı işletim sistemi tespiti, aynı paketlenmiş
-OpenOCD akışı — bkz. [01-Hello_Blink'in Çözüm bölümü](../../../Getting_Started/01-Hello_Blink/README.md#solution).
-Bu eğitim için gerçek donanımda tam olarak neyin doğrulandığı için
-yukarıdaki **Çözüm** bölümüne bakın.
+(Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Önceki her
+eğitimle aynı işletim sistemi tespiti, aynı paketlenmiş OpenOCD akışı —
+bkz. [01-Hello_Blink'in Çözüm bölümü](../01-Hello_Blink/README.md#çözüm).
+Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne
+bakın.
 
 ## Ne Zaman Tamamlanmış Sayılır
 
-`tdf.py monitor`, 8 saniyelik aralıklarla `scene -> SOLID`, ardından
-`scene -> BLINK (auto)`, ardından `scene -> PULSE (auto)` gösterir —
-gerçekten doğrulandı, bkz. **Çözüm**. On LED'in tamamı görünür şekilde
-açık olmalı (SOLID), ardından on farklı yanıp sönme hızında kademeli
-(BLINK), ardından kısa kalp atışı darbeleri olarak kademeli (PULSE), ve
-herhangi bir anda bir USER buton basması hemen bir sonraki sahneye
-atlamalı, `(auto)` yerine `(button)` olarak loglanmalı. Görsel/fiziksel
-kısımlar benim tarafımdan gerçek bir kartta henüz doğrulanmadı — bkz.
-**Çözüm** bölümündeki dürüstlük notu.
+`tdf monitor`, 8 saniyelik aralıklarla `scene -> SOLID`, ardından
+`scene -> BLINK (auto)`, ardından `scene -> PULSE (auto)` gösterir ve
+sonra `SOLID (auto)`'ya geri döner. On LED'in tamamı görünür şekilde
+açıktır (SOLID), ardından on farklı yanıp sönme hızında kademelenir
+(BLINK), ardından kısa kalp atışı darbeleri olarak kademelenir (PULSE),
+ve herhangi bir anda bir USER buton basması hemen bir sonraki sahneye
+atlar, `(auto)` yerine `(button)` olarak loglanır.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

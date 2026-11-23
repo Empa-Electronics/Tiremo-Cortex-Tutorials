@@ -52,7 +52,10 @@ target_compile_definitions(DebugUartLogging PRIVATE
 # time and persists across rebuilds until you configure again with a
 # different value.
 set(TIREMO_DEBUG_LEVEL "" CACHE STRING "Log verbosity compile-time ceiling (0=NONE, 1=ERROR, 2=WARN, 3=INFO, 4=DEBUG). Empty = tiremo_debug.h's own default (INFO).")
-if(TIREMO_DEBUG_LEVEL)
+# Compare against the empty string, not truthiness: CMake treats "0" as
+# false, so `if(TIREMO_DEBUG_LEVEL)` would silently ignore level 0 (NONE).
+# Pass -DTIREMO_DEBUG_LEVEL= (empty) to return to the header's default.
+if(NOT TIREMO_DEBUG_LEVEL STREQUAL "")
     target_compile_definitions(DebugUartLogging PRIVATE TIREMO_DEBUG_LEVEL=${TIREMO_DEBUG_LEVEL})
 endif()
 

@@ -17,7 +17,7 @@
 
 # Button Read And Debounce
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Getting Started / Getting Started · Zorluk: Kolay***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Getting Started · Zorluk: Kolay***
 
 > Bu sayfa [İngilizce orijinalinin](../../../Getting_Started/04-Button_Read_And_Debounce/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır (`Sw/` klasörü yalnızca
@@ -49,20 +49,22 @@ debounce edilmiş şekilde.
 - Bir uzun-tutma eşiğini, bırakmayı beklemeden, aşıldığı anda algılama —
   referans üretici yazılımının fabrika sıfırlama kontrolünün kullandığı
   ile aynı şekil
-- `tdf.py monitor` — bu eğitimde eklenen yeni bir alt komut; kartı SWD
-  üzerinden resetler ve UART log'unu seviyeye göre renk kodlu olarak
-  akıtır, böylece buton olayları yalnızca teorik olarak loglanmak yerine
-  gerçekten izlenebilir hale gelir
+- `tdf monitor`'ün nasıl çalıştığı — kartı SWD üzerinden resetleyen ve
+  UART log'unu seviyeye göre renk kodlu olarak akıtan depo aracı komutu;
+  böylece buton olaylarını canlı izleyebilirsiniz
 
 ## Ön Koşullar
 
 - [03-Debug_UART_Logging](../../../Getting_Started/03-Debug_UART_Logging/README.md) — bu eğitimin LED döngüsü ve loglaması, buton işleme eklenmiş Tutorial 03'ün ta kendisi
 - `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites))
-- Basma/bırakma/tutma log satırlarını görmek için: ya `tdf.py monitor`
+- Basma/bırakma/tutma log satırlarını görmek için: ya `tdf monitor`
   (aşağıdaki **Çözüm**'e bakın — `pyserial` gerektiriyor, `./install.sh` /
   `install.ps1` / `install.bat` bunu ayrı bir `tdf_venv/` içinde kurar), ya
-  da 115200 8N1'de herhangi bir USB-seri terminal
-- USER butonuna erişilebilir, SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
+  da 115200 8N1'de herhangi bir seri terminal (Tera Term, PuTTY, screen,
+  minicom, …). Ayrı bir USB-seri adaptör gerekmez: kartın üzerindeki
+  CMSIS-DAP hata ayıklayıcısı aynı USB kablosu üzerinden bir seri port
+  sağlar (Windows'ta örneğin `USB Serial Device (COMx)`).
+- Bilgisayarınıza USB kablosuyla bağlı, USER butonuna erişilebilen bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
 ## Debounce'u Anlamak (ve Referans Sürücünün Neden Hiç Debounce'u Olmadığı)
 
@@ -111,18 +113,19 @@ olarak referans mimarisinin, çevre birimine genel değil tek bir çağırana
 
 ## Çözüm
 
-[`Sw/`](../../../Getting_Started/04-Button_Read_And_Debounce/Sw/) gerçek, derlenebilir bir uygulamaya sahip:
+[`Sw/`](../../../Getting_Started/04-Button_Read_And_Debounce/Sw/) gerçek, derlenebilir bir uygulamaya sahip. Depo kökünden:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
+cd Getting_Started/04-Button_Read_And_Debounce/Sw
+tdf build
+tdf flash
 ```
 
-(`tdf.py`'nin ne olduğu ve `./install.sh` + `source ./export.sh` — Windows'ta
+(`tdf`'nin ne olduğu ve `./install.sh` + `source ./export.sh` — Windows'ta
 `install.ps1` + `. .\export.ps1` ya da `install.bat` + `export.bat` — ile
-nasıl `PATH`'e ekleneceği için [01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#solution)
-bakın.)
+nasıl `PATH`'e ekleneceği için [01-Hello_Blink'in Çözüm bölümüne](../01-Hello_Blink/README.md#çözüm)
+bakın. macOS/Linux'ta `tdf.py` takma ad olarak da çalışır; Windows'ta
+`tdf` kullanın.)
 
 Önceki her eğitimle aynı paylaşılan satıcı SDK'sı ve aynı CMake derleme
 şekli ([`Generation/`](../../../Generation/), depo kökünde). Hiç yeni
@@ -132,29 +135,31 @@ girdisi, bu eğitimin kendi `Drivers/button/Src/tiremo_button.c`'i,
 Tutorial 03'ün UART/debug kaynaklarının yanına `CMakeLists.txt`'e
 eklendi.
 
-**Flaşlandığı doğrulandı, gözlemlendiği de doğrulandı — geriye dürüst
-bir açık kaldı:** `tdf.py build` temiz şekilde derlenip bağlanıyor
-(`.text` 13216 bayt). `tdf.py flash`, gerçek, bağlı bir ABOV A34G43A
-Starter Kit'e karşı SWD üzerinden tam bir programlama-ve-doğrulama
-döngüsünü tamamladı (`** Verified OK **`). UART log'unu okumak daha önce
-burada engelliydi — bu ortamda seri terminal yoktu — bu yüzden bu eğitim
-`tdf.py monitor`'ı da ekliyor:
+**Gerçek donanımda doğrulandı:** `tdf build`, macOS'ta ve Windows 11'de
+hatasız derlenip bağlanıyor (`.text` yaklaşık 13 KB; kesin boyut
+toolchain sürümüne göre biraz değişir, ve linker
+[01-Hello_Blink'in Çözüm bölümünde](../01-Hello_Blink/README.md#çözüm)
+açıklanan beklenen ve zararsız `_close` / `_lseek` / `_read` / `_write is
+not implemented` uyarılarını basar). `tdf flash`, gerçek, bağlı bir
+Tiremo Cortex kartına karşı SWD üzerinden tam bir programlama-ve-doğrulama
+döngüsünü tamamladı (`** Verified OK **`). Log'u izlemek için çalıştırın:
 
 ```sh
-tdf.py monitor
+tdf monitor
 ```
 
-Bu, kartı SWD üzerinden resetler (yeni bir `reset-device` CMake hedefi,
+Bu, kartı SWD üzerinden resetler (`reset-device` CMake hedefi,
 `init; reset run; shutdown` — aynı OpenOCD, yeniden programlama yok) ve
 ardından log'u seviyeye göre renk kodlu olarak akıtır (`[ERROR]` kırmızı,
-`[WARN]` sarı, `[INFO]` yeşil, `[DEBUG]` camgöbeği — Windows'ta `tdf.py
-monitor` konsolun ANSI işlemesini açar, böylece renkler görünür). Gerçek,
-yeni bir bağımlılık gerektirdi: `pyserial` — düz bir `pip install` yerine
-`./install.sh` tarafından ayrı bir `tdf_venv/` içine kuruldu, çünkü
-çoğu güncel Python kurulumu (Homebrew, çoğu Linux dağıtımı) artık
-sistem geneline pip kurulumlarını doğrudan reddediyor (PEP 668);
-`source ./export.sh` o venv'i otomatik olarak etkinleştirir. İlk seferde
-tam kurulum:
+`[WARN]` sarı, `[INFO]` yeşil, `[DEBUG]` camgöbeği — Windows'ta `tdf
+monitor` konsolun ANSI işlemesini açar, böylece renkler görünür). Çıkmak
+için Ctrl+C. Seri portu aynı anda yalnızca bir program açabilir, bu
+yüzden önce o porttaki diğer terminalleri (Tera Term, PuTTY, …) kapatın.
+`monitor`, `pyserial` gerektirir; bu, düz bir `pip install` yerine kurulum
+betikleri tarafından ayrı bir `tdf_venv/` içine kurulur, çünkü çoğu güncel
+Python kurulumu (Homebrew, çoğu Linux dağıtımı) sistem geneline pip
+kurulumlarını reddediyor (PEP 668); `export` o venv'i otomatik olarak
+etkinleştirir. İlk seferde tam kurulum:
 
 ```sh
 # macOS / Linux
@@ -174,22 +179,30 @@ install.bat
 export.bat
 ```
 
-**Bununla, bağlı kartta, gerçekten doğrulanan:** önyükleme satırı ve
-sürekli `LED1`/`LED2 toggle @ ... ms` satırları doğru şekilde, yeşil
-renkte akıyor, Tutorial 02/03'ün yanıp sönme desenine uyuyor — hem
-Tutorial 03'ün hem bu eğitimin kendi belgelerinde daha önce
-doğrulanmamış olarak işaretlenmişti, şimdi kapatıldı. **Hâlâ gerçekten
-doğrulanmamış olan:** buton-basma davranışının kendisi, gerçek kartta
-bir insan parmağı gerektiriyor, bunu buradan yapamıyorum — `tdf.py
-monitor` log borusunun çalıştığını kanıtlar, bir basmanın doğru log
-satırını ürettiğini değil. Bunu kendiniz kontrol ediyorsanız: `tdf.py
-monitor`'ı çalıştırın, sonra USER butonuna basıp basılı tutun — bir
-basma için bir sarı `USER button: pressed` satırı (birkaç tane değil),
-10 saniyeyi aşan bir tutma için bir yeşil `USER button: long hold
-reached (10000 ms)` satırı, ve bırakmada bir sarı `USER button: released
-after N ms` satırı görmelisiniz. (Basma/bırakma özellikle `INFO` değil
-`WARN` seviyesinde loglanıyor, böylece bunu gerçekten canlı izlerken
-sürekli yeşil LED-toggle gürültüsüne karşı sarı renkte öne çıkıyorlar.)
+**Ne görmelisiniz:** önyükleme satırı ve sürekli `LED1`/`LED2 toggle @
+... ms` satırları yeşil renkte, Tutorial 02/03'ün yanıp sönme desenine
+uygun şekilde akar. USER butonuna basınca her fiziksel basma için tam
+olarak bir sarı `[WARN] USER button: pressed` satırı (birkaç tane değil),
+bırakınca bir sarı `[WARN] USER button: released after N ms` satırı
+gelir. 10 saniyeden uzun basılı tutarsanız eşik aşıldığı anda yeşil bir
+`[INFO] USER button: long hold reached (10000 ms)` satırı görünür;
+bırakma satırı da `(was a long hold)` ile biter. Örneğin gerçek bir
+kartta iki kısa basma:
+
+```text
+[INFO] LED1 toggle @ 37003 ms
+[WARN] USER button: pressed
+[INFO] LED1 toggle @ 38003 ms
+[WARN] USER button: released after 1821 ms
+[INFO] LED1 toggle @ 39003 ms
+```
+
+Basma/bırakma `WARN`, uzun tutma satırı `INFO` seviyesinde loglanır:
+basma/bırakma kenarları sürekli yeşil LED-toggle satırlarına karşı sarı
+renkte öne çıkar. İpucu: LED satırlarını tamamen gizlemek için
+`tdf build -DTIREMO_DEBUG_LEVEL=2` ile derleyin — yalnızca `WARN`
+basma/bırakma satırları kalır (o seviyede `INFO` uzun-tutma satırı da
+derlemeden çıkarılır).
 
 ## Adım Adım
 
@@ -287,13 +300,13 @@ yüzden 10 saniyeye ulaşıldığı anda tetiklenir — nihai bırakmayı beklem
 referans üretici yazılımındaki `TIREMO_APP_ServiceFactoryResetHold()`'un
 kullandığı ile aynı şekil.
 
-### 4. Canlı izleme: `tdf.py monitor`
+### 4. Canlı izleme: `tdf monitor`
 
-[`tools/tdf.py`](../../../tools/tdf.py) yeni bir `monitor` alt komutu
-kazanıyor. `build`/`flash`/`clean`/`clean-device`'ın aksine, altında
+[`tools/tdf.py`](../../../tools/tdf.py) bir `monitor` alt komutuna
+sahiptir. `build`/`flash`/`clean`/`clean-device`'ın aksine, altında
 saf CMake devretme değil — kartı resetlemek yine öyle (`cmake --build
-build --target reset-device`, her eğitimin `CMakeLists.txt`'ine
-`erase-device`'in hemen yanına eklenen bir hedef), ama sonrasında
+build --target reset-device`, her eğitimin `CMakeLists.txt`'inde
+`erase-device`'in hemen yanında tanımlı bir hedef), ama sonrasında
 UART'ı okumak gerçek bir seri port gerektiriyor, ki CMake ve OpenOCD'nin
 bu konuda hiçbir kavramı yok. O kısım `pyserial`: kartın seri portunu
 otomatik algıla (birden fazla aday çıkarsa `--port`'a düş), 115200
@@ -313,41 +326,38 @@ def colorize(line):
     return f"{color}{line}\033[0m" if color else line
 ```
 
-Önce resetlemek, seri portu açmadan önce, bilinçli bir seçim: her
-`tdf.py monitor` oturumunun, kartın zaten yapmakta olduğu bir şeyin
-ortasına düşmek yerine, taze bir önyüklemeden başlamasını garanti eder.
-Bilinmeye değer, dürüst bir uç durum: canlı bir UART bağlantısını
-resetlemek, tam reset sınırında bir satırı bazen ikiye yırtabilir
-(test sırasında bir kez gözlemlendi — başıboş, bozuk bir kısmi satır,
-hemen ardından 0 ms'ye yakın yeniden başlayan temiz çıktı). Zararsız, ve
-bir eğitim aracı için etrafında mühendislik yapmaya değmez.
+Sıra bilinçlidir: `monitor` önce seri portu açar ve bilgisayarda zaten
+tamponlanmış eski baytları atar, *sonra* kartı resetler. Böylece her
+`tdf monitor` oturumu taze bir önyüklemeden başlar ve port açılırken
+önyükleme satırı kaybolmaz. Bilinmeye değer bir uç durum: canlı bir UART
+bağlantısını resetlemek, tam reset sınırında bir satırı bazen ikiye
+yırtabilir (başıboş, bozuk bir kısmi satır, hemen ardından 0 ms'ye yakın
+yeniden başlayan temiz çıktı). Zararsızdır.
 
 ### 5. Derle, flaşla, izle
 
 ```sh
-tdf.py build
-tdf.py flash
-tdf.py monitor
+tdf build
+tdf flash
+tdf monitor
 ```
 
+(Ya da tek komutta zincirleyerek: `tdf build flash monitor`.)
 `build`/`flash` için önceki her eğitimle aynı işletim sistemi tespiti,
 aynı paketlenmiş OpenOCD akışı — bkz.
-[01-Hello_Blink'in Çözüm bölümü](../../../Getting_Started/01-Hello_Blink/README.md#solution).
-Bu eğitim için gerçek donanımda tam olarak neyin doğrulandığı, ve
-`monitor`'ın tam hikayesi için yukarıdaki **Çözüm** bölümüne bakın.
+[01-Hello_Blink'in Çözüm bölümü](../01-Hello_Blink/README.md#çözüm).
+Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne
+bakın.
 
 ## Ne Zaman Tamamlanmış Sayılır
 
-`tdf.py monitor`, önyükleme satırını ve sürekli `LED1`/`LED2 toggle @
-... ms` satırlarını yeşil renkte akıtır — gerçekten doğrulandı, bkz.
-**Çözüm**. USER butonuna basıp basılı tutmak şunları eklemeli: her
-fiziksel basma için bir sarı `USER button: pressed` satırı (birkaç tane
-değil — debounce'un çalıştığının kanıtı), bir tutma 10 saniyeyi aştığı
-anda bir yeşil `USER button: long hold reached (10000 ms)` satırı, ve
-bırakmada `N`'in kısa bir basmayı uzun bir tutmadan ayırt ettiği bir
-sarı `USER button: released after N ms` satırı. Özellikle buton-basma
-kısmı benim tarafımdan gerçek bir kartta henüz doğrulanmadı — bkz.
-**Çözüm** bölümündeki dürüstlük notu.
+`tdf monitor`, önyükleme satırını ve sürekli `LED1`/`LED2 toggle @
+... ms` satırlarını yeşil renkte akıtır. USER butonuna basıp basılı
+tutmak şunları ekler: her fiziksel basma için bir sarı `USER button:
+pressed` satırı (birkaç tane değil — debounce'un çalıştığının kanıtı),
+bir tutma 10 saniyeyi aştığı anda bir yeşil `USER button: long hold
+reached (10000 ms)` satırı, ve bırakmada `N`'in kısa bir basmayı uzun bir
+tutmadan ayırt ettiği bir sarı `USER button: released after N ms` satırı.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

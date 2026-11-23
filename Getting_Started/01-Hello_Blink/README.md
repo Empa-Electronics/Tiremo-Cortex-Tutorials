@@ -17,7 +17,7 @@
 
 # Hello Blink
 
-***Board: Tiremo Cortex (ESP32) · Section: Getting Started / Getting Started · Difficulty: Easy***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Getting Started · Difficulty: Easy***
 
 ## Introduction
 
@@ -31,11 +31,11 @@ Before anything talks to WiFi or AWS, you need a build that flashes and a board 
 
 ## Prerequisites
 
-- `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` — run [`./install.sh`](../../install.sh) (macOS/Linux), [`install.ps1`](../../install.ps1) (Windows PowerShell), or [`install.bat`](../../install.bat) (Windows cmd.exe) from the repo root to check for these and get install commands for what's missing (built and tested here against Arm GNU Toolchain 15.2.1, CMake 4.3, Ninja 1.13; anything reasonably recent should work)
+- `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` — run [`./install.sh`](../../install.sh) (macOS/Linux), [`install.ps1`](../../install.ps1) (Windows PowerShell), or [`install.bat`](../../install.bat) (Windows cmd.exe) from the repo root to check for these and get install commands for what's missing (built and tested with Arm GNU Toolchain 14.2.1 and 15.2.1, CMake 4.3 and 4.4, Ninja 1.13; anything reasonably recent should work)
 - **Windows:** the commands below run identically in cmd.exe, PowerShell, bash, or zsh — no Git Bash or WSL required. (An earlier version of this repo used `build.sh`/`flash.sh` bash scripts and needed one of those; the switch to CMake was made specifically to remove that requirement — see [Solution](#solution) below.) The setup scripts come in native flavors now: `install.ps1` / `export.ps1` for PowerShell (dot-source the second: `. .\export.ps1`), `install.bat` / `export.bat` for cmd.exe. If PowerShell blocks `.ps1` scripts, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
-- An ABOV A34G43A Starter Kit connected over its onboard SWD debugger
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../Hardware.md)) connected to your PC with a USB cable. The board's onboard CMSIS-DAP debug probe handles SWD flashing; no separate programmer is needed.
 
-> **Windows: build verified, hardware flash still pending.** `tdf.py build` runs end-to-end on Windows 11 (Arm GNU Toolchain 14.2.1, CMake 4.4.0, Ninja 1.13.2, installed via `install.ps1` + winget) — every source compiles and `HelloBlink` links to a 5156-byte `.text` image, matching the macOS build. The Windows setup scripts (`install.ps1`/`.bat`, `export.ps1`/`.bat`) and the `tools/tdf.cmd` shim are in place. `tdf.py flash` picks the bundled `win32` OpenOCD via `CMAKE_HOST_SYSTEM_NAME` but hasn't been exercised against a real board on Windows yet — if you flash it, please report back.
+> **Windows: build and flash verified.** `tdf build` and `tdf flash` run end-to-end on Windows 11 (Arm GNU Toolchain 14.2.1, CMake 4.3.2 / 4.4.0, Ninja 1.13.2): every source compiles, `HelloBlink` links to a 5156-byte `.text` image (the same size as the macOS build), and the bundled `win32` OpenOCD programs and verifies the board over the onboard CMSIS-DAP probe (`** Verified OK **`).
 
 ## Understanding the GPIO HAL
 
@@ -54,7 +54,8 @@ typedef enum { TIREMO_HAL_GPIO_PORT_A = 0, ..., TIREMO_HAL_GPIO_PORT_G } TIREMO_
 typedef enum { TIREMO_HAL_GPIO_PIN_0 = 0, ..., TIREMO_HAL_GPIO_PIN_15 } TIREMO_HAL_GPIO_Pin_t;
 ```
 
-Hello Blink uses exactly three functions from it
+Hello Blink calls three functions from it directly (`TogglePin` also uses
+a fourth, `TIREMO_HAL_GPIO_ReadPin()`, internally — see below)
 ([`Tiremo_Hal/Src/tiremo_hal_gpio.c`](./Sw/Tiremo_Hal/Src/tiremo_hal_gpio.c)):
 
 ```c
@@ -130,15 +131,15 @@ install.bat
 export.bat
 ```
 
-Then, from `Sw/`:
+Then, from the repo root, go into this tutorial's `Sw/` folder and build and flash:
 
 ```sh
-cd Sw
+cd Getting_Started/01-Hello_Blink/Sw
 tdf build
 tdf flash
 ```
 
-(`tdf.py` still works as an alias.)
+On macOS/Linux, `tdf.py` also works as an alias for `tdf`. On Windows, use `tdf`. If you skipped the `export` step, call the script directly instead, e.g. `python ..\..\..\tools\tdf.py build` from `Sw\`.
 
 **What `tdf.py` actually is:** a thin Python wrapper at [`tools/tdf.py`](../../tools/tdf.py) — the same role `idf.py` plays for ESP-IDF. It owns no OpenOCD or compiler logic itself; `tdf build` is exactly `cmake -G Ninja -B build -DCMAKE_TOOLCHAIN_FILE=<repo>/cmake/toolchain-arm-none-eabi.cmake && cmake --build build`, and `tdf flash` adds `cmake --build build --target flash` after it. It self-locates the repo from its own file path, so `python tools/tdf.py build` (`python tools\tdf.py build` on Windows) works from anywhere, with or without `export.sh` — that script only adds the convenience of typing bare `tdf` (or `tdf.py`; on Windows, `tools/tdf.cmd`). There's also `tdf clean` (removes `build/`) and `tdf clean-device` (mass-erases the connected board's chip flash — asks first). `tdf monitor`, added once there was a UART to actually read (see [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution)), resets the board over SWD and streams the log — it's the one subcommand that isn't pure CMake delegation, since it also needs `pyserial`, installed into a dedicated `tdf_venv/` by `install.sh` / `install.ps1` / `install.bat` and activated by the matching `export.*`.
 
@@ -146,7 +147,7 @@ It builds against this repo's shared vendor SDK ([`Generation/`](../../Generatio
 
 **Why CMake, not a hand-written Makefile:** this tutorial was originally built with a plain Makefile — matching the reference firmware's own build system — and it worked. But it required Git Bash or WSL on Windows (plus a separate `make` install, since Git Bash doesn't bundle one), and hit a real bug: a vendor source path containing `..` components, fed through the naive `$(patsubst %.c,$(BUILD_DIR)/obj/%.o,$(SRCS))` pattern every one of these tutorials' Makefiles used, let those `..` escape `build/obj/` and write object files into a stray directory tree outside the build folder entirely. The Make version worked around it with a `vpath` trick; CMake's `add_executable()` sidesteps the whole problem, since it manages object file placement for out-of-tree sources internally. Between removing the Windows shell dependency and removing a class of bug outright, CMake won — see [`Sw/CMakeLists.txt`](./Sw/CMakeLists.txt). Even CMake's own invocation has a learning curve, though (`cmake -G Ninja -B build -DCMAKE_TOOLCHAIN_FILE=...` is not something anyone should have to memorize or retype for every tutorial), which is what `tdf.py` is for.
 
-**Honesty check:** `tdf.py build` compiles and links clean (verified on this machine, Arm GNU Toolchain 15.2.1, CMake 4.3.3, Ninja 1.13.2, macOS/arm64 — identical `.text`/`.data`/`.bss` sizes to the earlier Make-based build). `tdf.py flash` completed a full program-and-verify cycle over SWD against a real, connected ABOV A34G43A Starter Kit (`** Verified OK **`) — this tutorial is now genuinely flashed, not just linked. `tdf.py clean-device` was also exercised for real: erased the board (confirmed by the post-erase halt reading back `pc: 0xfffffffe`, the classic blank-flash signature), then `tdf.py flash` recovered it to a normal boot. `BLINK_DELAY_LOOPS` in `Sw/Src/prv_user_code.c` is a hand-picked estimate, not a calibrated time base — if the blink rate is visibly off on your board, adjust it up or down.
+**Honesty check:** `tdf build` compiles and links without errors on macOS/arm64 (Arm GNU Toolchain 15.2.1, CMake 4.3.3, Ninja 1.13.2) and Windows 11 (Arm GNU Toolchain 14.2.1, CMake 4.3.2, Ninja 1.13.2), with identical `.text`/`.data`/`.bss` sizes. The linker prints `_close`, `_lseek`, `_read`, and `_write is not implemented and will always fail` warnings: these are expected, since they come from newlib's `nosys` stubs (`--specs=nosys.specs` in the toolchain file), and they are harmless because this firmware never uses file I/O. `tdf flash` completed a full program-and-verify cycle over SWD on a real, connected Tiremo Cortex board (`** Verified OK **`) on both macOS and Windows. `tdf.py clean-device` was also exercised for real: erased the board (confirmed by the post-erase halt reading back `pc: 0xfffffffe`, the classic blank-flash signature), then `tdf.py flash` recovered it to a normal boot. `BLINK_DELAY_LOOPS` in `Sw/Src/prv_user_code.c` is a hand-picked estimate, not a calibrated time base — if the blink rate is visibly off on your board, adjust it up or down.
 
 ## Walkthrough
 
@@ -244,15 +245,15 @@ at the repo root, shared by every tutorial rather than repeated in each
 ### 5. Flash
 
 ```sh
-tdf.py build   # -> build/HelloBlink (.elf) + .bin, size report
-tdf.py flash
+tdf build   # -> build/HelloBlink (.elf) + .bin, size report
+tdf flash
 ```
 
 The `flash` custom target in `CMakeLists.txt` (which `tdf.py flash` just
 runs via `cmake --build build --target flash`) picks the matching
 prebuilt OpenOCD binary for your OS (Linux/macOS/Windows all ship one in
 the vendor SDK, detected via `CMAKE_HOST_SYSTEM_NAME`/`_PROCESSOR`) and
-programs the single monolithic image at address 0. There's also a
+programs the single monolithic image at address 0. There's also an
 `erase-device` target (`tdf.py clean-device`) that mass-erases the whole
 chip instead — useful for proving to yourself that a board is genuinely
 blank before flashing it fresh. See [Prerequisites](#prerequisites)
@@ -262,7 +263,7 @@ verified on real hardware.
 
 ## Done When
 
-LED1 blinks at 1 Hz after a fresh flash, with no debugger attached.
+LED1 blinks steadily, roughly once per second, after a fresh flash, with no debugger attached. The delay is an uncalibrated busy-wait, so the exact rate varies; see `BLINK_DELAY_LOOPS` in the Honesty check above.
 
 <p align="center"><img alt="" src="../../images/banner.png" width="100%"></p>
 

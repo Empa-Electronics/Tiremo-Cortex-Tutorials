@@ -17,7 +17,7 @@
 
 # Button Read And Debounce
 
-***Board: Tiremo Cortex (ESP32) · Section: Getting Started / Getting Started · Difficulty: Easy***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Getting Started · Difficulty: Easy***
 
 ## Introduction
 
@@ -29,14 +29,14 @@ The USER button is only used for one thing in the production firmware — a 10-s
 - Why the reference button driver itself has **no debounce logic at all**, and why that's a deliberate, defensible choice for its one real caller
 - A small debounce state machine, built in application code on top of the raw driver, using the same non-blocking `TIREMO_SysTick_GetMs()` idiom as Tutorial 02
 - Detecting a long-hold threshold the instant it's crossed, without waiting for release — the same shape the reference firmware's factory-reset check uses
-- `tdf.py monitor` — a new subcommand added in this tutorial that resets the board over SWD and streams the UART log, color-coded by level, so button events are actually watchable instead of just theoretically logged
+- How `tdf monitor` works — the repo tool command that resets the board over SWD and streams the UART log, color-coded by level, so you can watch button events live
 
 ## Prerequisites
 
 - [03-Debug_UART_Logging](../03-Debug_UART_Logging/) — this tutorial's LED loop and logging are exactly Tutorial 03's, with button handling added
 - `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` (see [01-Hello_Blink's Prerequisites](../01-Hello_Blink/#prerequisites))
-- To see the press/release/hold log lines: either `tdf.py monitor` (see **Solution** below — needs `pyserial`, which `./install.sh` / `install.ps1` / `install.bat` sets up in a dedicated `tdf_venv/`), or any USB-to-serial terminal at 115200 8N1
-- An ABOV A34G43A Starter Kit connected over its onboard SWD debugger, with the USER button accessible
+- To see the press/release/hold log lines: either `tdf monitor` (see **Solution** below — needs `pyserial`, which `./install.sh` / `install.ps1` / `install.bat` sets up in a dedicated `tdf_venv/`), or any serial terminal (Tera Term, PuTTY, screen, minicom, …) at 115200 8N1. No separate USB-to-serial adapter is needed: the board's onboard CMSIS-DAP probe provides a serial port over the same USB cable (for example `USB Serial Device (COMx)` on Windows).
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../Hardware.md)) connected to your PC with a USB cable, with the USER button accessible. The board's onboard CMSIS-DAP debug probe handles SWD flashing; no separate programmer is needed.
 
 ## Understanding Debounce (and Why the Reference Driver Doesn't Have Any)
 
@@ -83,18 +83,19 @@ specific to one caller rather than generic to the peripheral.
 
 ## Solution
 
-[`Sw/`](./Sw/) has a real, buildable implementation:
+[`Sw/`](./Sw/) has a real, buildable implementation. From the repo root:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
+cd Getting_Started/04-Button_Read_And_Debounce/Sw
+tdf build
+tdf flash
 ```
 
 (See [01-Hello_Blink's Solution](../01-Hello_Blink/#solution) for what
-`tdf.py` is and how to get it on `PATH` via `./install.sh` + `source
+`tdf` is and how to get it on `PATH` via `./install.sh` + `source
 ./export.sh` — on Windows, `install.ps1` + `. .\export.ps1`, or
-`install.bat` + `export.bat`.)
+`install.bat` + `export.bat`. On macOS/Linux, `tdf.py` also works as an
+alias; on Windows, use `tdf`.)
 
 Same shared vendor SDK and CMake build shape as every prior tutorial
 ([`Generation/`](../../Generation/) at the repo root). No new vendor
@@ -103,28 +104,31 @@ sources were needed — the button is pure GPIO, already covered by
 tutorial's own `Drivers/button/Src/tiremo_button.c`, added to
 `CMakeLists.txt` alongside Tutorial 03's UART/debug sources.
 
-**Confirmed flashed and confirmed observed — with one honest gap
-left:** `tdf.py build` compiles and links clean (`.text` 13216 bytes).
-`tdf.py flash` completed a full program-and-verify cycle over SWD
-against a real, connected ABOV A34G43A Starter Kit (`** Verified OK
-**`). Reading the UART log used to be blocked here — no serial terminal
-available in this environment — so this tutorial also adds
-`tdf.py monitor`:
+**Confirmed on real hardware:** `tdf build` compiles and links without
+errors on macOS and Windows 11 (`.text` about 13 KB; the exact size
+varies slightly with the toolchain version, and the linker prints the
+same expected, harmless `_close` / `_lseek` / `_read` / `_write is not
+implemented` warnings explained in [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)).
+`tdf flash` completed a full program-and-verify cycle over SWD on a
+real, connected Tiremo Cortex board (`** Verified OK **`). To watch the
+log, run:
 
 ```sh
-tdf.py monitor
+tdf monitor
 ```
 
-This resets the board over SWD (a new `reset-device` CMake target,
+This resets the board over SWD (the `reset-device` CMake target,
 `init; reset run; shutdown` — same OpenOCD, no reprogramming) and then
 streams the log, color-coded by level (`[ERROR]` red, `[WARN]` yellow,
-`[INFO]` green, `[DEBUG]` cyan — on Windows `tdf.py monitor` turns on the
-console's ANSI processing so the colors render). It needed one real new
-dependency, `pyserial` — installed into a dedicated `tdf_venv/` by
-`./install.sh` rather than a plain `pip install`, because most current
-Python installs (Homebrew, most Linux distros) now refuse system-wide pip
-installs outright (PEP 668); `source ./export.sh` activates that venv
-automatically. Full setup, first time only:
+`[INFO]` green, `[DEBUG]` cyan — on Windows `tdf monitor` turns on the
+console's ANSI processing so the colors render). Press Ctrl+C to exit.
+Only one program can open the serial port at a time, so close any other
+terminal (Tera Term, PuTTY, …) on that port first. `monitor` needs
+`pyserial`, installed into a dedicated `tdf_venv/` by the install
+scripts rather than a plain `pip install`, because most current Python
+installs (Homebrew, most Linux distros) refuse system-wide pip installs
+(PEP 668); `export` activates that venv automatically. Full setup,
+first time only:
 
 ```sh
 # macOS / Linux
@@ -144,21 +148,29 @@ install.bat
 export.bat
 ```
 
-**Genuinely verified with this, for real, on the connected board:** the
-boot line and continuous `LED1`/`LED2 toggle @ ... ms` lines stream
-correctly, in green, matching Tutorial 02/03's blink pattern —
-previously flagged as unconfirmed in both Tutorial 03's and this
-tutorial's own docs, now closed. **What's still genuinely unconfirmed:**
-the button-press behavior itself needs a human finger on the real
-board, which I can't do from here — `tdf.py monitor` proves the log
-pipe works, not that a press produces the right log line. If you're
-checking this yourself: run `tdf.py monitor`, then press and hold the
-USER button — you should see one yellow `USER button: pressed` line per
-press (not several), a green `USER button: long hold reached (10000
-ms)` line if you hold past 10 s, and a yellow `USER button: released
-after N ms` line on release. (Press/release are logged at `WARN`, not
-`INFO`, specifically so they stand out in yellow against the constant
-green LED-toggle spam once you're actually watching this live.)
+**What you should see:** the boot line and continuous `LED1`/`LED2
+toggle @ ... ms` lines in green, matching Tutorial 02/03's blink
+pattern. Press the USER button and you get exactly one yellow
+`[WARN] USER button: pressed` line per physical press (not several),
+then a yellow `[WARN] USER button: released after N ms` line on
+release. Hold it past 10 s and a green `[INFO] USER button: long hold
+reached (10000 ms)` line appears the moment the threshold is crossed;
+the release line then ends with `(was a long hold)`. For example, two
+short presses on a real board:
+
+```text
+[INFO] LED1 toggle @ 37003 ms
+[WARN] USER button: pressed
+[INFO] LED1 toggle @ 38003 ms
+[WARN] USER button: released after 1821 ms
+[INFO] LED1 toggle @ 39003 ms
+```
+
+Press/release are logged at `WARN` and the long-hold line at `INFO`:
+the press/release edges stand out in yellow against the constant green
+LED-toggle lines. Tip: to hide the LED lines entirely, build with
+`tdf build -DTIREMO_DEBUG_LEVEL=2` — only the `WARN` press/release lines
+remain (the `INFO` long-hold line is compiled out too at that level).
 
 ## Walkthrough
 
@@ -254,13 +266,13 @@ independent of the debounce state machine, so it fires the moment 10 s
 is reached — it doesn't wait for the eventual release, the same shape
 `TIREMO_APP_ServiceFactoryResetHold()` uses in the reference firmware.
 
-### 4. Watching it live: `tdf.py monitor`
+### 4. Watching it live: `tdf monitor`
 
-[`tools/tdf.py`](../../tools/tdf.py) gets a new `monitor` subcommand.
+[`tools/tdf.py`](../../tools/tdf.py) has a `monitor` subcommand.
 Unlike `build`/`flash`/`clean`/`clean-device`, it isn't pure CMake
 delegation underneath — resetting the board still is (`cmake --build
-build --target reset-device`, a target added to every tutorial's
-`CMakeLists.txt` right next to `erase-device`), but reading the UART
+build --target reset-device`, a target every tutorial's
+`CMakeLists.txt` defines right next to `erase-device`), but reading the UART
 afterwards needs an actual serial port, which CMake and OpenOCD have no
 concept of. That part is `pyserial`: auto-detect the board's serial
 port (falling back to `--port` if more than one candidate turns up),
@@ -280,39 +292,37 @@ def colorize(line):
     return f"{color}{line}\033[0m" if color else line
 ```
 
-Resetting first, before opening the serial port, is deliberate: it
-guarantees every `tdf.py monitor` session starts from a fresh boot
-instead of picking up mid-stream on whatever the board happened to be
-doing already. One honest edge case worth knowing about: resetting a
-live UART connection can occasionally tear a line in half right at the
-reset boundary (observed once during testing — a stray, garbled partial
-line, immediately followed by clean output starting back near 0 ms).
-Harmless, and not worth engineering around for a tutorial tool.
+The order is deliberate: `monitor` opens the serial port and discards
+any stale bytes already buffered on the host, *then* resets the board.
+That way every `tdf monitor` session starts from a fresh boot, and the
+boot line isn't lost while the port is still opening. One edge case
+worth knowing about: resetting a live UART connection can occasionally
+tear a line in half right at the reset boundary (a stray, garbled
+partial line, immediately followed by clean output starting back near
+0 ms). It's harmless.
 
 ### 5. Build, flash, and watch
 
 ```sh
-tdf.py build
-tdf.py flash
-tdf.py monitor
+tdf build
+tdf flash
+tdf monitor
 ```
 
-Same OS-detection, same bundled-OpenOCD flow as every prior tutorial for
+(Or chained in one command: `tdf build flash monitor`.) Same
+OS-detection, same bundled-OpenOCD flow as every prior tutorial for
 `build`/`flash` — see [01-Hello_Blink's Solution](../01-Hello_Blink/#solution).
-See **Solution** above for what's actually confirmed on real hardware
-here, and for `monitor`'s full story.
+See **Solution** above for what the output should look like.
 
 ## Done When
 
-`tdf.py monitor` streams the boot line and continuous `LED1`/`LED2
-toggle @ ... ms` lines in green — genuinely confirmed, see **Solution**.
-Pressing and holding the USER button should then add: one yellow `USER
-button: pressed` line per physical press (not several — proof the
-debounce is working), a green `USER button: long hold reached (10000
-ms)` line the instant a hold crosses 10 s, and a yellow `USER button:
-released after N ms` line on release, with `N` distinguishing a short
-press from a long hold. The button-press part specifically is not yet
-confirmed on a real board by me — see the honesty note in **Solution**.
+`tdf monitor` streams the boot line and continuous `LED1`/`LED2
+toggle @ ... ms` lines in green. Pressing and holding the USER button
+then adds: one yellow `USER button: pressed` line per physical press
+(not several — proof the debounce is working), a green `USER button:
+long hold reached (10000 ms)` line the instant a hold crosses 10 s, and
+a yellow `USER button: released after N ms` line on release, with `N`
+distinguishing a short press from a long hold.
 
 <p align="center"><img alt="" src="../../images/banner.png" width="100%"></p>
 

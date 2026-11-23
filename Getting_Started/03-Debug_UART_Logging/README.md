@@ -17,7 +17,7 @@
 
 # Debug UART Logging
 
-***Board: Tiremo Cortex (ESP32) · Section: Getting Started / Getting Started · Difficulty: Easy***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Getting Started · Difficulty: Easy***
 
 ## Introduction
 
@@ -26,7 +26,7 @@ Every tutorial from here on will be debugged over a UART log, not a debugger bre
 ## You Will Learn
 
 - `TIREMO_LOG_ERROR/WARN/INFO/DEBUG` and the `TIREMO_DEBUG_LEVEL` compile-time ceiling
-- Overriding verbosity with `-DTIREMO_DEBUG_LEVEL=N` at CMake configure time — and a real bug found while getting that override to actually work
+- Overriding verbosity with `-DTIREMO_DEBUG_LEVEL=N` at CMake configure time — and a preprocessor pitfall that can silently break that override
 - Why runtime `TIREMO_Debug_SetLevel()` can only go quieter, never louder
 - Why `main.c` finally changes in this tutorial, after staying identical through Tutorials 01 and 02
 
@@ -34,26 +34,27 @@ Every tutorial from here on will be debugged over a UART log, not a debugger bre
 
 - [02-SysTick_Timing](../02-SysTick_Timing/) — this tutorial's LED loop is exactly Tutorial 02's, with logging added
 - `arm-none-eabi-gcc`, `cmake` (3.20+), and `ninja` on `PATH` (see [01-Hello_Blink's Prerequisites](../01-Hello_Blink/#prerequisites) — identical here, including why Windows needs no Git Bash/WSL with this build system)
-- A USB-to-serial terminal (screen, PuTTY, minicom, or your IDE's built-in one) at 115200 8N1, to actually see the log output
-- An ABOV A34G43A Starter Kit connected over its onboard SWD debugger
+- A serial terminal at 115200 8N1 to see the log output: `tdf monitor` (see [Solution](#solution)), Tera Term, PuTTY, screen, minicom, or your IDE's built-in one. No separate USB-to-serial adapter is needed: the board's onboard CMSIS-DAP probe provides a serial port over the same USB cable (for example `USB Serial Device (COMx)` on Windows).
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../Hardware.md)) connected to your PC with a USB cable. The board's onboard CMSIS-DAP debug probe handles SWD flashing; no separate programmer is needed.
 
-## A Real Bug: the Compile-Time Level Wasn't Compiling Anything Out
+## A Preprocessor Pitfall: Why the Levels Are Also Macros
 
-This tutorial's third "You Will Learn" bullet — rebuild at a lower
-`TIREMO_DEBUG_LEVEL` and confirm verbosity changes — is also the test
-that exposed a real bug in `tiremo_debug.h`. The original header has
-this, right after declaring the level enum:
+This tutorial's second "You Will Learn" bullet — rebuild at a lower
+`TIREMO_DEBUG_LEVEL` and confirm verbosity changes — depends on a
+detail in `tiremo_debug.h` that is easy to get wrong. A first, natural
+version of the header looks like this, right after declaring the level
+enum:
 
 ```c
 typedef enum { TIREMO_DEBUG_LEVEL_NONE = 0, ..., TIREMO_DEBUG_LEVEL_DEBUG = 4 } TIREMO_Debug_Level_t;
 
- #define TIREMO_DEBUG_LEVEL  TIREMO_DEBUG_LEVEL_INFO   /* <- unconditional */
+#define TIREMO_DEBUG_LEVEL  TIREMO_DEBUG_LEVEL_INFO   /* <- unconditional */
 #ifndef TIREMO_DEBUG_LEVEL
 #define TIREMO_DEBUG_LEVEL           TIREMO_DEBUG_LEVEL_INFO
 #endif
 ```
 
-Two independent bugs stack here. First, the unconditional `#define`
+Two independent mistakes stack here. First, the unconditional `#define`
 above the `#ifndef` guard always wins — the guard below it can never
 fire, so a `-DTIREMO_DEBUG_LEVEL=2` passed at build time gets silently
 overwritten back to `INFO` regardless. Fixing just that isn't enough,
@@ -72,13 +73,13 @@ every guard in the file, like:
 ```
 
 silently reduces to `0 >= 0` — always true — no matter what level is
-set. Verified directly with the preprocessor (`arm-none-eabi-gcc -E`):
-`TIREMO_LOG_DEBUG(...)` expanded to a real, live `TIREMO_Debug_Log()`
-call even with `-DTIREMO_DEBUG_LEVEL=2` passed. Every log macro was
+set. You can see this with the preprocessor (`arm-none-eabi-gcc -E`):
+`TIREMO_LOG_DEBUG(...)` expands to a real, live `TIREMO_Debug_Log()`
+call even with `-DTIREMO_DEBUG_LEVEL=2` passed. Every log macro is
 always compiled in; only the *runtime* check inside `TIREMO_Debug_Log()`
-(real C, not preprocessor `#if`) was ever actually filtering anything.
+(real C, not preprocessor `#if`) actually filters anything.
 
-**The fix**, in [`Sw/Common/Include/tiremo_debug.h`](./Sw/Common/Include/tiremo_debug.h):
+**The solution used in this repo**, in [`Sw/Common/Include/tiremo_debug.h`](./Sw/Common/Include/tiremo_debug.h):
 redeclare each level as a plain numeric macro immediately after the
 enum, before anything references them in a `#if`:
 
@@ -100,56 +101,64 @@ sees it, which is both what makes the `#if` guards work and completely
 harmless to every existing call site, since the numbers match the
 enum's own values exactly.
 
-**Verified, not assumed:** configured and built this tutorial's `Sw/`
-twice, once at the default level and once with
-`tdf.py build -DTIREMO_DEBUG_LEVEL=2`, and
-`strings build/DebugUartLogging | grep "toggle @"` finds the INFO
-log format strings twice in the default build and **zero** times at
-level 2 — genuinely compiled out, not just runtime-suppressed. Binary
-`.text` size drops from 12780 to 9436 bytes (~26%) between the two.
+**How to check it yourself:** build this tutorial's `Sw/` twice, once
+at the default level and once with `tdf build -DTIREMO_DEBUG_LEVEL=2`.
+`strings build/DebugUartLogging | grep "toggle @"` (macOS/Linux) or
+`Select-String -Path build\DebugUartLogging -Pattern "toggle @"`
+(PowerShell) finds the INFO log format strings twice in the default
+build and **zero** times at level 2 — genuinely compiled out, not just
+runtime-suppressed. Binary `.text` size drops by about a quarter between
+the two (for example from about 12.6 KB to about 9.3 KB with Arm GNU
+Toolchain 14.2.1; exact numbers vary slightly with the toolchain version).
 
 ## Solution
 
-[`Sw/`](./Sw/) has a real, buildable implementation:
+[`Sw/`](./Sw/) has a real, buildable implementation. From the repo root:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
+cd Getting_Started/03-Debug_UART_Logging/Sw
+tdf build
+tdf flash
 ```
 
 (See [01-Hello_Blink's Solution](../01-Hello_Blink/#solution) for what
-`tdf.py` is and how to get it on `PATH` via `./install.sh` + `source
+`tdf` is and how to get it on `PATH` via `./install.sh` + `source
 ./export.sh` — on Windows, `install.ps1` + `. .\export.ps1`, or
-`install.bat` + `export.bat`.)
+`install.bat` + `export.bat`. On macOS/Linux, `tdf.py` also works as an
+alias; on Windows, use `tdf`.)
 
 Same shared vendor SDK as Tutorials 01/02 ([`Generation/`](../../Generation/)
-at the repo root), same CMake build shape (see the same section for why
-this repo moved off Make). This is the first tutorial in this repo whose
-vendor source list needed real investigation rather than reuse —
-bringing up a UART peripheral pulls in DMA and NMI vendor HAL modules
-transitively (`hpl_dma.c`, `hpl_nmi.c`), discovered by compiling and
-reading the linker's undefined-reference errors rather than guessing.
+at the repo root), same CMake build as every tutorial in this repo (see
+[01-Hello_Blink's Solution](../01-Hello_Blink/#solution) for why CMake).
+This is the first tutorial whose vendor source list grows noticeably:
+bringing up a UART adds the vendor UART HAL (`hal_uart.c`) and the
+template's UART setup code (`user_uart.c`, `user_uart_isr.c`), which in
+turn pull in the DMA and NMI vendor HAL modules (`hpl_dma.c`,
+`hpl_nmi.c`) — see [`Sw/CMakeLists.txt`](./Sw/CMakeLists.txt).
 
-**Confirmed flashed and confirmed observed:** `tdf.py build` compiles
-and links clean at both debug levels. `tdf.py flash` completed a full
-program-and-verify cycle over SWD against a real, connected ABOV
-A34G43A Starter Kit (`** Verified OK **`) — same as Tutorial 02.
-UART output itself was unconfirmed for a while (no serial terminal
-available), until `tdf.py monitor` (added in
-[04-Button_Read_And_Debounce](../04-Button_Read_And_Debounce/#solution))
-made that possible from this same environment. Genuinely observed on
-this tutorial's flashed image: leveled `[INFO] LED1 toggle @ ... ms` /
-`LED2 toggle @ ... ms` lines streaming continuously, matching the blink
-pattern from Tutorial 02.
+**Confirmed on real hardware:** `tdf build` compiles and links without
+errors at every debug level on macOS and Windows 11 (the linker prints
+the same expected, harmless `_close` / `_lseek` / `_read` / `_write is
+not implemented` warnings explained in [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)).
+`tdf flash` completed a full program-and-verify cycle over SWD on a
+real, connected Tiremo Cortex board (`** Verified OK **`), and the
+flashed image streams leveled `[INFO] LED1 toggle @ ... ms` /
+`LED2 toggle @ ... ms` lines continuously, matching the blink pattern
+from Tutorial 02.
+
+To watch the log, run:
 
 ```sh
-tdf.py monitor
+tdf monitor
 ```
 
-resets the board over SWD and streams the log, color-coded by level.
-See [04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution)
-for what `monitor` is and how it's built.
+It resets the board over SWD and streams the log, color-coded by level
+(Ctrl+C to exit). It needs `pyserial`, which `install.sh` / `install.ps1`
+/ `install.bat` set up for you. Only one program can open the serial port
+at a time, so close any other terminal (Tera Term, PuTTY, …) on that
+port first. `tdf monitor` is covered in more detail in
+[04-Button_Read_And_Debounce's Solution](../04-Button_Read_And_Debounce/#solution);
+you don't need to finish Tutorial 04 to use it here.
 
 ## Walkthrough
 
@@ -213,33 +222,37 @@ for (;;)
 when compiled in, prints `[INFO] <message>\r\n`, and is blocking
 (`prvDebugTransmitBlocking()` waits for the UART to actually send) — worth
 knowing before adding logging to a tight timing loop later in the
-curriculum, the same way Tutorial 02 flagged `TogglePin()`'s
+curriculum, the same way Tutorial 01 flagged `TogglePin()`'s
 read-modify-write as worth remembering later.
 
-### 4. The bug fix
+### 4. The level macros
 
-Covered in full above — see **A Real Bug**. The short version: three
-`#define`s added to [`Sw/Common/Include/tiremo_debug.h`](./Sw/Common/Include/tiremo_debug.h)
-after the enum, nothing else in the file touched.
+Covered in full above — see **A Preprocessor Pitfall**. The short
+version: five `#define`s (`TIREMO_DEBUG_LEVEL_NONE` … `_DEBUG`) in
+[`Sw/Common/Include/tiremo_debug.h`](./Sw/Common/Include/tiremo_debug.h)
+right after the enum, so the `#if` guards can see the level values.
 
 ### 5. Build and flash
 
 ```sh
-tdf.py build             # default level: INFO and above
-tdf.py flash
+tdf build             # default level: INFO and above
+tdf flash
 
 # WARN and above only -- INFO lines compiled out. TIREMO_DEBUG_LEVEL is a
-# CMake *cache* variable under the hood, set at configure time, not a
-# one-shot build-time override like the old `make TIREMO_DEBUG_LEVEL=2`
-# was -- it persists across rebuilds in this build/ directory until you
-# pass -D again with a different value (or use a separate build
-# directory per level). tdf.py forwards -D straight to cmake configure:
-tdf.py build -DTIREMO_DEBUG_LEVEL=2
-tdf.py flash
+# CMake *cache* variable, set at configure time: it persists across
+# rebuilds in this build/ directory until you pass -D again with a
+# different value (or use a separate build directory per level).
+# tdf forwards -D straight to cmake configure:
+tdf build -DTIREMO_DEBUG_LEVEL=2
+tdf flash
+
+# Levels: 0=NONE (all logs compiled out), 1=ERROR, 2=WARN, 3=INFO, 4=DEBUG.
+# Back to the default (INFO) -- pass an empty value:
+tdf build -DTIREMO_DEBUG_LEVEL=
 ```
 
 Same OS-detection, same bundled-OpenOCD flow as Tutorials 01/02, just
-reached through `tdf.py` — see [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)
+reached through `tdf` — see [01-Hello_Blink's Solution](../01-Hello_Blink/#solution)
 for what it is. See **Solution** above for what's confirmed on real
 hardware for this tutorial specifically.
 
@@ -247,9 +260,9 @@ hardware for this tutorial specifically.
 
 Boot log shows `[INFO]` lines for boot and every LED toggle over a
 115200 8N1 serial connection, and reconfiguring with
-`-DTIREMO_DEBUG_LEVEL=2` then rebuilding makes them disappear entirely —
-verified via `strings`/binary size above, and via `tdf.py monitor`
-directly on the serial output itself.
+`-DTIREMO_DEBUG_LEVEL=2` then rebuilding and flashing makes them
+disappear entirely — check it with `tdf monitor` on the serial output,
+and with the `strings` / binary-size check described above.
 
 <p align="center"><img alt="" src="../../images/banner.png" width="100%"></p>
 

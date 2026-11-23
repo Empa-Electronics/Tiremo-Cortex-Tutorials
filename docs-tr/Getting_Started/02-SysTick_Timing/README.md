@@ -17,7 +17,7 @@
 
 # SysTick Timing
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Getting Started / Getting Started · Zorluk: Kolay***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Getting Started · Zorluk: Kolay***
 
 > Bu sayfa [İngilizce orijinalinin](../../../Getting_Started/02-SysTick_Timing/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır (`Sw/` klasörü yalnızca
@@ -40,14 +40,15 @@ bir şeyle kanıtlar: tek bir döngüden iki LED'i iki farklı, doğru hızda
 - Neden geçen-zaman matematiğinin (`now - last >= interval`) iç içe
   gecikmelerden daha güvenli olduğu ve milisaniye sayacının etrafından
   dolanmasına (wraparound) nasıl dayandığı
-- Tutorial 01'in GPIO için tanıttığı aynı `Tiremo_Hal` (satıcıya dönük) /
-  `Common` (uygulamaya dönük) ayrımının zamanlama için uygulanışı
+- `Tiremo_Hal` (satıcıya dönük) katmanının üzerine yeni bir `Common`
+  (uygulamaya dönük) katman: Tutorial 01 GPIO için `Tiremo_Hal`'i tanıttı;
+  bu eğitim `Common/` klasörünü ilk kez, zamanlamayla başlayarak ekliyor
 
 ## Ön Koşullar
 
 - [01-Hello_Blink](../../../Getting_Started/01-Hello_Blink/README.md) — bu eğitim onun GPIO HAL'ini ve board_config.h desenini değişmeden yeniden kullanır
 - `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşullar bölümü](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites) — burada aynısı geçerli, Windows'un bu derleme sistemiyle neden Git Bash/WSL gerektirmediği dahil)
-- SWD üzerinden bağlı bir ABOV A34G43A Starter Kit
+- Bilgisayarınıza USB kablosuyla bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
 ## Bloklamayan Zamanlamayı Anlamak
 
@@ -78,14 +79,18 @@ mantığı.
 **Uygulama tarafı** ([`Common/Src/tiremo_systick.c`](../../../Getting_Started/02-SysTick_Timing/Sw/Common/Src/tiremo_systick.c))
 sonraki her eğitimin gerçekte çağırdığı şeydir. Yukarıdaki donanım
 katmanına bir geri çağırma (callback) kaydeder ve her 1 ms kesmede
-serbest çalışan bir sayacı artırır:
+serbest çalışan bir sayacı artırır (burada kısaltılmıştır; gerçek
+işleyici ayrıca `TIREMO_SysTick_DelayMs()`'in gecikme sayacını azaltır ve
+aşağıda anlatılan `TIREMO_SysTick_OnTick1ms()` kancasını çağırır):
 
 ```c
 static volatile uint32_t s_msTick = 0U;
 
 static void prvSysTickHandleTick(void)
 {
+    /* ... */
     s_msTick++;
+    /* ... */
 }
 
 uint32_t TIREMO_SysTick_GetMs(void)
@@ -122,38 +127,41 @@ mantığı boyunca kullandığı tam olarak aynı deyimdir.
 
 ## Çözüm
 
-[`Sw/`](../../../Getting_Started/02-SysTick_Timing/Sw/) gerçek, derlenebilir bir uygulamaya sahip:
+[`Sw/`](../../../Getting_Started/02-SysTick_Timing/Sw/) gerçek, derlenebilir bir uygulamaya sahip. Depo kökünden:
 
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
+cd Getting_Started/02-SysTick_Timing/Sw
+tdf build
+tdf flash
 ```
 
 (Yeni bir shell'de ilk seferinde, depo kökünden: `source export.sh`
 (bash/zsh), `. .\export.ps1` (PowerShell) ya da `export.bat` (cmd.exe)
-`tdf.py`'yi `PATH`'e ekler — `tdf.py`'nin aslında ne olduğu ve bu deponun
-neden ham `cmake`/`make` çağrıları yerine onu kullandığı için
-[01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#solution)
+`tdf`'yi `PATH`'e ekler. macOS/Linux'ta `tdf.py` takma ad olarak da
+çalışır; Windows'ta `tdf` kullanın, ya da export adımı olmadan `Sw\`
+içinden `python ..\..\..\tools\tdf.py build`. `tdf`'nin aslında ne olduğu
+ve bu deponun neden ham `cmake` çağrıları yerine onu kullandığı için
+[01-Hello_Blink'in Çözüm bölümüne](../01-Hello_Blink/README.md#çözüm)
 bakın.)
 
 Tutorial 01 ile aynı paylaşılan satıcı SDK'sı
-([`Generation/`](../../../Generation/), depo kökünde), aynı CMake şekli
-(bu eğitim, 01 ve 03 ile birlikte, elle yazılmış bir Makefile'dan
-CMake'e taşındı — nedeni için aynı bölüme bakın) — bu sefer Tutorial
-01'in GPIO HAL'inin üzerine SysTick katmanı eklenmiş tek bir ~5.5 KB
-imaj bağlanıyor.
+([`Generation/`](../../../Generation/), depo kökünde), bu depodaki her
+eğitimle aynı CMake derlemesi (neden CMake olduğu için
+[01-Hello_Blink'in Çözüm bölümüne](../01-Hello_Blink/README.md#çözüm)
+bakın) — bu sefer Tutorial 01'in GPIO HAL'inin üzerine SysTick katmanı
+eklenmiş tek bir ~5.5 KB imaj bağlanıyor.
 
-**Gerçek donanımda doğrulandı.** `tdf.py build` temiz şekilde
-derlenip bağlanıyor, `tdf.py flash` gerçek, bağlı
-bir ABOV A34G43A Starter Kit'e karşı SWD üzerinden tam bir
-programlama-ve-doğrulama döngüsünü tamamladı, ve —
-kart üzerinde gözle kontrol edildi — her iki LED de belirgin şekilde
-farklı hızlarda yanıp sönüyor. `Sw/Src/prv_user_code.c` içindeki
-`LED1_INTERVAL_MS` / `LED2_INTERVAL_MS`, bu yazının ilk tahmini olan
-`500` / `300` yerine `1000` / `5000` (2 s ve 10 s tam döngü) olarak
-ayarlandı — çok daha büyük bir fark, iki hızı bir bakışta ayırt edilir
-kıldı; daha ince bir fark bunu yapamadı.
+**Gerçek donanımda doğrulandı.** `tdf build`, macOS'ta ve Windows 11'de
+hatasız derlenip bağlanıyor. Linker, [01-Hello_Blink'in Çözüm
+bölümünde](../01-Hello_Blink/README.md#çözüm) açıklanan beklenen ve
+zararsız `_close` / `_lseek` / `_read` / `_write is not implemented`
+uyarılarını burada da basar. `tdf flash`, gerçek, bağlı bir Tiremo
+Cortex kartına karşı SWD üzerinden tam bir programlama-ve-doğrulama
+döngüsünü tamamladı (`** Verified OK **`) ve her iki LED de belirgin
+şekilde farklı hızlarda yanıp sönüyor. `Sw/Src/prv_user_code.c`
+içindeki `LED1_INTERVAL_MS` / `LED2_INTERVAL_MS` değerleri, iki hız bir
+bakışta ayırt edilsin diye `1000` / `5000` (2 s ve 10 s tam döngü)
+olarak ayarlanmıştır.
 
 ## Adım Adım
 
@@ -238,20 +246,20 @@ kolay kısımdı.
 ### 5. Flaşlama
 
 ```sh
-tdf.py build
-tdf.py flash
+tdf build
+tdf flash
 ```
 
 Tutorial 01 ile aynı işletim sistemi tespiti, aynı paketlenmiş OpenOCD
 akışı, sadece tam `cmake --build build --target flash` yazmak yerine
-`tdf.py` üzerinden ulaşılıyor — bunun gerçek donanıma gerçekten
+`tdf` üzerinden ulaşılıyor — bunun gerçek donanıma gerçekten
 ulaştığının onayı için yukarıdaki Çözüm bölümüne bakın.
 
 ## Ne Zaman Tamamlanmış Sayılır
 
 Hiçbir debugger bağlı değilken, tek bir bloklamayan döngüden iki LED
-bağımsız, gözle görülür farklı hızlarda yanıp söner. **Doğrulandı** —
-bkz. yukarıdaki Çözüm.
+bağımsız, gözle görülür farklı hızlarda yanıp söner: LED1 her saniye
+(2 s tam döngü), LED2 her 5 saniyede bir (10 s tam döngü) durum değiştirir.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 
