@@ -25,7 +25,8 @@ extern "C"
 /**
  * @brief 7-bit I2C address of the LIS2DE12 sensor.
  *
- * SA0 = 1 maps to ST 8-bit write address 0x33 -> 7-bit 0x19.
+ * SA0 = 1 maps to ST 8-bit addresses 0x32 (write) / 0x33 (read)
+ * -> 7-bit 0x19 (0x32 >> 1).
  */
 #define TIREMO_BOARD_LIS2DE12_I2C_ADDRESS   (0x19U)
 

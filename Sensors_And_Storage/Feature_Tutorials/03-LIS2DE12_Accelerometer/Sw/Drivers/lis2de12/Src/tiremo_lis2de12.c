@@ -33,9 +33,13 @@
 #define TIREMO_LIS2DE12_DRDY_TIMEOUT_MS     (200U)
 #define TIREMO_LIS2DE12_WHOAMI_RETRIES      (10U)
 
+/** @brief Sensitivity is kept in tenths of mg/digit (datasheet values
+ *  15.6 / 31.2 / 62.5 / 187.5) so the conversion stays integer-only. */
+#define TIREMO_LIS2DE12_SENS_DIV            (2560)   /* 256 (left-justify) * 10 (tenths) */
+
 static bool s_initialized = false;
 static uint8_t s_whoAmI = 0U;
-static uint16_t s_sensMg = 16U;
+static uint16_t s_sensTenthMg = 156U;
 
 static bool prvReadRegs(uint8_t reg, uint8_t *pData, uint32_t length)
 {
@@ -72,22 +76,23 @@ static bool prvWriteReg(uint8_t reg, uint8_t value)
                                      1U) == TIREMO_HAL_I2C_STATUS_OK);
 }
 
-static uint8_t prvScaleToFsBits(uint8_t scaleG, uint16_t *pSensMg)
+/* Datasheet sensitivity (LIS2DE12, Table 3), in tenths of mg/digit. */
+static uint8_t prvScaleToFsBits(uint8_t scaleG, uint16_t *pSensTenthMg)
 {
     switch (scaleG)
     {
     case 4U:
-        *pSensMg = 32U;
+        *pSensTenthMg = 312U;   /* 31.2 mg/digit */
         return 0x10U;
     case 8U:
-        *pSensMg = 64U;
+        *pSensTenthMg = 625U;   /* 62.5 mg/digit */
         return 0x20U;
     case 16U:
-        *pSensMg = 192U;
+        *pSensTenthMg = 1875U;  /* 187.5 mg/digit */
         return 0x30U;
     case 2U:
     default:
-        *pSensMg = 16U;
+        *pSensTenthMg = 156U;   /* 15.6 mg/digit */
         return 0x00U;
     }
 }
@@ -168,7 +173,7 @@ bool TIREMO_LIS2DE12_Init(void)
 
 bool TIREMO_LIS2DE12_Configure(uint8_t scaleG, uint16_t dataRateHz)
 {
-    uint16_t sensMg = 16U;
+    uint16_t sensTenthMg = 156U;
     uint8_t fsBits;
     uint8_t ctrl1;
     uint8_t ctrl1Read = 0U;
@@ -178,7 +183,7 @@ bool TIREMO_LIS2DE12_Configure(uint8_t scaleG, uint16_t dataRateHz)
         return false;
     }
 
-    fsBits = prvScaleToFsBits(scaleG, &sensMg);
+    fsBits = prvScaleToFsBits(scaleG, &sensTenthMg);
     if (!prvWriteReg(TIREMO_LIS2DE12_CTRL_REG4, fsBits))
     {
         return false;
@@ -198,7 +203,7 @@ bool TIREMO_LIS2DE12_Configure(uint8_t scaleG, uint16_t dataRateHz)
         return false;
     }
 
-    s_sensMg = sensMg;
+    s_sensTenthMg = sensTenthMg;
     return true;
 }
 
@@ -269,12 +274,14 @@ bool TIREMO_LIS2DE12_ReadAccel(int16_t *pAccelX_mg,
         sumZ += (int16_t)(((uint16_t)raw[4] << 8) | raw[5]);
     }
 
-    *pAccelX_mg = (int16_t)((sumX * (int32_t)s_sensMg) /
-                            (TIREMO_LIS2DE12_OVERSAMPLE_CNT * 256));
-    *pAccelY_mg = (int16_t)((sumY * (int32_t)s_sensMg) /
-                            (TIREMO_LIS2DE12_OVERSAMPLE_CNT * 256));
-    *pAccelZ_mg = (int16_t)((sumZ * (int32_t)s_sensMg) /
-                            (TIREMO_LIS2DE12_OVERSAMPLE_CNT * 256));
+    /* Average of OVERSAMPLE_CNT samples; max |sum| = 4 * 32768, times the
+     * largest sensitivity (1875) still fits comfortably in int32_t. */
+    *pAccelX_mg = (int16_t)((sumX * (int32_t)s_sensTenthMg) /
+                            ((int32_t)TIREMO_LIS2DE12_OVERSAMPLE_CNT * TIREMO_LIS2DE12_SENS_DIV));
+    *pAccelY_mg = (int16_t)((sumY * (int32_t)s_sensTenthMg) /
+                            ((int32_t)TIREMO_LIS2DE12_OVERSAMPLE_CNT * TIREMO_LIS2DE12_SENS_DIV));
+    *pAccelZ_mg = (int16_t)((sumZ * (int32_t)s_sensTenthMg) /
+                            ((int32_t)TIREMO_LIS2DE12_OVERSAMPLE_CNT * TIREMO_LIS2DE12_SENS_DIV));
 
     return true;
 }
