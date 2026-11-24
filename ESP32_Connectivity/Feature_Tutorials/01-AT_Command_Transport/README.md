@@ -17,11 +17,11 @@
 
 # AT Command Transport
 
-***Board: Tiremo Cortex (ESP32) · Section: ESP32 Connectivity / Feature Tutorials · Difficulty: Medium***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: ESP32 Connectivity / Feature Tutorials · Difficulty: Medium***
 
 ## Introduction
 
-Every ESP32 feature from here on rides on this transport: power sequencing, a UART RX ring buffer, and an expect/timeout command primitive. Get this rock solid before building WiFi or MQTT on top of it. This tutorial does **not** copy the full production ESP32 driver — only Init / SendCommand / IsPresent / DisableEcho. Join, NTP, BluFi, and MQTT are functions added to the same file in later tutorials.
+Every ESP32 feature from here on rides on this transport: power sequencing, a UART RX ring buffer, and an expect/timeout command primitive. Get this rock solid before building WiFi or MQTT on top of it. The driver in this tutorial is deliberately small — only Init / SendCommand / IsPresent / DisableEcho. Join, NTP, BluFi, and MQTT are functions added to the same file in later tutorials.
 
 ## You Will Learn
 
@@ -32,8 +32,9 @@ Every ESP32 feature from here on rides on this transport: power sequencing, a UA
 
 ## Prerequisites
 
-- [Getting_Started](../../../Getting_Started/) complete — SysTick, debug UART, and `tdf.py` are assumed
-- An ABOV A34G43A Starter Kit with the ESP32 module on UART2 / PA12
+- [Getting_Started](../../../Getting_Started/) complete — SysTick, the debug UART, and `tdf` are assumed
+- To watch the log: `tdf monitor` or any serial terminal (Tera Term, PuTTY, screen, minicom, …) at 115200 8N1 on the board's USB serial port
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../../Hardware.md)) connected to your PC with a USB cable. The ESP32 module is on the board, wired to UART2 (PA8/PA9) with its supply gated by PA12. The board's onboard CMSIS-DAP debug probe handles SWD flashing; no separate programmer is needed.
 
 ## Understanding the two UARTs
 
@@ -41,7 +42,7 @@ The MCU talks to *you* and to the *radio* on two different serial ports. Mixing 
 
 | Port | Pins | Who speaks | What you see |
 |------|------|------------|----------------|
-| **UART0** | the USB debug console | `TIREMO_LOG_INFO` / `tdf.py monitor` | `[INFO] AT_Command_Transport: boot` |
+| **UART0** | the USB debug console | `TIREMO_LOG_INFO` / `tdf monitor` | `[INFO] AT_Command_Transport: boot` |
 | **UART2** | PA8 RX, PA9 TX | ESP-AT firmware on the module | `AT\r\n` then `OK` |
 
 [`PRV_UART_Init()`](../../../Generation/AUDK32_A34xxxx-1.0.12/Example/Source/TmplUserApp/user_uart.c) clocks **both** (and UART1, unused here). Then two Tiremo inits steal the IRQs:
@@ -49,7 +50,7 @@ The MCU talks to *you* and to the *radio* on two different serial ports. Mixing 
 - `TIREMO_Debug_Init()` re-arms **UART0** with the debug ring (Getting Started 03).
 - `TIREMO_ESP32_Init()` re-arms **UART2** with this tutorial's AT ring.
 
-If you type `AT` into `tdf.py monitor`, you are talking to the MCU log, not the ESP32. If you `TIREMO_Debug_Puts` onto UART2, you corrupt the AT parser. Keep the two pipes separate for the rest of this section.
+Your PC only ever sees UART0: `tdf monitor` just displays what the MCU logs, and even if you type `AT` into a serial terminal on the USB port, it reaches the MCU's debug UART, not the ESP32. Only the firmware talks to the module, over UART2. If you `TIREMO_Debug_Puts` onto UART2, you corrupt the AT parser. Keep the two pipes separate for the rest of this section.
 
 ## Understanding the power-cycle
 
@@ -76,7 +77,7 @@ static void prvESP32PowerCycle(void)
 }
 ```
 
-The delays live in [`board_config.h`](./Sw/Board/board_config.h): **500 ms off**, **3000 ms boot**. Those 3.5 seconds are why `tdf.py monitor` (reset the chip, *then* open the port) often misses the first log lines. The firmware still ran them; the terminal just wasn't listening yet.
+The delays live in [`board_config.h`](./Sw/Board/board_config.h): **500 ms off**, **3000 ms boot**. So expect a pause of about 3.5 seconds between `ESP32: power cycling module...` and `ESP32: power-on boot delay elapsed` — that's the module booting, not a hang.
 
 `TIREMO_ESP32_Init()` also sets PA12 to push-pull output before that sequence, then registers the UART2 IRQ and arms a 1-byte receive. Until `prvESP32ArmRx()` runs, incoming AT bytes have nowhere to go.
 
@@ -197,16 +198,18 @@ Call `TIREMO_ESP32_DisableEcho()` once after `IsPresent()`, then never again unl
 
 [`Sw/`](./Sw/) has a real, buildable implementation:
 
+From the repo root:
+
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-Same CMake shape as Sensors & Local Storage; `GEN_DIR` is four levels up to [`Generation/`](../../../Generation/).
+(See [Getting_Started/01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution) for what `tdf` is. On macOS/Linux, `tdf.py` also works as an alias; on Windows, use `tdf`. Close any other terminal on the board's serial port before running `tdf monitor` — only one program can open it at a time.)
 
-**Verified on the connected board:** `.text` 14624 bytes, flash **Verified OK**. Boot:
+**Confirmed on real hardware:** `tdf build` compiles and links without errors on macOS and Windows 11 (`.text` about 14.5 KB; the exact size varies slightly with the toolchain version, and the linker prints the same expected, harmless `_close` / `_lseek` / `_read` / `_write is not implemented` warnings explained in [01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)). `tdf flash` completed a full program-and-verify cycle over SWD on a real, connected Tiremo Cortex board (`** Verified OK **`). The boot log:
 
 ```text
 [INFO] AT_Command_Transport: boot
@@ -220,7 +223,29 @@ Same CMake shape as Sensors & Local Storage; `GEN_DIR` is four levels up to [`Ge
 [INFO] ESP32: heartbeat AT -> OK
 ```
 
-Heartbeats continue every 5 s. Rebuild with `tdf.py build -D TIREMO_DEBUG_LEVEL=4` if you want the raw TX/RX JSON dumps.
+A `heartbeat AT -> OK` line follows every 5 s.
+
+To see the raw bytes on the wire, rebuild with `tdf build -DTIREMO_DEBUG_LEVEL=4` and flash again. Every command and its reply are then dumped as JSON-escaped strings. Here is the second `AT` (echo still on), then `ATE0`, then the `AT` after it:
+
+```text
+[DEBUG] ESP32 TX (4 bytes):
+{"data":"AT\r\n"}
+[DEBUG] ESP32 RX matched "OK" after 8 bytes:
+{"data":"AT\r\n\r\nOK"}
+[INFO] ESP32: AT (echo still on) capture starts with echo=yes
+[DEBUG] ESP32 TX (6 bytes):
+{"data":"ATE0\r\n"}
+[DEBUG] ESP32 RX matched "OK" after 10 bytes:
+{"data":"ATE0\r\n\r\nOK"}
+[INFO] ESP32: command echo disabled (ATE0)
+[DEBUG] ESP32 TX (4 bytes):
+{"data":"AT\r\n"}
+[DEBUG] ESP32 RX matched "OK" after 4 bytes:
+{"data":"\r\nOK"}
+[INFO] ESP32: AT after ATE0 is echo-free (OK only)
+```
+
+The echoed `AT\r\n` at the start of the first reply is exactly what `ATE0` removes. (The dump stops at `OK` because the read returns as soon as the expected substring is seen.) Run `tdf build -DTIREMO_DEBUG_LEVEL=` (empty) to go back to the default level.
 
 ## Walkthrough
 
@@ -230,7 +255,7 @@ Read the files in this order — each one adds one idea.
 
 2. [`board_config.h`](./Sw/Board/board_config.h) — the only board knowledge the driver is allowed: UART2, PA12, on/off polarity, 500 ms / 3000 ms. If a later board spins the gate pin, this file changes and `tiremo_esp32.c` does not.
 
-3. [`tiremo_esp32.h`](./Sw/Drivers/esp32/Include/tiremo_esp32.h) / [`.c`](./Sw/Drivers/esp32/Src/tiremo_esp32.c) — the transport. This is a **subset** of the production ESP32 driver: Init, SendCommand, IsPresent, DisableEcho. WiFi join, NTP, BluFi, and MQTT are later tutorials adding functions to this same file, not a second UART stack.
+3. [`tiremo_esp32.h`](./Sw/Drivers/esp32/Include/tiremo_esp32.h) / [`.c`](./Sw/Drivers/esp32/Src/tiremo_esp32.c) — the transport, kept to the minimum: Init, SendCommand, IsPresent, DisableEcho. WiFi join, NTP, BluFi, and MQTT are later tutorials adding functions to this same file, not a second UART stack.
 
 4. [`prv_user_code.c`](./Sw/Src/prv_user_code.c) — the lesson, not the driver:
    - SysTick + debug UART (so logs have a clock and a console)
@@ -239,13 +264,13 @@ Read the files in this order — each one adds one idea.
    - Capture a second `AT` **before** `ATE0` and log `echo=yes`
    - `DisableEcho()`
    - Capture `AT` again and log `echo-free`
-   - Forever: every 5 s, `IsPresent()` as a heartbeat so you can yank the antenna / power-cycle the kit and watch it fail
+   - Forever: every 5 s, `IsPresent()` as a heartbeat — if the module stops answering on UART2, you see `[WARN] ESP32: heartbeat AT failed` instead of `OK`
 
 The `for (;;) { }` on init/probe failure is deliberate: a silent reboot loop would hide a wiring mistake. Fix the hardware (or the PA12 polarity), then reset.
 
 ## Done When
 
-`AT` reliably returns `OK` after every power cycle, and echoed command text no longer appears in captured responses — **confirmed**.
+After every reset, `tdf monitor` shows `ESP32: AT -> OK (module present)`, the capture before `ATE0` reports `echo=yes`, the one after it reports `echo-free (OK only)`, and `heartbeat AT -> OK` keeps arriving every 5 s.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

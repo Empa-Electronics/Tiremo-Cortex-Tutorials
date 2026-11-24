@@ -214,9 +214,10 @@ bool TIREMO_ESP32_JoinAP(const char *pSsid,
     (void)snprintf(command, sizeof(command), "AT+CWJAP=\"%s\",\"%s\"\r\n",
                    pSsid, pPassword);
 
-    /* "WIFI GOT IP", not "OK": the command can ACK while DHCP is still
-     * running. Tutorial 01 taught substring match; this is why the
-     * substring must be the event you actually care about. */
+    /* "WIFI GOT IP", not "OK": wait for the event you actually care
+     * about (an IPv4 address), not the generic end-of-command marker.
+     * A failed join ends in "+CWJAP:<code>" + ERROR, which aborts the
+     * wait early (see tutorial 01). */
     return TIREMO_ESP32_SendCommand(command, "WIFI GOT IP", timeoutMs);
 }
 
@@ -484,7 +485,16 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
 
         TIREMO_LOG_DEBUG("ESP32 TX (%lu bytes): ",
                          (unsigned long)strlen(pCommand));
-        prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        if (strncmp(pCommand, "AT+CWJAP=", 9U) == 0)
+        {
+            /* Never dump the WiFi password, even at DEBUG level. */
+            prvESP32LogResponse("", "AT+CWJAP=<credentials hidden>",
+                                (uint32_t)strlen("AT+CWJAP=<credentials hidden>"));
+        }
+        else
+        {
+            prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        }
 
         if (TIREMO_HAL_UART_Transmit(TIREMO_ESP32_UART_PORT,
                                      (const uint8_t *)pCommand,
