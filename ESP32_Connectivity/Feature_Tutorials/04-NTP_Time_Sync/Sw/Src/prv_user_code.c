@@ -11,6 +11,15 @@
 #include "../Common/Include/tiremo_persist.h"
 #include "../Common/Include/tiremo_clock.h"
 #include "../Drivers/esp32/Include/tiremo_esp32.h"
+
+/* Check for the file first: a plain #include of a missing header stops the
+ * build with "No such file" before any of the checks below can explain
+ * what to do. */
+#if defined(__has_include)
+#if !__has_include("wifi_secrets.h")
+#error "Copy Sw/wifi_secrets.h.example to Sw/wifi_secrets.h and set TIREMO_WIFI_SSID / TIREMO_WIFI_PASSWORD"
+#endif
+#endif
 #include "wifi_secrets.h"
 
 #include <string.h>
@@ -94,17 +103,34 @@ void PRV_USER_Code(void)
         Hang("persist: flash init failed");
     }
 
-    usedSaved = TIREMO_Persist_Load(&saved) && TIREMO_Persist_HasSsid(&saved);
-    if (usedSaved)
+    pSsid = TIREMO_WIFI_SSID;
+    pPassword = TIREMO_WIFI_PASSWORD;
+    usedSaved = false;
+
+    if (TIREMO_Persist_Load(&saved) && TIREMO_Persist_HasSsid(&saved))
     {
-        pSsid = saved.ssid;
-        pPassword = saved.password;
-        TIREMO_LOG_INFO("persist: loaded SSID \"%s\"", pSsid);
+        saved.ssid[sizeof(saved.ssid) - 1U] = '\0';
+        saved.password[sizeof(saved.password) - 1U] = '\0';
+
+        /* If wifi_secrets.h was edited after this record was saved, the
+         * new credentials win: otherwise editing the file and reflashing
+         * would have no effect until the saved network failed. */
+        if ((strcmp(saved.ssid, TIREMO_WIFI_SSID) != 0) ||
+            (strcmp(saved.password, TIREMO_WIFI_PASSWORD) != 0))
+        {
+            TIREMO_LOG_INFO("persist: wifi_secrets.h changed since the last "
+                            "save, using it: \"%s\"", pSsid);
+        }
+        else
+        {
+            usedSaved = true;
+            pSsid = saved.ssid;
+            pPassword = saved.password;
+            TIREMO_LOG_INFO("persist: loaded SSID \"%s\"", pSsid);
+        }
     }
     else
     {
-        pSsid = TIREMO_WIFI_SSID;
-        pPassword = TIREMO_WIFI_PASSWORD;
         TIREMO_LOG_INFO("persist: no saved SSID, using wifi_secrets.h \"%s\"",
                         pSsid);
     }
