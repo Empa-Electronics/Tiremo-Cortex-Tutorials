@@ -16,10 +16,9 @@ set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 if(NOT EXISTS ${CERTS_DIR}/client_cert.pem OR NOT EXISTS ${CERTS_DIR}/client_key.pem)
     message(FATAL_ERROR
-        "Missing test client credentials.\n"
-        "  cp certs/client_cert.pem.example certs/client_cert.pem\n"
-        "  cp certs/client_key.pem.example certs/client_key.pem\n"
-        "then paste a self-signed test certificate and key (openssl req -x509).\n"
+        "Missing test client credentials (certs/client_cert.pem, certs/client_key.pem).\n"
+        "Generate a self-signed TEST pair from this Sw/ folder:\n"
+        "  openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -keyout certs/client_key.pem -out certs/client_cert.pem -subj \"/CN=Tiremo Cortex Tutorial 02 TEST client - not for real use\"\n"
         "Those two files are gitignored; see certs/README.md.")
 endif()
 
@@ -85,9 +84,12 @@ target_compile_definitions(MTLSCredentialsInModuleNVS PRIVATE
 
 # Log verbosity compile-time ceiling (0=NONE ... 4=DEBUG). Default INFO in
 # tiremo_debug.h when unset. Override at configure time:
-#   tdf.py build -D TIREMO_DEBUG_LEVEL=2   (WARN and below)
+#   tdf build -DTIREMO_DEBUG_LEVEL=2   (WARN and ERROR only)
 set(TIREMO_DEBUG_LEVEL "" CACHE STRING "Log verbosity compile-time ceiling (0=NONE, 1=ERROR, 2=WARN, 3=INFO, 4=DEBUG). Empty = tiremo_debug.h's own default (INFO).")
-if(TIREMO_DEBUG_LEVEL)
+# Compare against the empty string, not truthiness: CMake treats "0" as
+# false, so `if(TIREMO_DEBUG_LEVEL)` would silently ignore level 0 (NONE).
+# Pass -DTIREMO_DEBUG_LEVEL= (empty) to return to the header's default.
+if(NOT TIREMO_DEBUG_LEVEL STREQUAL "")
     target_compile_definitions(MTLSCredentialsInModuleNVS PRIVATE TIREMO_DEBUG_LEVEL=${TIREMO_DEBUG_LEVEL})
 endif()
 
