@@ -15,6 +15,15 @@
 #include "../Common/Include/tiremo_systick.h"
 #include "../Common/Include/tiremo_debug.h"
 #include "../Drivers/esp32/Include/tiremo_esp32.h"
+
+/* Check for the file first: a plain #include of a missing header stops the
+ * build with "No such file" before any of the checks below can explain
+ * what to do. */
+#if defined(__has_include)
+#if !__has_include("wifi_secrets.h")
+#error "Copy Sw/wifi_secrets.h.example to Sw/wifi_secrets.h and set TIREMO_WIFI_SSID / TIREMO_WIFI_PASSWORD"
+#endif
+#endif
 #include "wifi_secrets.h"
 
 #include <stdint.h>
@@ -25,6 +34,12 @@
 #endif
 
 #define JOIN_TIMEOUT_MS      (20000U)
+
+/* broker.emqx.io is shared by everyone on the internet. A broker drops an
+ * existing connection when a second client connects with the same client
+ * id, and everyone subscribed to a topic sees every message on it. Give
+ * MQTT_CLIENT_ID and MQTT_TOPIC a unique suffix (your name, a random
+ * number, ...) before flashing. */
 #define MQTT_CLIENT_ID       "tiremo-cortex-01"
 #define MQTT_BROKER_HOST     "broker.emqx.io"
 #define MQTT_BROKER_PORT     (1883U)

@@ -662,7 +662,16 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
 
         TIREMO_LOG_DEBUG("ESP32 TX (%lu bytes): ",
                          (unsigned long)strlen(pCommand));
-        prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        if (strncmp(pCommand, "AT+CWJAP=", 9U) == 0)
+        {
+            /* Never dump the WiFi password, even at DEBUG level. */
+            prvESP32LogResponse("", "AT+CWJAP=<credentials hidden>",
+                                (uint32_t)strlen("AT+CWJAP=<credentials hidden>"));
+        }
+        else
+        {
+            prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        }
 
         if (TIREMO_HAL_UART_Transmit(TIREMO_ESP32_UART_PORT,
                                      (const uint8_t *)pCommand,

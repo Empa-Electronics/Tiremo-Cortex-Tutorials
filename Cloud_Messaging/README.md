@@ -16,7 +16,7 @@
 
 # Cloud Messaging (MQTT & TLS)
 
-Get MQTT working end to end: a public broker first with no TLS, then mutual-TLS credentials staged in the ESP32's own NVS, then a real Tiremo Cloud session, then the handler-driven polling pattern production firmware relies on.
+Get MQTT working end to end: a public broker first with no TLS, then mutual-TLS credentials staged in the ESP32's own NVS, then a real Tiremo Cloud session.
 
 The broker is [`iot.tiremo.ai`](https://iot.tiremo.ai). TLS SNI and the first mutual-TLS connection are documented in [TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni) and [first connection](https://docs.tiremo.ai/device-provisioning/third-phase). Fleet provisioning comes later in [Tiremo Cloud](../Tiremo_Cloud/) — see [device provisioning](https://docs.tiremo.ai/device-provisioning/getting-started).
 

@@ -17,7 +17,7 @@
 
 # MQTT to a Public Broker
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Cloud Messaging (MQTT & TLS) / Feature Tutorials · Zorluk: Orta***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Cloud Messaging (MQTT & TLS) / Feature Tutorials · Zorluk: Orta***
 
 > Bu sayfa [İngilizce orijinalinin](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır (`Sw/` klasörü yalnızca
@@ -26,100 +26,87 @@
 
 ## Giriş
 
-Sertifikalara dokunmadan önce, ESP32'nin yerleşik MQTT istemcisinin
-gerçekten çalıştığını kanıtlayın — açık metinde bir genel test broker'ına
-bağlanın, bir mesaj yayınlayın, ve o mesajın geri yankılandığını duymak
-için abone olun. [`iot.tiremo.ai`](https://iot.tiremo.ai) karşılıklı TLS
-eğitim 03'tür — bkz. [TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni).
+Sertifikalara dokunmadan önce ESP32'nin yerleşik MQTT istemcisinin gerçekten çalıştığını kanıtlayın: herkese açık bir test broker'ına şifresiz bağlanın, bir mesaj yayınlayın ve aynı konuya abone olup mesajın geri geldiğini görün. [Eğitim 03](../03-MQTT_mTLS_To_AWS_IoT/README.md) ardından Tiremo Cloud'a ([`iot.tiremo.ai`](https://iot.tiremo.ai)) karşılıklı TLS (mTLS) ile bağlanır.
 
 ## Neler Öğreneceksiniz
 
 - `AT+MQTTUSERCFG` (scheme 1, TLS yok) / `AT+MQTTCONN` / `AT+MQTTSUB` / `AT+MQTTPUB`
-- `MqttPublish` (string payload) ile `MqttPublishRaw` (binary-safe) arasındaki fark
-- Bunu inşa ederken bulunan ve düzeltilen gerçek bir hata: ESP-AT'nin MQTT `scheme` parametresi 0-indeksli değil, 1-indeksli
+- ESP-AT'nin MQTT `scheme` değerinin neden 0'dan değil 1'den başladığı
+- `MqttPublish` (metin yükü) ile `MqttPublishRaw` (ikili veriye güvenli) arasındaki fark
+- Herkese açık bir broker'daki bir istemcinin neden kendine ait bir client ID'ye ve konuya ihtiyaç duyduğu
 
 ## Ön Koşullar
 
-- [ESP32 Connectivity](../../../../ESP32_Connectivity/README.md) — WiFi bağlantısı çalışıyor
-- Bu `Sw/`'de `wifi_secrets.h` (gitignored), ESP32 Connectivity ile aynı desen
-- Toolchain ve flaşlama [Getting Started](../../../../Getting_Started/README.md)'a göre kurulu
-- Yayınlama/yankı döngüsünü izlemek için `tdf.py monitor` (kurulum için [Getting_Started/04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution) bakın)
+- [ESP32 Connectivity](../../../ESP32_Connectivity/) — WiFi bağlantısı çalışıyor
+- İnternet erişimi olan 2,4 GHz bir WiFi ağı ve bu `Sw/` klasörünün kendi `wifi_secrets.h` dosyası — bkz. [Kimlik bilgileri](#kimlik-bilgileri-şifreyi-commit-etmeyin)
+- [Getting Started](../../../Getting_Started/) kurulum betikleri çalıştırılmış olmalı, böylece `tdf` kullanılabilir
+- Log'u izlemek için: `tdf monitor` ya da kartın USB seri portunda 115200 8N1'de herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …)
+- USB kabloyla bilgisayarınıza bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanıma Genel Bakış](../../../Hardware.md))
+- İsteğe bağlı: kartın mesajlarının broker'a ulaştığını izlemek için bilgisayarınızda bir MQTT istemcisi (örneğin [MQTTX](https://mqttx.app/))
 
-## Gerçek Bir Hata: `scheme 0` Diye Bir Şey Yok
+## `scheme`'i anlamak: `scheme 0` yoktur
 
-Bu eğitimin taslak anahatı (hiçbir şey inşa edilmeden önce yazılmıştı)
-"scheme 0, TLS yok" diyordu — makul bir tahmin, çünkü bu kod tabanının
-başka her yerinde 0-indeksli enum'lar norm. İlk gerçek derleme bu
-tahminin yanlış olduğunu hemen kanıtladı:
+`AT+MQTTUSERCFG`'nin ikinci parametresi taşıma türünü seçer. 0'dan başlaması gereken bir sayı listesi gibi görünür, ama [Espressif'in ESP-AT MQTT komut referansında](https://github.com/espressif/esp-at/blob/master/docs/en/AT_Command_Set/MQTT_AT_Commands.rst) **1'den başlar**: `1` düz TCP, `2`–`5` TLS türleri (`5` karşılıklı TLS'tir, eğitim 03'te kullanılır), `6`–`10` WebSocket türleridir. `scheme 0` yoktur: `AT+MQTTUSERCFG=0,0,...` doğrudan yalın bir `\r\nERROR\r\n` (9 bayt) ile reddedilir — modül, daha herhangi bir ağ trafiği olmadan komutun kendisini reddeder. Sürücünün `1` göndermesinin nedeni budur.
 
-```text
-[DEBUG] ESP32 TX: {"data":"AT+MQTTUSERCFG=0,0,\"tiremo-cortex-01\",\"\",\"\",0,0,\"\"\r\n"}
-[WARN] ESP32 RX: "OK" rejected with ERROR after 9 bytes
-{"data":"\r\nERROR\r\n"}
-```
+## `MQTTPUBRAW`'ın tamamlanma işaretini anlamak
 
-Dokuz bayt tam olarak `\r\nERROR\r\n` — modül komutu doğrudan reddetti,
-bir bağlantı hatası değil. Ham AT trafiğini görmek için
-`-D TIREMO_DEBUG_LEVEL=4` ile yeniden derlemek (yukarıda) gönderilen
-tam baytların sözdizimsel olarak doğru biçimlendiğini doğruladı, bu da
-sorunu `scheme` değerinin kendisine daralttı.
-[Espressif'in kendi ESP-AT MQTT komut referansını](https://github.com/espressif/esp-at/blob/master/docs/en/AT_Command_Set/MQTT_AT_Commands.rst)
-kontrol etmek bunu çözdü: `scheme` **1-indeksli** — `1` düz TCP, `2`–`5`
-TLS varyantları (`5` karşılıklı TLS, Tutorial 03'ün taslağının bu
-değer konusunda haklı olduğunu doğruluyor), `6`–`10` WebSocket
-varyantları. `scheme 0` diye bir şey yok.
-[`Sw/Drivers/esp32/Src/tiremo_esp32.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Drivers/esp32/Src/tiremo_esp32.c)'nin
-`TIREMO_ESP32_MqttUserConfig()`'inde tek bir rakamı düzeltmek hatanın
-tamamıydı.
-
-Aynı debug izi ikinci, daha küçük bir uyuşmazlığı da ortaya çıkardı:
-`AT+MQTTPUBRAW`'ın gerçek tamamlama işareti `+MQTTPUB:OK` /
-`+MQTTPUB:FAIL`, düz bir `OK` değil (aşağıdaki izdeki o ilk `OK`,
-modül ham baytları `>` ile istemeden önce, sadece komutun kabul
-edildiğini gösteriyor):
+`AT+MQTTPUBRAW` iki adımda çalışır: modül komutu önce `OK` ile kabul eder ve yükü bir `>` istemiyle ister; ham baytlar gönderildikten sonra ancak sonucu `+MQTTPUB:OK` ya da `+MQTTPUB:FAIL` olarak bildirir. Kartta `TIREMO_DEBUG_LEVEL=4` ile yakalandı:
 
 ```text
-[DEBUG] ESP32 RX matched ">" after 9 bytes: {"data":"\r\nOK\r\n\r\n>"}
-[DEBUG] ESP32 RX matched "+MQTTPUB:OK" after 11 bytes: {"data":"+MQTTPUB:OK"}
+[DEBUG] ESP32 TX (49 bytes):
+{"data":"AT+MQTTPUBRAW=0,\"tiremo-cortex/mqtt-demo\",4,0,0\r\n"}
+[DEBUG] ESP32 RX matched ">" after 9 bytes:
+{"data":"\r\nOK\r\n\r\n>"}
+[DEBUG] ESP32 RX matched "+MQTTPUB:OK" after 11 bytes:
+{"data":"+MQTTPUB:OK"}
 ```
 
-Düz bir `"OK"` eşleşmesi, teknik olarak burada tesadüfen yine de
-çalışırdı — `"+MQTTPUB:OK"`, `"OK"`'yı bir alt dize olarak içeriyor.
-Gerçek işareti eşleştirmek ise başarıyı `+MQTTPUB:FAIL`'den gerçekten
-ayırt eden şey, bu yüzden sürücü bu tesadüfe güvenmek yerine ona
-açıkça eşleşiyor.
+Yalın bir `"OK"` ile eşleşmek tesadüfen çalışırdı, çünkü `"+MQTTPUB:OK"` içinde `"OK"` geçer — ama daha önceki `OK`'de de dönerdi ve başarıyı `+MQTTPUB:FAIL`'den hiçbir zaman ayıramazdı. Bu yüzden sürücü açıkça `+MQTTPUB:OK` ile eşleşir.
+
+## Paylaşılan bir public broker'ı anlamak
+
+`broker.emqx.io` internetteki herkese açıktır; bu yüzden MQTT'nin iki kuralı burada önemlidir:
+
+- **Client ID'ler benzersiz olmalıdır.** İkinci bir istemci aynı client ID ile bağlandığında broker ilkini düşürür. Başka biri bu eğitimi aynı anda varsayılan `tiremo-cortex-01` ile çalıştırırsa, sizin kartınız ve onunki birbirini sürekli atar.
+- **Konular paylaşılır.** `tiremo-cortex/mqtt-demo` konusuna abone olan herkes, ona yayınlanan her mesajı görür — sizinkini de, başkalarınınkini de.
+
+Bu yüzden yüklemeden önce [`Sw/Src/prv_user_code.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Src/prv_user_code.c) içindeki `MQTT_CLIENT_ID` ve `MQTT_TOPIC` değerlerine benzersiz bir ek verin (adınız, rastgele bir sayı, …), örneğin `"tiremo-cortex-myname-4711"` ve `"tiremo-cortex/myname-4711/demo"`. Ve herkese açık bir test broker'ı üzerinden asla özel bir şey göndermeyin.
+
+## Kimlik bilgileri (şifreyi commit etmeyin)
+
+[ESP32 Connectivity eğitim 02'deki](../../../ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/README.md#kimlik-bilgileri-şifreyi-commit-etmeyin) gibi: bu `Sw/` klasörünün kendi `wifi_secrets.h` dosyası gerekir. Repo kök dizininden:
+
+```sh
+cd Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw
+cp wifi_secrets.h.example wifi_secrets.h
+```
+
+(cmd.exe'de `cp` yerine `copy` kullanın.) Ardından ağınızın SSID'sini ve şifresini girin ya da ESP32 Connectivity için hazırladığınız bir `wifi_secrets.h`'i kopyalayın. Dosya [`Sw/.gitignore`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/.gitignore) içinde listelidir, yani hiçbir zaman bir commit'e girmez. ESP32 Connectivity'deki gibi, DEBUG seviyesindeki TX dökümü bağlanma komutunun yerine `AT+CWJAP=<credentials hidden>` gösterir.
 
 ## Çözüm
 
-[`Sw/`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/) gerçek, derlenebilir bir uygulamaya sahip:
+Repo kök dizininden (`wifi_secrets.h`'i yukarıdaki gibi oluşturduktan sonra):
 
 ```sh
-cd Sw
-cp wifi_secrets.h.example wifi_secrets.h   # once; then edit
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-ESP32 Connectivity ile aynı CMake şekli; `GEN_DIR` dört seviye yukarıda
-[`Generation/`](../../../../Generation/)'a ulaşıyor. ESP32 sürücüsü
-([`tiremo_esp32.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Drivers/esp32/Src/tiremo_esp32.c))
-ESP32 Connectivity Tutorial 02'nin WiFi-join alt kümesi (tam BluFi
-yığını değil — bu eğitim ona ihtiyaç duymuyor), aynı dosyaya eklenen
-MQTT fonksiyonlarıyla birlikte, o bölümün "bir büyüyen sürücü, ikinci
-bir UART yığını değil" desenini sürdürerek. Referans üretici
-yazılımının hiçbir yerinde MQTT/TLS kodu yok — bu sürücünün MQTT
-yarısı orijinal, gerçek ESP-AT komut setine karşı inşa edildi ve
-hatası ayıklandı.
+(`tdf`'nin ne olduğu için [Getting_Started/01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) bakın. macOS/Linux'ta `tdf.py` takma ad olarak da çalışır; Windows'ta `tdf` kullanın. `tdf monitor`'ü çalıştırmadan önce kartın seri portundaki diğer terminalleri kapatın — portu aynı anda yalnızca bir program açabilir.)
 
-**Bağlı kartta gerçekten, gerçek hayatta doğrulandı — ve gerçek bir
-genel broker üzerinden bağımsız olarak da:** `tdf.py build` temiz
-şekilde derlenip bağlanıyor (`.text` 17268 bayt). `tdf.py flash`, SWD
-üzerinden tam bir programlama-ve-doğrulama döngüsünü tamamladı
-(`** Verified OK **`). `tdf.py monitor` ardından, doğrudan gerçek
-donanımdan şunu gösterdi:
+ESP32 sürücüsü ([`tiremo_esp32.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Drivers/esp32/Src/tiremo_esp32.c)), ESP32 Connectivity eğitim 02'nin WiFi bağlantı alt kümesidir; MQTT fonksiyonları aynı dosyaya eklenmiştir — ikinci bir UART yığını değil, büyüyen tek bir sürücü.
+
+**Gerçek donanımda doğrulandı:** `tdf build`, macOS'ta ve Windows 11'de hatasız derlenip bağlanıyor (`.text` yaklaşık 17 KB; kesin boyut toolchain sürümüne göre biraz değişir, ve linker [01-Hello_Blink'in Çözüm bölümünde](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) açıklanan beklenen ve zararsız `_close` / `_lseek` / `_read` / `_write is not implemented` uyarılarını basar). `tdf flash`, gerçek, bağlı bir Tiremo Cortex kartına karşı SWD üzerinden tam bir programlama-ve-doğrulama döngüsünü tamamladı (`** Verified OK **`). Log (ağ adı değiştirildi):
 
 ```text
+[INFO] MQTT_To_Public_Broker: boot
+[INFO] ESP32: power cycling module...
+[INFO] ESP32: power-on boot delay elapsed
+[INFO] TIREMO_ESP32_Init: UART2 ready
+[INFO] ESP32: command echo disabled (ATE0)
+[INFO] ESP32: joining SSID "YourSSID"
 [INFO] ESP32: WIFI GOT IP
 [INFO] MQTT: client id "tiremo-cortex-01" configured (scheme 1, no TLS)
 [INFO] MQTT: connecting to broker.emqx.io:1883
@@ -133,23 +120,19 @@ donanımdan şunu gösterdi:
 [INFO] MQTT: echo payload: 4 bytes "...."
 ```
 
-her 5 saniyede bir tekrarlanıyor, string (`MqttPublish`) ve
-binary-safe (`MqttPublishRaw`, dört ham sayaç baytı yazdırılabilir
-ASCII olmadığı için `....` olarak loglanıyor — beklenen, hata değil)
-yayınları arasında geçiş yapıyor.
+Bu, her 5 saniyede bir metin (`MqttPublish`) ve ikili veriye güvenli (`MqttPublishRaw`) yayınlar arasında dönüşümlü olarak tekrarlanır. Ham yük `....` olarak loglanır, çünkü dört sayaç baytı yazdırılabilir ASCII değildir — bu beklenen bir durumdur, hata değil.
 
-Bu tek başına bir gidiş-dönüş kanıtlıyor, ama mesajın gerçekten bu
-makineden çıktığını kanıtlamıyor. Bu yüzden bu ayrıca bağımsız olarak
-da kontrol edildi: bir `mqttx` CLI abonesi
-(`mqttx sub -h broker.emqx.io -t tiremo-cortex/mqtt-demo`), bu üretici
-yazılımıyla ya da bu depoyla hiçbir bağlantısı olmayan tamamen ayrı bir
-MQTT istemcisi, aynı anda çalıştırıldı ve gerçekten aynı mesajları aldı
-— `hello from Tiremo Cortex #6`, `#8`, ve ham `00 00 00 07` /
-`00 00 00 09` sayaç baytları — bunun gerçekten açık internet üzerinden
-`broker.emqx.io`'dan geçtiğini, yerel bir loopback olmadığını
-doğruluyor.
+### Mesajları bilgisayarınızdan izleyin
 
-## Adım Adım
+Geri gelen mesaj bir gidiş-dönüşü kanıtlar, ama mesajların gerçekten karttan çıkıp internet üzerinden geçtiğini kanıtlamaz. Aynı konuya bilgisayarınızdaki ayrı bir MQTT istemcisiyle abone olun — örneğin [MQTTX](https://mqttx.app/) komut satırı aracıyla (konuyu değiştirdiyseniz kendi konunuzu kullanın):
+
+```sh
+mqttx sub -h broker.emqx.io -t tiremo-cortex/mqtt-demo
+```
+
+Kart çalışırken kartın metin mesajları ve ham sayaçları (`00 00 00 0d`, `00 00 00 0f`, … baytları olarak) her 5 saniyede bir `broker.emqx.io` üzerinden bilgisayarınıza ulaşır. Bu, test kartında bir bilgisayardaki ayrı bir aboneyle kontrol edildi.
+
+## Adım Adım İnceleme
 
 ### 1. MQTT kimliği — `TIREMO_ESP32_MqttUserConfig()`
 
@@ -159,11 +142,7 @@ doğruluyor.
                pClientId, pUsername, pPassword);
 ```
 
-LinkID `0` (bu sürücü yalnızca tek bir MQTT bağlantısı kullanır),
-scheme `1` (düz TCP — yukarıdaki **Gerçek Bir Hata**'ya bakın), boş
-kullanıcı adı/parola (bu genel broker hiçbirini gerektirmiyor), sertifika/CA
-yok (slot `0`, yol `""` — bunlar Tutorial 02'den itibaren önem
-kazanıyor).
+LinkID `0` (bu sürücü yalnızca tek bir MQTT bağlantısı kullanır), scheme `1` (düz TCP — yukarıya bakın), boş kullanıcı adı/şifre (bu public broker hiçbirini istemez), sertifika yok (slotlar `0`, yol `""` — bunlar eğitim 02'den itibaren önem kazanır).
 
 ### 2. Bağlan ve abone ol
 
@@ -172,13 +151,11 @@ TIREMO_ESP32_MqttConnect("broker.emqx.io", 1883, 10000U);
 TIREMO_ESP32_MqttSubscribe("tiremo-cortex/mqtt-demo", 0U);
 ```
 
-İkisi de sıradan `AT+MQTTCONN` / `AT+MQTTSUB`, `"OK"` üzerinde
-eşleşiyor — burada yeni bir yanıt-ayrıştırma numarası gerekmiyor.
+İkisi de `"OK"` ile eşleşen sıradan `AT+MQTTCONN` / `AT+MQTTSUB` komutlarıdır.
 
 ### 3. Yayınlamanın iki yolu
 
-[`Sw/Src/prv_user_code.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Src/prv_user_code.c),
-aynı konu üzerinde ikisi arasında geçiş yapar:
+[`Sw/Src/prv_user_code.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Src/prv_user_code.c) aynı konuda ikisi arasında dönüşümlü çalışır:
 
 ```c
 TIREMO_ESP32_MqttPublish(topic, "hello from Tiremo Cortex #0", 0, false);
@@ -187,55 +164,22 @@ uint8_t counter[4] = { 0, 0, 0, 1 };
 TIREMO_ESP32_MqttPublishRaw(topic, counter, 4, 0, false);
 ```
 
-`MqttPublish`, payload'ı AT-komut tırnakları içinde gönderir — basit,
-ama payload'ın asla `"`, `\r`, ya da `\n` içeremeyeceği anlamına gelir.
-`MqttPublishRaw` bunun yerine onu ham, uzunluk-önekli baytlar olarak
-gönderir: `AT+MQTTPUBRAW=...,<uzunluk>,...`'ı yayınla, modülün `>`
-istemini bekle, sonra tam olarak `<uzunluk>` ham bayt aktar — bu
-müfredatta ilerde tırnaklı bir JSON payload'ının ya da paketlenmiş bir
-binary struct'ın içerebileceği gömülü sıfır bayt dahil, her şey için
-güvenli.
+`MqttPublish` yükü AT komutunun tırnakları içinde gönderir — basittir, ama yük hiçbir zaman `"`, `\r` ya da `\n` içeremez. `MqttPublishRaw` ise yükü ham, uzunluğu önceden bildirilen baytlar olarak gönderir: `AT+MQTTPUBRAW=...,<uzunluk>,...` gönderilir, modülün `>` istemi beklenir, ardından tam olarak `<uzunluk>` kadar ham bayt iletilir — her şey için güvenlidir; bir JSON yükündeki tırnaklar ya da paketlenmiş bir ikili yapıdaki sıfır baytı dahil.
 
-### 4. Yankıyı almak — gerçek bir uzunluk-önekli ayrıştırma
+### 4. Geri gelen mesajı almak — uzunluk önekli ayrıştırma
 
-ESP-AT, gelen bir mesajı istenmeyen bir URC olarak bildirir:
+ESP-AT gelen bir mesajı istenmeden gönderilen bir bildirim (URC) olarak bildirir:
 
 ```text
-+MQTTSUBRECV:0,"tiremo-cortex/mqtt-demo",4,<4 ham bayt>
++MQTTSUBRECV:0,"tiremo-cortex/mqtt-demo",4,<4 raw bytes>
 ```
 
-[`tiremo_esp32.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Drivers/esp32/Src/tiremo_esp32.c)'deki
-`TIREMO_ESP32_MqttWaitMessage()`, `SendCommandCapture`'ın yaptığı gibi
-baytları bir yakalama tamponuna biriktirir, ama sabit bir alt diziyi
-eşleştirmek yerine, her bayttan sonra tamponu yeniden ayrıştırır:
-`+MQTTSUBRECV:` işaretini bul, tırnaklı konuyu ayrıştır, ondalık
-uzunluk alanını ayrıştır, sonra tamponun uzunluk alanının *ötesinde*
-o kadar baytı zaten tutup tutmadığını kontrol et. Mesaj ancak o zaman
-tamamdır — bir metin sezgiseli değil, gerçek bir uzunluk-önekli
-ayrıştırma, ki bu onu 3. adımdaki binary payload için de doğru kılan
-şey. Gerçek tek sınır: tüm URC'nin (başlık + payload) bu sürücünün
-512 baytlık yakalama tamponuna sığması gerekiyor, ESP32
-Connectivity'de `AT+CWLAP`'ın tarama dökümünün zaten sahip olduğu aynı
-kısıtlama.
+[`tiremo_esp32.c`](../../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/Sw/Drivers/esp32/Src/tiremo_esp32.c) içindeki `TIREMO_ESP32_MqttWaitMessage()`, baytları `SendCommandCapture` gibi bir yakalama tamponunda toplar, ama sabit bir alt dizeyle eşleşmek yerine her bayttan sonra tamponu yeniden ayrıştırır: `+MQTTSUBRECV:` işaretini bulur, tırnak içindeki konuyu ayrıştırır, ondalık uzunluğu ayrıştırır, sonra tamponun uzunluk alanından *sonra* o kadar bayt içerip içermediğine bakar. Mesaj ancak o zaman tamamdır — bir metin tahmini değil, gerçek bir uzunluk önekli ayrıştırma; 3. adımdaki ikili yük için de doğru çalışmasını sağlayan budur. Sınır: bildirimin tamamı (başlık + yük) sürücünün 512 baytlık yakalama tamponuna sığmalıdır.
 
-### 5. Derle, flaşla, izle
+## Tamamlanma Ölçütü
 
-```sh
-tdf.py build
-tdf.py flash
-tdf.py monitor
-```
-
-Bu eğitim için gerçek donanımda tam olarak neyin doğrulandığı, bağımsız
-`mqttx` çapraz kontrolü dahil, için yukarıdaki **Çözüm** bölümüne
-bakın.
-
-## Ne Zaman Tamamlanmış Sayılır
-
-Bu kart tarafından, aynı zamanda abone olduğu bir konuda yayınlanan bir
-mesaj geri yankılanır ve loglanır — hem bu kartın kendi logu hem de
-aynı genel broker'da bağımsız bir `mqttx` abonesi tarafından gerçekten
-doğrulandı; bkz. **Çözüm**.
+- `tdf monitor`, `MQTT: connected` satırını ve ardından her 5 saniyede bir `publishing` satırını, onu izleyen `echo received` satırını ve aynı yükü gösteriyor (metin ve ham, dönüşümlü).
+- Bilgisayarınızda, `broker.emqx.io` üzerinde aynı konuya abone ayrı bir MQTT istemcisi aynı mesajları alıyor.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 
