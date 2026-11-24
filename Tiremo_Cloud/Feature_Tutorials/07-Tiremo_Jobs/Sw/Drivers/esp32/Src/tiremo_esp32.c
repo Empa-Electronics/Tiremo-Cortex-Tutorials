@@ -74,11 +74,19 @@ typedef struct
  *****************************************************************************/
 
 static bool s_initialized = false;
+/* Set around a command whose ERROR answer is expected (AT+MQTTCLEAN=0
+ * with no session open), so it logs at DEBUG instead of WARN. */
+static bool s_errorExpected = false;
 static volatile bool s_rxArmPending = false;
 static TIREMO_ESP32_RxRing_t s_rxRing;
 static uint8_t s_rxByte = 0U;
 static char s_mqttRx[TIREMO_ESP32_MQTT_RX_SIZE];
 static uint32_t s_mqttRxLen = 0U;
+/* Set while MqttPublishRaw sends its command: unread bytes are moved
+ * into the MQTT hold buffer instead of being flushed, so an inbound
+ * +MQTTSUBRECV (for example a shadow delta) that arrives just before a
+ * telemetry publish is not lost. */
+static bool s_keepMqttRx = false;
 
 /******************************************************************************
  * Private Function Prototypes
@@ -89,6 +97,9 @@ static bool prvESP32RxRingIsEmpty(void);
 static void prvESP32RxRingPush(uint8_t byte);
 static bool prvESP32RxRingPop(uint8_t *pByte);
 static void prvESP32RxRingFlush(void);
+static void prvESP32MqttHoldAppend(const char *pData, uint32_t length);
+static void prvESP32MqttDrainRingToHold(void);
+static void prvESP32MqttHoldTrim(void);
 static void prvESP32UARTCallback(uint32_t event, void *pContext);
 static void prvESP32ArmRx(void);
 static void prvESP32LogResponse(const char *pLabel,
@@ -530,8 +541,12 @@ bool TIREMO_ESP32_MqttPublishRaw(const char *pTopic, const uint8_t *pPayload,
                                  uint32_t length, uint8_t qos, bool retain)
 {
     char command[160];
+    char prompt[TIREMO_ESP32_RESPONSE_BUF_SIZE];
+    const char *pUrc;
     uint32_t startMs;
+    uint32_t searchFrom;
     uint8_t byte;
+    bool gotPrompt;
     bool foundOk = false;
     bool foundFail = false;
 
@@ -545,12 +560,31 @@ bool TIREMO_ESP32_MqttPublishRaw(const char *pTopic, const uint8_t *pPayload,
                    pTopic, (unsigned long)length, (unsigned int)qos,
                    retain ? 1U : 0U);
 
+    /* An inbound message (for example a shadow delta) can arrive at any
+     * time, also right before or during this publish. Keep it in the
+     * hold buffer for the next MqttWaitMessage instead of flushing it. */
+    s_keepMqttRx = true;
+    prompt[0] = '\0';
+
     /* The module answers with a bare '>' prompt once it's ready for the
      * raw bytes -- not "OK" yet, that comes after the payload. */
-    if (!TIREMO_ESP32_SendCommand(command, ">",
-                                  TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS))
+    gotPrompt = TIREMO_ESP32_SendCommandCapture(command, ">",
+                                                TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS,
+                                                prompt, sizeof(prompt));
+    s_keepMqttRx = false;
+
+    /* A message that arrived while waiting for '>' landed in the command
+     * capture; move it into the hold buffer. */
+    pUrc = strstr(prompt, "+MQTTSUBRECV:");
+    if (pUrc != NULL)
+    {
+        prvESP32MqttHoldAppend(pUrc, (uint32_t)strlen(pUrc));
+    }
+
+    if (!gotPrompt)
     {
         TIREMO_LOG_WARN("ESP32: MQTTPUBRAW prompt '>' never arrived");
+        prvESP32MqttHoldTrim();
         return false;
     }
 
@@ -564,9 +598,11 @@ bool TIREMO_ESP32_MqttPublishRaw(const char *pTopic, const uint8_t *pPayload,
     /* AWS can answer CreateKeysAndCertificate before +MQTTPUB:OK.
      * Accumulate that burst into the MQTT hold buffer instead of the
      * 2048-byte command capture, which would drop the PEM JSON and then
-     * report a truncated "accepted" payload. Do not flush the ring. */
-    s_mqttRxLen = 0U;
-    s_mqttRx[0] = '\0';
+     * report a truncated "accepted" payload. Do not flush the ring.
+     * Messages already in the hold buffer are kept; only search the
+     * bytes that arrive from here on for this publish's result. */
+    prvESP32MqttHoldTrim();
+    searchFrom = s_mqttRxLen;
     startMs = TIREMO_SysTick_GetMs();
     while ((!foundOk) && (!foundFail) &&
            ((TIREMO_SysTick_GetMs() - startMs) < TIREMO_ESP32_MQTT_PUB_TIMEOUT_MS))
@@ -578,16 +614,20 @@ bool TIREMO_ESP32_MqttPublishRaw(const char *pTopic, const uint8_t *pPayload,
                 s_mqttRx[s_mqttRxLen++] = (char)byte;
                 s_mqttRx[s_mqttRxLen] = '\0';
             }
-            if (strstr(s_mqttRx, "+MQTTPUB:OK") != NULL)
+            if (strstr(s_mqttRx + searchFrom, "+MQTTPUB:OK") != NULL)
             {
                 foundOk = true;
             }
-            else if (strstr(s_mqttRx, "+MQTTPUB:FAIL") != NULL)
+            else if (strstr(s_mqttRx + searchFrom, "+MQTTPUB:FAIL") != NULL)
             {
                 foundFail = true;
             }
         }
     }
+
+    /* Drop the +MQTTPUB result and other non-message bytes, keep any
+     * +MQTTSUBRECV for the next MqttWaitMessage. */
+    prvESP32MqttHoldTrim();
 
     if (!foundOk)
     {
@@ -659,17 +699,22 @@ bool TIREMO_ESP32_MqttWaitMessage(char *pTopicOut, uint32_t topicOutSize,
 bool TIREMO_ESP32_MqttDisconnect(void)
 {
     char response[128];
+    bool ok;
 
     s_mqttRxLen = 0U;
     s_mqttRx[0] = '\0';
 
-    if (TIREMO_ESP32_SendCommandCapture("AT+MQTTCLEAN=0\r\n", "OK",
-                                        TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS,
-                                        response, sizeof(response)))
+    /* Not connected: the module answers ERROR. That is success here, so
+     * it is logged at DEBUG instead of as a WARN. */
+    s_errorExpected = true;
+    ok = TIREMO_ESP32_SendCommandCapture("AT+MQTTCLEAN=0\r\n", "OK",
+                                         TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS,
+                                         response, sizeof(response));
+    s_errorExpected = false;
+    if (ok)
     {
         return true;
     }
-    /* Not connected: the module answers ERROR. That is success here. */
     return (strstr(response, "ERROR") != NULL);
 }
 
@@ -863,6 +908,77 @@ static void prvESP32RxRingFlush(void)
 }
 
 /**
+ * @brief Append bytes to the MQTT hold buffer (bounded, NUL-terminated).
+ */
+static void prvESP32MqttHoldAppend(const char *pData, uint32_t length)
+{
+    uint32_t room = (TIREMO_ESP32_MQTT_RX_SIZE - 1U) - s_mqttRxLen;
+
+    if (length > room)
+    {
+        length = room;
+    }
+    memcpy(s_mqttRx + s_mqttRxLen, pData, length);
+    s_mqttRxLen += length;
+    s_mqttRx[s_mqttRxLen] = '\0';
+}
+
+/**
+ * @brief Move every unread byte from the RX ring into the hold buffer.
+ */
+static void prvESP32MqttDrainRingToHold(void)
+{
+    uint8_t byte;
+
+    while (prvESP32RxRingPop(&byte))
+    {
+        if (s_mqttRxLen < (TIREMO_ESP32_MQTT_RX_SIZE - 1U))
+        {
+            s_mqttRx[s_mqttRxLen++] = (char)byte;
+            s_mqttRx[s_mqttRxLen] = '\0';
+        }
+    }
+}
+
+/**
+ * @brief Keep only inbound messages in the hold buffer.
+ *
+ * Everything before the first "+MQTTSUBRECV:" is a command result
+ * (OK, >, +MQTTPUB:OK, ...) and is dropped. With no message in the
+ * buffer, only a short tail that could be the start of one is kept, so
+ * the buffer cannot fill up with old results between messages.
+ */
+static void prvESP32MqttHoldTrim(void)
+{
+    const uint32_t markerLen = (uint32_t)(sizeof("+MQTTSUBRECV:") - 1U);
+    const char *pMarker = strstr(s_mqttRx, "+MQTTSUBRECV:");
+    const char *pPlus;
+    uint32_t start;
+
+    if (pMarker != NULL)
+    {
+        start = (uint32_t)(pMarker - s_mqttRx);
+    }
+    else
+    {
+        pPlus = strrchr(s_mqttRx, '+');
+        if ((pPlus != NULL) &&
+            ((s_mqttRxLen - (uint32_t)(pPlus - s_mqttRx)) < markerLen) &&
+            (strncmp(pPlus, "+MQTTSUBRECV:",
+                     s_mqttRxLen - (uint32_t)(pPlus - s_mqttRx)) == 0))
+        {
+            start = (uint32_t)(pPlus - s_mqttRx);
+        }
+        else
+        {
+            start = s_mqttRxLen;
+        }
+    }
+
+    prvESP32MqttHoldShift(start);
+}
+
+/**
  * @brief Drop the parsed MQTT URC from the hold buffer, keep any bytes
  *        that arrived after it (typically +MQTTPUB:OK or the next URC).
  */
@@ -1017,11 +1133,27 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
 
     if (pCommand != NULL)
     {
-        prvESP32RxRingFlush();
+        if (s_keepMqttRx)
+        {
+            prvESP32MqttDrainRingToHold();
+        }
+        else
+        {
+            prvESP32RxRingFlush();
+        }
 
         TIREMO_LOG_DEBUG("ESP32 TX (%lu bytes): ",
                          (unsigned long)strlen(pCommand));
-        prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        if (strncmp(pCommand, "AT+CWJAP=", 9U) == 0)
+        {
+            /* Never dump the WiFi password, even at DEBUG level. */
+            prvESP32LogResponse("", "AT+CWJAP=<credentials hidden>",
+                                (uint32_t)strlen("AT+CWJAP=<credentials hidden>"));
+        }
+        else
+        {
+            prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        }
 
         if (TIREMO_HAL_UART_Transmit(TIREMO_ESP32_UART_PORT,
                                      (const uint8_t *)pCommand,
@@ -1073,8 +1205,16 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
     }
     else if (errored)
     {
-        TIREMO_LOG_WARN("ESP32 RX: \"%s\" rejected with ERROR after %lu bytes",
-                        pExpected, (unsigned long)length);
+        if (s_errorExpected)
+        {
+            TIREMO_LOG_DEBUG("ESP32 RX: \"%s\" answered ERROR (expected) after %lu bytes",
+                             pExpected, (unsigned long)length);
+        }
+        else
+        {
+            TIREMO_LOG_WARN("ESP32 RX: \"%s\" rejected with ERROR after %lu bytes",
+                            pExpected, (unsigned long)length);
+        }
         prvESP32LogResponse("", response, length);
     }
     else

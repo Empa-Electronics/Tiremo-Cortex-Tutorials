@@ -17,7 +17,7 @@
 
 # Live Shadow Delta Handling
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Zor***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Zor***
 
 > Bu sayfa [İngilizce orijinalinin](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır; içerik farklılaşırsa
@@ -25,47 +25,49 @@
 
 ## Giriş
 
-[Eğitim 04](../../../../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/)
-desired durumu bir kez, açılışta uygular. Gerçek bir kontrol düzlemi
-cihaz zaten çalışırken `desired`'ı değiştirir. Tiremo Cloud o zaman farkı
+[Eğitim 04](../04-Shadow_Get_Apply_Report/README.md) desired durumu bir
+kez, açılışta uygular. Gerçek bir kontrol düzlemi ise cihaz çalışırken
+`desired`'ı değiştirir. Tiremo Cloud farkı
 `$aws/things/<thingName>/shadow/update/delta` üzerinde yayınlar. Bu
-eğitim 04'ün açılış GET / apply / report'unu korur, sonra o duran
-aboneliği ekler ve her gelen delta'yı sıfırlama olmadan uygular.
+eğitim 04'ün açılıştaki GET / uygula / raporla adımlarını korur, ardından
+bu sürekli aboneliği ekler ve gelen her delta'yı yeniden başlatmadan
+uygular.
 
 04'ün dersi hâlâ geçerlidir. Bir delta belgesi yalnızca farklı olan
-anahtarları içerir. Yalnızca onları raporlamak — veya yalnızca
-`reporting` ve `led` yeniden kurmak — diğer desired kardeşlerini
-(`note`, iç içe ekstralar, …) delta'da sonsuza kadar bırakır. Tiremo Cloud her
-raporda `update/delta`'yı yeniden yayınlar ve UART fırtına yapar. Canlı
-yol bilinen alanları günlük için üzerine yazar, dilimi son tam desired
-nesnesine birleştirir ve o nesnenin tamamını `reported` olarak yankılar.
+anahtarları içerir. Yalnızca o anahtarları raporlamak ya da yalnızca
+`reporting` ve `led`'i yeniden kurmak, desired'daki diğer her anahtarı
+(`note`, iç içe ek alanlar, …) delta'da sonsuza kadar bırakır. Tiremo
+Cloud her rapordan sonra `update/delta`'yı yeniden yayınlar ve log hiç
+temizlenmeyen delta'larla dolar. Canlı yol, tanıdığı alanları uygular,
+delta'yı son tam desired nesnesiyle birleştirir ve bu nesnenin tamamını
+`reported` olarak geri yansıtır.
 
-## Değişim, Tek Bakışta
+## Alışveriş, Tek Bakışta
 
 ```mermaid
 sequenceDiagram
     participant Board as Tiremo Cortex
     participant Cloud as Tiremo Cloud
 
-    Note over Board: eğitim 04 açılış GET / apply / tam report
-    Board->>Cloud: update/delta abone
-    Note over Cloud: operatör desired düzenler (sıfırlama yok)
-    Cloud-->>Board: update/delta (yalnızca değişen anahtarlar)
-    Note over Board: üzerine yaz + son desired ile birleştir
-    Board->>Cloud: shadow/update state.reported = tam desired yankısı
-    Cloud-->>Board: update/accepted (delta temizlenir)
+    Note over Board: tutorial 04 boot GET / apply / full report
+    Board->>Cloud: subscribe update/delta
+    Note over Cloud: operator edits desired (no reboot)
+    Cloud-->>Board: update/delta (changed keys only)
+    Note over Board: overlay + merge into last desired
+    Board->>Cloud: shadow/update state.reported = full desired echo
+    Cloud-->>Board: update/accepted (delta clears)
 ```
 
 ```mermaid
 flowchart TD
-    A([Açılış]) --> B[Eğitim 04: GET, uygula, tam report]
-    B --> C[update/delta abone]
-    C --> D([Hazır döngü: Poll + heartbeat])
-    D -->|gelen delta| E[Bilinen alanları üzerine yaz]
-    E --> F[Son desired ile birleştir, reported yankıla]
+    A([Boot]) --> B[Tutorial 04: GET, apply, full report]
+    B --> C[Subscribe update/delta]
+    C --> D([Ready loop: Poll + heartbeat])
+    D -->|inbound delta| E[Overlay known fields]
+    E --> F[Merge into last desired, echo reported]
     F --> D
-    D -->|USER 10 s tutuldu| G[Verilen kimliği sil]
-    G --> H[Sistem sıfırlama]
+    D -->|USER held 10 s| G[Erase issued identity]
+    G --> H[System reset]
     H -.-> A
 
     classDef normal fill:#bee3f8,stroke:#2b6cb0,color:#1a365d,stroke-width:1px
@@ -78,23 +80,26 @@ flowchart TD
 
 ## Neler Öğreneceksiniz
 
-- Tek seferlik `shadow/get`'ten ayrı, duran bir abonelik olarak `shadow/update/delta`
-- Delta yükünün `state`'inin *kısmi* desired farkı olduğu — `{desired, reported, delta}` değil
-- Canlı bir değişikliğin artakalan delta yaratmaması için 04'ün apply + tam yankı report'unu yeniden kullanmak
-- 10 s USER fabrika sıfırlamasının hâlâ çalışması için hazır döngüde MQTT yoklamak
+- Tek seferlik `shadow/get`'ten farklı, sürekli bir abonelik olarak `shadow/update/delta`
+- Delta yükündeki `state`'in neden `{desired, reported, delta}` değil, kısmi desired farkının *kendisi* olduğu
+- Canlı bir değişikliğin arkasında delta bırakmaması için 04'ün uygulama ve tam desired yansıtma adımlarını yeniden kullanmak
+- 10 sn USER fabrika sıfırlaması çalışmaya devam etsin diye MQTT'yi hazır döngüsünde yoklamak
 
-## Önkoşullar
+## Ön Koşullar
 
-- [04-Shadow_Get_Apply_Report](../../../../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/) — açılış GET / apply / tam report, Thing adı, iddia/verilen kimlik
-- 04 ile aynı gitignore'lu dosyalar bu `Sw/` içinde: `wifi_secrets.h`, `aws_iot_config.h`, `certs/claim_cert.pem`, `certs/claim_key.pem`. İddia PEM'leri, ürün kimliği ve ürün sırrını Tiremo UI'dan kopyalayın — [03 eğitimi](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/#tiremo-uidan-kimlik-bilgileri).
-- [Getting Started](../../../../Getting_Started/) ile kurulu araç zinciri ve flaş
+- [04-Shadow_Get_Apply_Report](../04-Shadow_Get_Apply_Report/README.md) — açılıştaki GET / uygula / tam rapor, Thing adı ve 03'ten gelen verilmiş kimlik
+- Bu `Sw/` içinde 04 ile aynı dört gitignore'lu dosya — bkz. [Kimlik bilgileri](#kimlik-bilgileri)
+- [Getting Started](../../../Getting_Started/) bölümündeki kurulum betikleri çalıştırılmış olmalı, böylece `tdf` kullanılabilir
+- Logu izlemek için: `tdf monitor` veya herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …), kartın USB seri portunda 115200 8N1
+- Bilgisayarınıza USB kablosuyla bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../../Hardware.md))
 
-## Platform belgelendirmesi
+## Platform dökümanı
 
 Canlı `update/delta`,
-[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)
-([cihaz entegrasyonu](https://docs.tiremo.ai/device-state-controller/device-integration))
-üretici yazılımı yoludur. Operatörler desired'ı Tiremo UI'da değiştirir; bu eğitim yeniden başlatmadan uygular.
+[Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)'ın
+üretici yazılımı tarafıdır (ayrıca bkz. [cihaz entegrasyonu](https://docs.tiremo.ai/device-state-controller/device-integration)).
+Operatörler desired'ı Tiremo UI'da değiştirir; bu eğitim onu yeniden
+başlatmadan uygular.
 
 ## `update/delta`'yı Anlamak
 
@@ -110,137 +115,185 @@ Yalnızca LED değiştiğinde klasik shadow delta'sı şöyle görünür:
 }
 ```
 
-Buradaki `state` get/accepted zarfı **değildir**. İç içe `desired` yoktur.
-O dilimi `reported` olarak `JsonWriter_Raw`'a vermek
-`{"led":{"on":true}}` yayınlar ve Tiremo Cloud `reporting`'i delta'da tutar.
+Buradaki `state`, get/accepted zarfı **değildir**; iç içe bir `desired`
+yoktur. Bu dilimi `reported` olarak `JsonWriter_Raw`'a vermek
+`{"led":{"on":true}}` yayınlar ve Tiremo Cloud `reporting`'i (ve
+desired'daki diğer her anahtarı) delta'da tutar.
 
-Yalnızca üç bilinen anahtarı yeniden kurmak aynı hatadır. Fırtına
-günlüğündeki açılış desired'ı 19 bayttı (`{"led":{"on":false}}`); canlı
-yol sonra `{reporting, led}` raporladı ve ekstra desired anahtarlarını
-eşleşmeden bıraktı, bu yüzden `update/delta` hiç temizlenmedi.
+Yalnızca bilinen üç anahtarı yeniden kurmak da aynı sorunu doğurur:
+desired'daki başka her anahtar hiç eşleşmez, bu yüzden `update/delta`
+hiç temizlenmez.
 
-Bu üretici yazılımı açılış GET'inden son tam desired nesnesini tutar.
-Her delta UART günlüğü için `reporting.*` / `led.on` üzerine yazar,
-dilimi o önbelleğe derin birleştirir (`null` bir anahtarı siler) ve
-sonucu `JsonWriter_Raw` ile yankılar. Birleşmiş desired son yayınlananla
-bayt bayt aynıysa rapor atlanır, böylece artakalan bir delta döngüye
-giremez.
+Bu üretici yazılımı açılıştaki GET'ten gelen son tam desired nesnesini
+saklar. Her delta'da:
 
-`update/delta` açılış yankısından **sonra** abone olunur. Daha erken
-abonelik, açılış yolu get/accepted veya update/accepted beklerken
-`MqttWaitMessage`'ın bir delta'yı tüketip (ve düşürüp) atmasına yol açardı.
+1. delta içeriyorsa `reporting.*` / `led.on` güncellenir ve uygulanan
+   değerler loglanır,
+2. delta, saklanan desired nesnesiyle derinlemesine birleştirilir
+   (`null` değeri anahtarı siler),
+3. birleştirilmiş nesne `JsonWriter_Raw` ile `reported` olarak geri
+   yansıtılır.
 
-Thing adı 04 ile aynı kuraldır: `TIREMO_AWS_THING_NAME` ayarlı değilse
-MQTT istemci kimliği (`<product>_<deviceId>`).
+Birleştirilmiş desired son yayınlanana bayt bayt eşitse rapor atlanır,
+böylece kalan bir delta döngüye giremez.
+
+`update/delta`'ya açılıştaki yansıtmadan **sonra** abone olunur. Daha
+erken abone olmak, açılış yolu get/accepted veya update/accepted
+beklerken bir delta mesajını okuyup atmasına yol açardı.
+
+Thing adı 04 ile aynı kurala uyar: `TIREMO_AWS_THING_NAME` tanımlı
+değilse MQTT client ID (`<product>_<deviceId>`).
 
 ## Çözüm
 
-[`Sw/`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/)
-gerçek, derlenebilir bir uygulamaya sahip. Eğitim 04'te kullandığınız
-gitignore'lu dosyaları kopyalayın:
+### Kimlik bilgileri
+
+Bu `Sw/`, eğitim 04 ile aynı dört gitignore'lu dosyaya ihtiyaç duyar.
+En kolayı onları eğitim 04'ün `Sw/`'sinden kopyalamaktır:
+
+- **`wifi_secrets.h`**: WiFi SSID'niz ve şifreniz (`wifi_secrets.h.example`'dan).
+- **`aws_iot_config.h`**: ürününüzün **Identifier**'ı ve **Secret Key**'i (`aws_iot_config.h.example`'dan) ve isteğe bağlı `TIREMO_AWS_THING_NAME`.
+- **`certs/claim_cert.pem`** ve **`certs/claim_key.pem`**: yeniden adlandırılmış **Provisioning Certificates** — bkz. [`certs/README.md`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/certs/README.md).
+
+Dört ad da gitignore'ludur; yine de commit etmeden önce `git status` ile kontrol edin. Biri eksikse derleme, ne yapılacağını söyleyen bir mesajla durur. Değerlerin Tiremo UI'da nerede olduğu: [eğitim 03](../03-Fleet_Provisioning_By_Claim/README.md#tiremo-uidan-kimlik-bilgileri).
+
+### Derle, yükle, izle
+
+Depo kök dizininden:
 
 ```sh
-cd Sw
-cp ../04-Shadow_Get_Apply_Report/Sw/wifi_secrets.h .
-cp ../04-Shadow_Get_Apply_Report/Sw/aws_iot_config.h .
-cp ../04-Shadow_Get_Apply_Report/Sw/certs/claim_cert.pem certs/
-cp ../04-Shadow_Get_Apply_Report/Sw/certs/claim_key.pem certs/
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-**Bağlı kartta doğrulandı:** `.text` 34928 bayt, flaş **Verified OK**.
-Başarılı bir eğitim 04'ten sonra UART iddia değişimini atladı, açılış
-GET / tam report'unu tekrarladı, sonra `update/delta`'ya abone oldu:
+(`tdf`'nin ne olduğu için [Getting_Started/01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) bakın. macOS/Linux'ta `tdf.py` de takma ad olarak çalışır; Windows'ta `tdf` kullanın. `tdf monitor` çalıştırmadan önce kartın seri portundaki diğer terminalleri kapatın — port aynı anda yalnızca bir program tarafından açılabilir.)
+
+**Gerçek donanımda doğrulandı:** `tdf build` macOS ve Windows 11'de hatasız derler ve bağlar (`.text` yaklaşık 36 KB; tam boyut araç zinciri sürümüne göre biraz değişir ve bağlayıcı, [01-Hello_Blink'in Çözüm bölümünde](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) açıklanan aynı beklenen, zararsız `_close` / `_lseek` / `_read` / `_write is not implemented` uyarılarını yazdırır). `tdf flash`, bağlı gerçek bir Tiremo Cortex kartında SWD üzerinden tam bir programlama ve doğrulama döngüsünü tamamladı (`** Verified OK **`). Kart eğitim 03 ile provision edilmişti; claim alışverişini atladı, 04'ün açılıştaki GET / tam rapor adımlarını çalıştırdı ve ardından `update/delta`'ya abone oldu. Aşağıda ürün tanımlayıcısı ve kartın MAC adresi yer tutucularla değiştirilmiştir:
 
 ```text
 [INFO] Live_Shadow_Delta: boot
-[INFO] identity: deviceId=30eda0806324 clientId=<product>_30eda0806324 thingName=<product>_30eda0806324
-[INFO] provision: marker matches 30eda0806324
+[INFO] hold USER 10000 ms to factory-reset (erase issued cert + marker)
+[INFO] ESP32: power cycling module...
+[INFO] ESP32: power-on boot delay elapsed
+[INFO] TIREMO_ESP32_Init: UART2 ready
+[INFO] ESP32: command echo disabled (ATE0)
+[INFO] identity: deviceId=<deviceId> clientId=<product>_<deviceId> thingName=<product>_<deviceId>
+[INFO] ESP32: online, SNTP epoch=...
+[INFO] provision: marker matches <deviceId>
+[INFO] provision: already done; using permanent credentials
+[INFO] shadow: thingName=<product>_<deviceId>
+[INFO] shadow: subscribe get/accepted get/rejected (delta after boot report)
 [INFO] shadow: get
-[INFO] shadow: applied reporting.enabled=true intervalS=60 led.on=false
-[INFO] shadow: update reported (77 bytes, full desired echo)
+[INFO] shadow: MQTT RX topic=$aws/things/<product>_<deviceId>/shadow/get/accepted frag=696 accum=696
+[INFO] shadow: desired 88 bytes
+[INFO] shadow: applied reporting.enabled=true intervalS=1 led.on=false
+[INFO] shadow: update reported (146 bytes, full desired echo)
+[INFO] shadow: MQTT RX topic=$aws/things/<product>_<deviceId>/shadow/update/accepted frag=398 accum=398
 [INFO] shadow: update accepted
+[INFO] shadow: get again to confirm delta is gone
+[INFO] shadow: MQTT RX topic=$aws/things/<product>_<deviceId>/shadow/get/accepted frag=696 accum=696
 [INFO] shadow: no leftover delta
 [INFO] shadow: subscribed update/delta
-[INFO] shadow: ready thingName=<product>_30eda0806324 (live update/delta)
+[INFO] shadow: ready thingName=<product>_<deviceId> (live update/delta)
 ```
 
-UART aboneliği kanıtlar. Tiremo UI klasik shadow `desired` yazar ve
-ortaya çıkan `delta`'yı gösterir.
+`ready` satırı 10 sn'de bir tekrarlanır. Kart artık `desired`'daki bir
+değişikliği bekler; bunu aşağıdaki gibi Tiremo UI'dan gönderirsiniz.
 
 ## Tiremo UI'da shadow güncellemesi gönderme
 
-**Device State Controller**'dan bir komut gönderin (kart hazır döngüde
-olmalı). Sonra cihaz sayfasında **Device Shadow State** içinde
-`desired` / `reported` / `delta` doğrulayın.
+Kart hazır döngüsündeyken **Device State Controller**'dan bir komut
+gönderin. Sonra cihaz sayfasını açın ve **Device Shadow State**'te
+`desired` / `reported` / `delta`'yı kontrol edin.
 
-**1. Ana menüden State Controller** açın.
+**1. Ana menüden State Controller'ı açın.**
 
 ![Tiremo UI: ana menüde State Controller](../../../../Tiremo_Cloud/figures/tiremo_ui_state_controller_menu.png)
 
-*Şekil: Tiremo UI — ana menüden **State Controller**.*
+*Şekil: Tiremo UI — ana menüde **State Controller**'a tıklayın.*
 
-**2. Komutu gönderin.** Bir satırdaki kâğıt uçak simgesine tıklayın
+**2. Bir komut gönderin.** Bir satırdaki kâğıt uçak simgesine tıklayın
 (örneğin **LightOn**).
 
 ![Tiremo UI: Device State Controller komutları](../../../../Tiremo_Cloud/figures/tiremo_ui_state_controller_commands.png)
 
-*Şekil: Tiremo UI — Device State Controller komutunda gönder simgesi.*
+*Şekil: Tiremo UI — Device State Controller komutundaki gönder simgesi.*
 
-**3. Bu cihazı hedefleyin, Send Command.** Hedef tipi **Device**, ürün
-ve bu kartın cihaz tanımlayıcısı (12 hex MAC), sonra **Send Command**.
+**3. Bu cihazı hedefleyin, ardından Send Command.** Hedef tipini
+**Device** yapın, ürünü ve bu kartın cihaz tanımlayıcısını (12 hex MAC)
+seçin, sonra **Send Command**'a tıklayın.
 
 ![Tiremo UI: Send Device State Command](../../../../Tiremo_Cloud/figures/tiremo_ui_send_state_command.png)
 
 *Şekil: Tiremo UI — **Send Command** desired güncellemesini kuyruğa alır.*
 
-UART:
+Komut bir değeri değiştirmelidir. Desired, komutun gönderdiği değeri
+zaten tutuyorsa desired ve reported yine eşleşir, Tiremo Cloud delta
+yayınlamaz ve UART'ta yalnızca `ready` satırları görünür. Bu durumda
+tersini gönderin (örneğin **LightOn**'dan sonra **LightOff**).
+
+Bir delta geldiğinde UART şunu gösterir (yer tutucular yukarıdaki gibi):
 
 ```text
-[INFO] shadow: delta ... bytes
-[INFO] shadow: applied reporting.enabled=... intervalS=... led.on=...
-[INFO] shadow: desired now ... bytes (merged)
-[INFO] shadow: update reported (... bytes, full desired echo)
+[INFO] shadow: MQTT RX topic=$aws/things/<product>_<deviceId>/shadow/update/delta frag=113 accum=113
+[INFO] shadow: delta 113 bytes
+[INFO] shadow: applied reporting.enabled=true intervalS=1 led.on=false
+[INFO] shadow: desired now 89 bytes (merged)
+[INFO] shadow: update reported (148 bytes, full desired echo)
+[INFO] shadow: ready thingName=<product>_<deviceId> (live update/delta)
 ```
 
-**4. Cihaz sayfasını açın.** Eğitim 01 / 06 ile aynı tanımlayıcı.
+Bu denemede komut, bu üretici yazılımının uygulamadığı bir anahtarı
+değiştirdi; bu yüzden `applied` satırı aynı kaldı. Anahtar yine de
+desired ile birleştirildi (88 → 89 bayt) ve reported olarak geri
+yansıtıldı, böylece delta'da kalmadı. Rapordan sonra ikinci bir delta
+gelmedi.
 
-![Tiremo UI: cihaz sayfası Device Shadow State](../../../../Tiremo_Cloud/figures/tiremo_ui_device_shadow_state.png)
+**4. Cihaz sayfasını açın.** Eğitim 01 ve 06'daki aynı tanımlayıcıyı kullanın.
 
-*Şekil: Tiremo UI — cihaz ayrıntısı, ortada **Device Shadow State**.*
+![Tiremo UI: cihaz sayfasında Device Shadow State](../../../../Tiremo_Cloud/figures/tiremo_ui_device_shadow_state.png)
 
-**5. Delta'yı doğrulayın.** `desired` ve `reported` uyuşmazsa kart
-eşleşmeyen anahtarlarla bir `delta` nesnesi gösterir. Bu üretici
-yazılımı tam desired belgesini `reported` olarak yankılayınca `delta`
-temizlenir.
+*Şekil: Tiremo UI — cihaz ayrıntıları, ortada **Device Shadow State**.*
+
+**5. Delta'yı kontrol edin.** `desired` ve `reported` uyuşmadığında kart,
+eşleşmeyen anahtarları içeren bir `delta` nesnesi gösterir. Bu üretici
+yazılımı desired belgesinin tamamını `reported` olarak yansıttıktan
+sonra o `delta` temizlenir.
 
 ![Tiremo UI: Device Shadow State delta](../../../../Tiremo_Cloud/figures/tiremo_ui_device_shadow_delta.png)
 
-*Şekil: Tiremo UI — **Device Shadow State** içinde `desired`, `reported`
-ve `delta` görünür.*
+*Şekil: Tiremo UI — `desired`, `reported` ve `delta`'nın göründüğü
+**Device Shadow State**.*
 
-Kartı sıfırlamadan ikinci bir komut gönderin. Her gönderim yeni bir
-delta / apply / tam report yazmalı; her rapordan sonra konsol delta'sı
-temizlenmeli. Bu üretici yazılımı `led.on` ve `reporting.*` uygular;
-komut belgesindeki diğer anahtarlar birleştirilip yankılanır, böylece
-`delta`'da kalmaz.
+Kartı sıfırlamadan başka bir komut gönderin. Bir değeri değiştiren her
+komut yeni bir delta / uygulama / tam rapor loglar ve her rapordan sonra
+konsoldaki delta temizlenir.
 
-## Adım Adım
+## Adım Adım İnceleme
 
-1. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Src/prv_user_code.c) — 04'ün kimlik / WiFi / SNTP / kurulum-veya-atla / açılış GET'i, sonra hazır döngüde `TIREMO_Shadow_Poll()`.
-2. [`tiremo_shadow.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Src/tiremo_shadow.c) — 04'ten açılış değişimi; `update/delta`'ya yalnızca o başarılı olduktan sonra abone; `Poll` her delta'yı son desired nesnesine birleştirir ve yankılar.
-3. [`tiremo_shadow.h`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Include/tiremo_shadow.h) — `GetApplyReport` ve `Poll`.
+1. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Src/prv_user_code.c) — 04'ün kimlik / WiFi /
+   SNTP / provision-veya-atla / açılış GET yolu, ardından hazır
+   döngüsünde `TIREMO_Shadow_Poll()`.
+2. [`tiremo_shadow.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Src/tiremo_shadow.c) — 04'ün açılış
+   alışverişi; `update/delta`'ya yalnızca bu başarılı olduktan sonra abone
+   olur; `Poll` her delta'yı son desired nesnesiyle birleştirir ve geri yansıtır.
+3. [`tiremo_shadow.h`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Include/tiremo_shadow.h) —
+   `GetApplyReport` ve `Poll`.
+4. [`tiremo_json.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Common/Src/tiremo_json.c) — birleştirmenin
+   04'ün üzerine eklediği iki yardımcı: `FindRaw` ve `ForEachKey`.
+5. [`tiremo_esp32.c`](../../../../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/Sw/Drivers/esp32/Src/tiremo_esp32.c) — 04'teki
+   sürücü. Zaman aşımına uğrayan bir MQTT beklemesi burada loglanmaz,
+   çünkü hazır döngüsündeki yoklama her 200 ms'de zaman aşımına uğrar;
+   açılıştaki shadow ve provisioning kodu kendi zaman aşımlarını loglar.
+   DEBUG dökümünde WiFi şifresi gizlenir (`AT+CWJAP=<credentials hidden>`).
 
-## Bitti Sayılınca
+## Tamamlanma Ölçütü
 
-Kart hazır döngüsünde otururken Tiremo UI'da bir desired alanını
-açıp kapatmak, sıfırlama olmadan, bir MQTT yoklama döngüsü içinde
-uygulanan günlüğü değiştirir ve yayınlanan reported nesnesi değişmeyen
-kardeşleri hâlâ içerir, böylece konsol delta'sı temizlenir. Açılış
-aboneliği yukarıdaki gibi donanımda doğrulandı; iki canlı geçiş konsol
-adımıdır.
+- Kart `shadow: subscribed update/delta` loglar ve hazır döngüsüne girer.
+- Tiremo UI'dan desired'ı değiştiren bir komut, yeniden başlatma olmadan `shadow: delta ... bytes`, `desired now ... bytes (merged)` ve `update reported` loglar.
+- Reported nesnesi desired'ın tam bir yansımasıdır (ek anahtarlar dahil), konsoldaki delta temizlenir ve ardından ikinci bir delta gelmez.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 

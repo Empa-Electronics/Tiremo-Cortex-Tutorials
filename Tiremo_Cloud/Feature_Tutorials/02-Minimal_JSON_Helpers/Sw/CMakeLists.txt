@@ -46,14 +46,14 @@ target_compile_definitions(MinimalJsonHelpers PRIVATE
 
 # Log verbosity compile-time ceiling (0=NONE ... 4=DEBUG). Default INFO in
 # tiremo_debug.h when unset. Override at configure time:
-#   cmake -B build -DTIREMO_DEBUG_LEVEL=2   (WARN and below)
-#   cmake --build build
-# Unlike the old `make TIREMO_DEBUG_LEVEL=2` (a one-shot build-time
-# override), this is a CMake cache variable: it's set once at configure
-# time and persists across rebuilds until you configure again with a
-# different value.
+#   tdf build -DTIREMO_DEBUG_LEVEL=2   (WARN and ERROR only)
+# This is a CMake cache variable: it is set once at configure time and
+# persists across rebuilds until you configure again with a different value.
 set(TIREMO_DEBUG_LEVEL "" CACHE STRING "Log verbosity compile-time ceiling (0=NONE, 1=ERROR, 2=WARN, 3=INFO, 4=DEBUG). Empty = tiremo_debug.h's own default (INFO).")
-if(TIREMO_DEBUG_LEVEL)
+# Compare against the empty string, not truthiness: CMake treats "0" as
+# false, so `if(TIREMO_DEBUG_LEVEL)` would silently ignore level 0 (NONE).
+# Pass -DTIREMO_DEBUG_LEVEL= (empty) to return to the header's default.
+if(NOT TIREMO_DEBUG_LEVEL STREQUAL "")
     target_compile_definitions(MinimalJsonHelpers PRIVATE TIREMO_DEBUG_LEVEL=${TIREMO_DEBUG_LEVEL})
 endif()
 
@@ -104,7 +104,7 @@ if(TIREMO_OPENOCD_BIN)
     )
 
     # Mass-erases the whole chip (both flash banks) -- not just this
-    # project's image. Used by `tdf.py clean-device`; no per-tutorial
+    # project's image. Used by `tdf clean-device`; no per-tutorial
     # target needs this normally, `flash` already overwrites in place.
     add_custom_target(erase-device
         COMMAND ${TIREMO_OPENOCD_BIN}
@@ -118,7 +118,7 @@ if(TIREMO_OPENOCD_BIN)
     )
 
     # Resets and resumes the target over SWD without reprogramming --
-    # used by `tdf.py monitor` right before it opens a serial terminal,
+    # used by `tdf monitor` right before it opens a serial terminal,
     # so log output always starts from a fresh boot.
     add_custom_target(reset-device
         COMMAND ${TIREMO_OPENOCD_BIN}

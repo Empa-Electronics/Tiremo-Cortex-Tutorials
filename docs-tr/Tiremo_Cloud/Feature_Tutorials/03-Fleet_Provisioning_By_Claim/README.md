@@ -17,7 +17,7 @@
 
 # Fleet Provisioning by Claim Certificate
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Zor***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Zor***
 
 > Bu sayfa [İngilizce orijinalinin](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır; içerik farklılaşırsa
@@ -25,31 +25,34 @@
 
 ## Giriş
 
-[Cloud Messaging 03](../../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/)
-Tiremo Cloud (`iot.tiremo.ai`) uç noktasına karşı scheme-5 karşılıklı-TLS oturumunu
-kanıtladı — tek bir Thing için elle oluşturduğunuz sertifika ile. Bu ölçeklenmez.
-Bu eğitim o elle yapılmış kimliği claim-based fleet provisioning ile değiştirir:
-kart bir kez paylaşılan, dar kapsamlı **iddia** (claim) sertifikasıyla bağlanır,
-MQTT üzerinden benzersiz bir cihaz sertifikası ister, station MAC'ten türetilen
-bir Thing kaydeder, verilen kimlik bilgilerini ESP32'nin kendi NVS'sine yazar
-ve kendisi olarak yeniden bağlanır.
+[Cloud Messaging 03](../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/README.md),
+ürün sayfanızdaki **Provisioning Certificates** ile Tiremo Cloud'a scheme 5
+karşılıklı TLS oturumu açtı. Bu sertifika ürünün bütün cihazları tarafından
+paylaşılır ve policy'si yalnızca fleet provisioning'e izin verir — bir
+cihazın kalıcı olarak kullanması gereken bir kimlik değildir. Bu eğitim onu
+amacına uygun kullanır: kart bu paylaşılan **claim** sertifikasıyla bir kez
+bağlanır, Tiremo Cloud'dan MQTT üzerinden kendine özel bir cihaz sertifikası
+ister, adı station MAC adresinden türetilen bir Thing kaydeder, verilen
+kimlik bilgilerini ESP32'nin kendi NVS'ine yazar ve kendi kimliğiyle yeniden
+bağlanır.
 
-İkinci açılış bu değişimi atlamalıdır. Üretici yazılımı `deviceId`'ye eşit bir
-kurulum işaretçisi (`tiremo` / `provisioned`) yazar; `TIREMO_Provision_IsDone()`
-onu okur ve kalıcı yola geçer.
+İkinci açılış bu alışverişi atlamalıdır. Üretici yazılımı, bu kartın
+`deviceId` değerine eşit bir provisioning işaretçisi (`tiremo` /
+`provisioned`) yazar; `TIREMO_Provision_IsDone()` onu geri okur ve kalıcı
+yolu seçer.
 
 ## Bütün Yaşam Döngüsü, Tek Bakışta
 
 ```mermaid
 flowchart TD
-    A([Açılış]) --> B[İstasyon MAC'inden deviceId türet<br/>WiFi'a katıl, SNTP senkronize et]
-    B --> C{Kurulum işaretçisi<br/>deviceId ile eşleşiyor mu?}
-    C -->|Hayır / eşleşmez| D[/İddia değişimini çalıştır<br/>iddia, oluştur, kaydet, yükle/]
-    C -->|Evet, zaten kurulu| E[Verilen mqtt_cert ve<br/>mqtt_key ile bağlan]
+    A([Boot]) --> B[Derive deviceId from station MAC<br/>Join WiFi, sync SNTP]
+    B --> C{Provisioning marker<br/>matches deviceId?}
+    C -->|No / mismatch| D[/Run claim exchange<br/>claim, create, register, install/]
+    C -->|Yes, already provisioned| E[Connect with the<br/>issued mqtt_cert and mqtt_key]
     D --> E
-    E --> F([Hazır döngüsü])
-    F -->|USER 10 s tutuldu| G[mqtt_cert, mqtt_key ve<br/>kurulum işaretçisini sil]
-    G --> H[Sistem sıfırlama]
+    E --> F([Ready loop])
+    F -->|USER held 10 s| G[Erase mqtt_cert, mqtt_key,<br/>and the provisioned marker]
+    G --> H[System reset]
     H -.-> A
 
     classDef normal fill:#bee3f8,stroke:#2b6cb0,color:#1a365d,stroke-width:1px
@@ -60,93 +63,96 @@ flowchart TD
     class G,H reset
 ```
 
-Bir kart, bu grafikte üç farklı yolculuk: **ilk açılış** (turuncu — iddia
-değişimini bir kez çalıştırır), **sonraki her açılış** (mavi — verilen
-kimlik bilgilerini doğrudan NVS'den okur, Tiremo Cloud kurulum uç noktasına hiç
-ağ çağrısı yapmadan), ve bir **fabrika sıfırlama** (kırmızı — 10 s'lik bir
-USER tutuşu verilen kimliği siler ve ilk açılışa geri döner).
+Tek kart, bu grafikte üç yol: **ilk açılış** (turuncu — claim alışverişini
+bir kez çalıştırır), **sonraki her açılış** (mavi — verilen kimlik
+bilgilerini doğrudan NVS'ten okur, Tiremo Cloud'un provisioning uç
+noktasına hiç ağ çağrısı yapmaz) ve **fabrika sıfırlaması** (kırmızı —
+USER 10 sn basılı tutulunca verilen kimlik silinir ve ilk açılışa dönülür).
 
 ## Neler Öğreneceksiniz
 
-- İddia sertifikasının Cloud Messaging 03'ün Thing başına cihaz sertifikasından farkı — aynı `certs/` düzeni, farklı platform nesnesi
-- İddia ile kurulum MQTT konuları: önce `CreateKeysAndCertificate`, sonra `RegisterThing`
-- `deviceIdentifier`'ın MQTT istemci kimliği değil, [eğitim 01](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/)'in çıplak 12 hex MAC'i olduğu
-- PEM-içinde-JSON'u [eğitim 02](../../../../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/)'nin `FindString`'i ile ayrıştırmak (satır sonları kaçışlı gelir)
-- Verilen sertifika/anahtarı `mqtt_cert` / `mqtt_key`'e ve tek seferlik işaretçiye yazmak
-- 10 saniyelik USER düğmesi fabrika sıfırlaması (Getting Started 04'ün tutuşu, debounce yok) — slotları siler, kart yeniden iddia eder
+- Paylaşılan claim sertifikasının (Provisioning Certificates) Tiremo Cloud'un verdiği cihaza özel sertifikadan farkı
+- Tiremo Cloud'un claim ile provisioning MQTT topic'leri: önce `CreateKeysAndCertificate`, sonra `RegisterThing`
+- `deviceIdentifier`'ın neden MQTT client ID değil de [Eğitim 01](../01-Device_Identity_From_MAC/README.md)'deki çıplak 12 hex MAC olduğu
+- JSON içindeki PEM'i [Eğitim 02](../02-Minimal_JSON_Helpers/README.md)'nin `FindString`'i ile ayrıştırmak (satır sonları kaçışlı gelir)
+- Verilen sertifika/anahtarı `mqtt_cert` / `mqtt_key`'e ve tek seferlik bir işaretçiye yazmak, böylece provisioning bir kez çalışır
+- Bu slotları silen ve kartın yeniden claim yapmasını sağlayan 10 saniyelik USER butonu fabrika sıfırlaması (Getting Started 04'teki basılı tutma, debounce yok)
 
-## Önkoşullar
+## Ön Koşullar
 
-- [01-Device_Identity_From_MAC](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/) ve [02-Minimal_JSON_Helpers](../../../../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/)
-- [Cloud Messaging 03](../../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/) — scheme 5, bağlantıdan önce SNTP, `MQTTUSERCFG` → `MQTTSNI` → `MQTTCONN`, ve bu eğitimin kopyaladığı `certs/` gitignore deseni
-- Ürününüz için **Tiremo UI** kimlik bilgileri: iddia sertifikası ve
-  anahtarı, ürün kimliği ve ürün sırrı — bkz.
-  [Tiremo UI'dan kimlik bilgileri](#tiremo-uidan-kimlik-bilgileri)
-- Bu `Sw/` içinde `wifi_secrets.h` (gitignore'lu)
-- [Getting Started](../../../../Getting_Started/) ile toolchain ve flaş
+- [01-Device_Identity_From_MAC](../01-Device_Identity_From_MAC/README.md) ve [02-Minimal_JSON_Helpers](../02-Minimal_JSON_Helpers/README.md)
+- [Cloud Messaging 03](../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/README.md) — scheme 5, bağlanmadan önce SNTP, `MQTTUSERCFG` → `MQTTSNI` → `MQTTCONN` ve bu eğitimin kopyaladığı `certs/` gitignore deseni
+- **Tiremo UI**'daki ürün sayfanızdan: **Identifier**, **Secret Key** ve **Provisioning Certificates** — bkz. [Tiremo UI'dan kimlik bilgileri](#tiremo-uidan-kimlik-bilgileri)
+- İnternet erişimi olan 2.4 GHz bir WiFi ağı ve bu `Sw/`'nin kendi `wifi_secrets.h` dosyası (gitignore'lu) — [Cloud Messaging eğitim 01](../../../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/README.md#kimlik-bilgileri-şifreyi-commit-etmeyin) ile aynı
+- [Getting Started](../../../Getting_Started/) bölümündeki kurulum betikleri çalıştırılmış olmalı, böylece `tdf` kullanılabilir
+- Logu izlemek için: `tdf monitor` veya herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …), kartın USB seri portunda 115200 8N1
+- Bilgisayarınıza USB kablosuyla bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../../Hardware.md))
 
-## Platform belgelendirmesi
+## Platform dökümanı
 
-Bu üretici yazılımı
-[cihaz kurulumu](https://docs.tiremo.ai/device-provisioning/getting-started)
-cihaz tarafını uygular:
+Bu üretici yazılımı,
+[Device provisioning](https://docs.tiremo.ai/device-provisioning/getting-started)
+sürecinin cihaz tarafını uygular:
 
-- [Faz 1](https://docs.tiremo.ai/device-provisioning/first-phase) — bootstrap (iddia) sertifikası, ürün kimliği, ürün sırrı
-- [Faz 2](https://docs.tiremo.ai/device-provisioning/second-phase) — filo kurulumu MQTT (`CreateKeysAndCertificate` / `RegisterThing`)
+- [Phase 1](https://docs.tiremo.ai/device-provisioning/first-phase) — bootstrap (claim) sertifikası, ürün tanımlayıcısı, ürün secret'ı
+- [Phase 2](https://docs.tiremo.ai/device-provisioning/second-phase) — fleet provisioning MQTT (`CreateKeysAndCertificate` / `RegisterThing`)
 - [TLS SNI](https://docs.tiremo.ai/device-provisioning/tls-sni) — `iot.tiremo.ai` için `AT+MQTTSNI`
-- [Faz 3](https://docs.tiremo.ai/device-provisioning/third-phase) — verilen kalıcı sertifika ile yeniden bağlanma
-- İsteğe bağlı: [cihaz etiketleri](https://docs.tiremo.ai/device-provisioning/device-tags)
+- [Phase 3](https://docs.tiremo.ai/device-provisioning/third-phase) — verilen kalıcı sertifikayla yeniden bağlanma
+- İsteğe bağlı: [device tags](https://docs.tiremo.ai/device-provisioning/device-tags)
 
 ## `certs/` Klasörünü Anlamak (Gerçek ve Gitignore'lu)
 
-Cloud Messaging 03 ile aynı üç dosya fikri. Gitignore'lu çift, cihaz başına
-Thing sertifikası değil, paylaşılan **iddia** kimliğidir:
+Cloud Messaging 03 ile aynı üç dosya fikri:
 
-| Dosya | Commit'lendi mi? | Ne olduğu |
+| Dosya | Commit edilir mi? | Nedir |
 |---|---|---|
-| [`certs/root_ca.pem`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/root_ca.pem) | Evet | **Amazon Root CA 1** — gerçekten public, her Tiremo Cloud hesabı için aynı, `https://www.amazontrust.com/repository/AmazonRootCA1.pem`'den. Tiremo Cloud sunucu sertifikasını (`iot.tiremo.ai`) doğrular. |
-| `certs/claim_cert.pem.example` / `claim_key.pem.example` | Evet | Formatı gösteren yer tutucular. |
-| `certs/claim_cert.pem` | **Hayır** (gitignore'lu) | Kısıtlı filo-kurulum politikasına bağlı paylaşılan iddia sertifikası. |
-| `certs/claim_key.pem` | **Hayır** (gitignore'lu) | İddia sertifikasının özel anahtarı. Elinde olan herkes şablonunuzdan yeni cihaz sertifikası isteyebilir. |
+| [`certs/root_ca.pem`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/root_ca.pem) | Evet | **Amazon Root CA 1** — herkese açık, her Tiremo Cloud cihazı için aynı, `https://www.amazontrust.com/repository/AmazonRootCA1.pem` adresinden. Tiremo Cloud'un sunucu sertifikasını doğrular. |
+| `certs/claim_cert.pem.example` / `claim_key.pem.example` | Evet | Biçimi gösteren yer tutucular. |
+| `certs/claim_cert.pem` | **Hayır** (gitignore'lu) | Ürün sayfanızdaki **Provisioning Certificates** içindeki claim sertifikası. Policy'si yalnızca fleet provisioning'e (`CreateKeysAndCertificate` / `RegisterThing`) izin verir, normal uygulama topic'lerine değil. |
+| `certs/claim_key.pem` | **Hayır** (gitignore'lu) | Claim sertifikasının özel anahtarı. Ona sahip olan herkes ürününüz için yeni cihaz sertifikaları isteyebilir. |
 
-Bu, `wifi_secrets.h` ile aynı desendir: gitignore'lu gerçek dosya, commit'li
-`.example` şablon. İki `.example` dosyasını aynı klasörde `claim_cert.pem` ve
-`claim_key.pem` olarak kopyalayıp gerçek iddia sertifikası ve anahtarını
-yapıştırın — [`certs/README.md`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/README.md).
-Bu iki dosya yoksa CMake yapılandırmayı reddeder; örnekleri sessizce gömmez.
+Provisioning Certificates indirmesi, ürününüzün tanımlayıcısıyla
+adlandırılmış iki dosya verir. Bunları `Sw/certs/` içine koyun ve yeniden
+adlandırın:
 
-Cloud Messaging 03'ün `device_cert.pem` / `device_key.pem` dosyalarını buraya
-**kopyalamayın**. O çift elle yapılmış bir Thing kimliğidir. İddia sertifikası
-farklı bir platform nesnesidir: IoT politikası yalnızca `iot:Connect` ve
-`$aws/certificates/create/*` ile `$aws/provisioning-templates/<şablon>/provision/*`
-konularında `iot:Publish`/`Subscribe` izin vermelidir — sıradan uygulama konuları değil.
+| İndirilen dosya | Yeni adı |
+|---|---|
+| `<identifier>.certificate.pem` | `claim_cert.pem` |
+| `<identifier>.private.key` | `claim_key.pem` |
 
-Verilen cihaz sertifikası `certs/` içinde başlamaz. Tiremo Cloud onu CreateKeysAndCertificate
-JSON'unda döner; üretici yazılımı doğrudan modülün `mqtt_cert` / `mqtt_key`
-SYSMFG slotlarına yazar.
+Bunları Cloud Messaging 03'e zaten `device_cert.pem` / `device_key.pem`
+olarak koyduysanız, bu iki dosyayı yeni adlarıyla buraya kopyalayın —
+aynı sertifika ve anahtardır. Dosyalardan biri eksikse derleme
+`Missing claim credentials` ile durur; `.example` yer tutucularını asla
+gömmez. Bkz. [`certs/README.md`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/README.md).
+
+Verilen cihaza özel sertifika hiçbir zaman `certs/` içinde durmaz. Tiremo
+Cloud onu CreateKeysAndCertificate JSON'unda döndürür ve üretici yazılımı
+doğrudan modülün `mqtt_cert` / `mqtt_key` SYSMFG slotlarına yazar.
 
 ## Tiremo UI'dan kimlik bilgileri
 
-İddia PEM'leri, ürün kimliği ve ürün sırrı **Tiremo UI**'da ürününüz
-için verilir. Oradan indirin; uydurma değer kullanmayın. Şablon adı
-varsayılanı `tiremo-default`'tur; aracı `iot.tiremo.ai`'dir.
+Claim sertifikası ve anahtarı, ürün tanımlayıcısı ve ürün secret'ı,
+ürününüz için **Tiremo UI**'da verilir. Şablon adı varsayılan olarak
+`tiremo-default`'tur; broker `iot.tiremo.ai`'dir.
 
-**1. Sol menüden Products** öğesini açın.
+**1. Sol kenar çubuğundan Products'ı açın.**
 
 ![Tiremo UI: ana menüde Products](../../../../Tiremo_Cloud/figures/tiremo_ui_products_menu.png)
 
-*Şekil: Tiremo UI — ana menüden **Products** öğesine tıklayın.*
+*Şekil: Tiremo UI — ana menüde **Products**'a tıklayın.*
 
-**2. Kurulum yapacağınız ürünü açın.** Zaten o ürünün sayfasındaysanız
-bu adımı atlayın.
+**2. Provision edeceğiniz ürünü açın.** Zaten o ürünün sayfasındaysanız bu
+adımı atlayın.
 
 ![Tiremo UI: ürünü seçin](../../../../Tiremo_Cloud/figures/tiremo_ui_select_product.png)
 
-*Şekil: Tiremo UI — ürün adına tıklayarak açın.*
+*Şekil: Tiremo UI — açmak için ürün adına tıklayın.*
 
-**3. Ürün sayfasından kimliği, sırrı ve kurulum sertifikalarını** kopyalayın.
+**3. Ürün sayfasından tanımlayıcıyı ve secret'ı kopyalayın, provisioning
+sertifikalarını indirin.**
 
-![Tiremo UI: kimlik, sertifikalar ve ürün sırrı](../../../../Tiremo_Cloud/figures/tiremo_ui_product_credentials.png)
+![Tiremo UI: tanımlayıcı, sertifikalar ve ürün secret'ı](../../../../Tiremo_Cloud/figures/tiremo_ui_product_credentials.png)
 
 *Şekil: Tiremo UI — solda **Identifier** ve **Secret Key**, sağda
 **Provisioning Certificates**.*
@@ -154,45 +160,46 @@ bu adımı atlayın.
 O sayfada:
 
 - **Identifier** → gitignore'lu `aws_iot_config.h` içinde `TIREMO_AWS_PRODUCT_IDENTIFIER`
-- **Secret Key** → `TIREMO_AWS_PRODUCT_SECRET`. Bu dosyayı commit etmeyin; sırrı herkese açık bir issue veya sohbete yapıştırmayın.
-- **Provisioning Certificates** → **Certificate** ve **Private Key** dosyalarını gitignore'lu `certs/claim_cert.pem` ve `certs/claim_key.pem` olarak indirin. Bu üretici yazılımı Amazon Root CA 1'i `certs/root_ca.pem` olarak zaten taşır; bu eğitim için UI'daki **Public Key** gerekmez.
+- **Secret Key** → `TIREMO_AWS_PRODUCT_SECRET`. Bu dosyayı asla commit etmeyin, secret'ı herkese açık bir issue'ya veya sohbete yapıştırmayın.
+- **Provisioning Certificates** → **Certificate** ve **Private Key**'i indirin ve `certs/claim_cert.pem` ile `certs/claim_key.pem` olarak yeniden adlandırın (yukarıdaki tablo). Bu üretici yazılımı Amazon Root CA 1'i zaten `certs/root_ca.pem` olarak içerir; bu eğitim için UI'daki **Public Key** gerekmez.
 
-Aynı bootstrap sertifikası, kimlik ve sır
-[Faz 1: Önkoşullar ve üretim kurulumu](https://docs.tiremo.ai/device-provisioning/first-phase)
+Aynı bootstrap sertifikası, tanımlayıcı ve secret
+[Phase 1: Prerequisites & Manufacturing Setup](https://docs.tiremo.ai/device-provisioning/first-phase)
 sayfasında anlatılır.
 
-PEM olmayan dağıtım değerleri gitignore'lu `aws_iot_config.h` içindedir
-(`aws_iot_config.h.example`'ı kopyalayın): uç nokta (`iot.tiremo.ai`),
-şablon adı (başka kullanmıyorsanız `tiremo-default`), ürün kimliği,
-ürün sırrı, `isGateway`. Kimlik ve sırrı yukarıdaki ürün sayfasından kopyalayın.
+PEM olmayan kurulum değerleri gitignore'lu `aws_iot_config.h` içindedir
+(`aws_iot_config.h.example`'dan kopyalayın): endpoint (`iot.tiremo.ai`),
+şablon adı (başka bir şablon kullanmıyorsanız `tiremo-default`), ürün
+tanımlayıcısı, ürün secret'ı, `isGateway`. Yalnızca tanımlayıcının ve
+secret'ın doldurulması gerekir.
 
-## Kurulum Sırasını Anlamak
+## Provisioning Sırasını Anlamak
 
-Önce kimlik, sonra ağ, sonra iddia oturumu, en sonda verilen oturum.
+Önce kimlik, sonra ağ, sonra claim oturumu, en son verilen kimlikle oturum.
 
 ```mermaid
 sequenceDiagram
     participant Board as Tiremo Cortex
     participant Cloud as Tiremo Cloud
 
-    Note over Board: Root CA artı iddia sertifikası ve anahtarını<br/>mqtt_ca, mqtt_cert, mqtt_key'e yazar
-    Board->>Cloud: bağlan - scheme 5, iddia kimliği
-    Cloud-->>Board: bağlandı, iddia oturumu
+    Note over Board: writes Root CA plus claim cert and key<br/>into mqtt_ca, mqtt_cert, mqtt_key
+    Board->>Cloud: connect - scheme 5, claim identity
+    Cloud-->>Board: connected, claim session
 
-    Board->>Cloud: abone ol - certificates create accepted ve rejected
-    Board->>Cloud: yayınla - certificates create, boş gövde
+    Board->>Cloud: subscribe - certificates create accepted and rejected
+    Board->>Cloud: publish - certificates create, empty body
     Cloud-->>Board: certificatePem, privateKey, certificateOwnershipToken
-    Note over Board: birkaç MQTTSUBRECV parçasından yeniden<br/>birleştirilir, ESP-AT MQTT arabelleği 1024 bayt
-    Board->>Board: PEM'leri ve token'ı FindString ile ayrıştır
+    Note over Board: reassembled from several MQTTSUBRECV<br/>fragments, ESP-AT MQTT buffer is 1024 bytes
+    Board->>Board: parse PEMs and token with FindString
 
-    Board->>Cloud: abone ol - provisioning template accepted ve rejected
-    Board->>Cloud: yayınla - token, MAC, template parametreleriyle provision isteği
+    Board->>Cloud: subscribe - provisioning template accepted and rejected
+    Board->>Cloud: publish - provision request with token, MAC, template params
     Cloud-->>Board: thingName
 
-    Board->>Cloud: iddia oturumunu kapat
-    Note over Board: sonra verilen PEM'leri mqtt_cert ve mqtt_key'in üzerine yazar<br/>kurulum işaretçisini deviceId'ye eşit yazar
-    Board->>Cloud: bağlan - scheme 5, verilen kimlik
-    Cloud-->>Board: bağlandı, kalıcı oturum
+    Board->>Cloud: disconnect claim session
+    Note over Board: then overwrite mqtt_cert and mqtt_key with the issued PEMs<br/>write provisioned marker equal to deviceId
+    Board->>Cloud: connect - scheme 5, issued identity
+    Cloud-->>Board: connected, permanent session
 ```
 
 ```c
@@ -202,93 +209,165 @@ TIREMO_Identity_FromEui(eui, deviceId, sizeof(deviceId));
 
 TIREMO_ESP32_JoinAP(...);
 TIREMO_ESP32_EnableSntp();
-TIREMO_ESP32_WaitSntpEpoch(&epoch, ...);   /* scheme 5 gerçek saat ister */
+TIREMO_ESP32_WaitSntpEpoch(&epoch, ...);   /* scheme 5 needs a real clock */
 
 if (TIREMO_Provision_IsDone(deviceId)) {
+    /* mqtt_cert/mqtt_key already hold the issued identity */
     ConnectPermanent(clientId);
 } else {
     TIREMO_Provision_Run(deviceId, clientId);
 }
 ```
 
-`TIREMO_Provision_Run()` tüm iddia değişimidir:
+`TIREMO_Provision_Run()` claim alışverişinin tamamıdır:
 
-1. Amazon Root CA 1, iddia sertifikası ve iddia anahtarını `mqtt_ca` /
-   `mqtt_cert` / `mqtt_key`'e yaz (`AT+SYSMFG=2`).
-2. Scheme 5 ile bağlan: `MQTTUSERCFG` → `MQTTSNI` → `MQTTCONN`. Cloud
+1. Amazon Root CA 1'i, claim sertifikasını ve claim anahtarını
+   `mqtt_ca` / `mqtt_cert` / `mqtt_key` slotlarına yazar (`AT+SYSMFG=2`).
+2. Scheme 5 ile bağlanır: `MQTTUSERCFG` → `MQTTSNI` → `MQTTCONN`. Cloud
    Messaging 03 ile aynı sıra ve aynı SNTP gereksinimi.
-3. `$aws/certificates/create/json/accepted` ve `.../rejected`'e abone ol,
-   `$aws/certificates/create/json`'a `{}` yayınla.
-4. `certificateOwnershipToken`, `certificatePem` ve `privateKey`'i eğitim
-   02'nin `FindString`'i ile ayrıştır (PEM satır sonları `\n` olarak gelir).
-5. RegisterThing gövdesini `JsonWriter` ile kur. `deviceIdentifier` çıplak
-   MAC'tir (`30eda0806324`), `clientId` değil.
-6. `$aws/provisioning-templates/<ad>/provision/json/accepted|rejected`'e
-   abone ol, gövdeyi yayınla, `thingName` bekle.
-7. Bağlantıyı kes, `mqtt_cert` / `mqtt_key`'i verilen PEM ile üzerine yaz,
-   işaretçiyi yaz (`namespace tiremo`, key `provisioned` = `deviceId`).
-8. Aynı `clientId` ile yeniden bağlan; artık verilen sertifikayı sunar.
+3. `$aws/certificates/create/json/accepted` ve `.../rejected`'a abone
+   olur, `$aws/certificates/create/json`'a `{}` yayınlar.
+4. `certificateOwnershipToken`, `certificatePem` ve `privateKey`'i Eğitim
+   02'nin `FindString`'i ile ayrıştırır (PEM satır sonları `\n` olarak gelir).
+5. RegisterThing gövdesini `JsonWriter` ile kurar. `deviceIdentifier`,
+   `clientId` değil, çıplak MAC'tir (`<deviceId>`).
+6. `$aws/provisioning-templates/<name>/provision/json/accepted|rejected`'a
+   abone olur, gövdeyi yayınlar, `thingName`'i bekler.
+7. Bağlantıyı keser, `mqtt_cert` / `mqtt_key`'in üzerine verilen PEM'i
+   yazar, işaretçiyi yazar (`namespace tiremo`, anahtar `provisioned` = `deviceId`).
+8. Aynı `clientId` ile, bu kez verilen sertifikayı sunarak yeniden bağlanır.
 
-RX halkası ve MQTT tutma tamponu 8192 bayttır. ESP-AT'nin kendi MQTT
-tamponu 1024 bayttır; CreateKeysAndCertificate birkaç `+MQTTSUBRECV`
-parçası olarak gelir. `prvWaitAccepted()` bunları nesne tamamlanana
-kadar birleştirir.
+RX halkası ve MQTT tutma tamponu 8192 bayttır. Bu, *birleştirilmiş*
+CreateKeysAndCertificate JSON'u için yeterlidir. ESP-AT'nin kendi MQTT
+istemci tamponu 1024 bayt olduğundan modül bu içeriği aynı topic'te
+birkaç `+MQTTSUBRECV` URC'si olarak gönderir (ilk parça `{` ile başlayan
+~979 bayt, sonra 1024 baytlık PEM dilimleri — aşağıdaki logdaki `frag=` /
+`accum=` satırları). `prvWaitAccepted()` bu parçaları JSON nesnesi
+tamamlanana kadar birleştirir. Her URC'yi tam bir MQTT mesajı saymak,
+`certificateOwnershipToken`'ı son dilimde, sertifikayı/anahtarı
+öncekilerde bırakır — ayrıştırma başarısız olur.
 
-## Fabrika Sıfırlama: 10 s USER Tutuşu
+## Fabrika Sıfırlaması: 10 sn USER Basılı Tutma
 
-İşaretçi ve verilen sertifika ESP32 NVS'sindedir; MCU flaşı bunları silmez.
-USER'ı 10 s tutun — [Getting Started 04](../../../../Getting_Started/04-Button_Read_And_Debounce/)
-ile aynı ham basış, debounce yok. `mqtt_cert`, `mqtt_key` ve
-`tiremo`/`provisioned` silinir, sonra `NVIC_SystemReset()`. Sonraki
-açılış iddia değişimini yeniden çalıştırır.
+İşaretçi ve verilen sertifika ESP32'nin NVS'inde durur, bu yüzden MCU'yu
+yeniden yüklemek onları silmez — zaten provision edilmiş bir kartın (bu
+eğitimle veya aynı ürünü kullanan sonraki bir eğitimle) bir sonraki
+açılışta alışverişi atlamasının sebebi budur. USER'ı 10 sn basılı tutun —
+[Getting Started 04](../../../Getting_Started/04-Button_Read_And_Debounce/README.md)
+ile aynı ham basma kontrolü, debounce yok, bırakmayı beklemeden eşikte
+tetiklenir. Bu `mqtt_cert`, `mqtt_key` ve `tiremo`/`provisioned`'ı siler,
+ardından `NVIC_SystemReset()` çağırır. Sonraki açılış claim alışverişini
+yeniden çalıştırır ve aynı Thing adını yeni verilmiş bir sertifikayla kaydeder.
+
+Hem hazır döngüsünde hem de başarısız bir provisioning sonrası durma
+yolunda çalışır.
 
 ## Çözüm
 
-[`Sw/`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/)
-gerçek, derlenebilir bir uygulamadır:
+### Kimlik bilgileri
+
+Bu `Sw/` gitignore'lu dört dosyaya ihtiyaç duyar:
+
+- **`wifi_secrets.h`**: `wifi_secrets.h.example` dosyasını `wifi_secrets.h` olarak kopyalayın ve WiFi SSID'nizi ve şifrenizi yazın.
+- **`aws_iot_config.h`**: `aws_iot_config.h.example` dosyasını `aws_iot_config.h` olarak kopyalayın, sonra `TIREMO_AWS_PRODUCT_IDENTIFIER` değerine **Identifier**'ınızı, `TIREMO_AWS_PRODUCT_SECRET` değerine **Secret Key**'inizi yazın. Endpoint ve şablon zaten doldurulmuştur.
+- **`certs/claim_cert.pem`** ve **`certs/claim_key.pem`**: yeniden adlandırılmış **Provisioning Certificates** — bkz. [`certs/` klasörü](#certs-klasörünü-anlamak-gerçek-ve-gitignorelu).
+
+Dört ad da gitignore'ludur; yine de commit etmeden önce `git status` ile kontrol edin. Biri eksikse derleme, ne yapılacağını söyleyen bir mesajla durur.
+
+### Derle, yükle, izle
+
+Depo kök dizininden:
 
 ```sh
-cd Sw
-cp wifi_secrets.h.example wifi_secrets.h
-cp aws_iot_config.h.example aws_iot_config.h          # sonra uç nokta / şablon / ürün
-cp certs/claim_cert.pem.example certs/claim_cert.pem  # sonra gerçek iddia sertifikası
-cp certs/claim_key.pem.example certs/claim_key.pem    # sonra gerçek iddia anahtarı
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-`tdf.py build` iki iddia PEM dosyası varken temiz bağlar (`.text` 27944).
-Bu dosyalar yokken CMake yapılandırmaz.
+(`tdf`'nin ne olduğu için [Getting_Started/01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) bakın. macOS/Linux'ta `tdf.py` de takma ad olarak çalışır; Windows'ta `tdf` kullanın. `tdf monitor` çalıştırmadan önce kartın seri portundaki diğer terminalleri kapatın — port aynı anda yalnızca bir program tarafından açılabilir.)
 
-Taban: Cloud Messaging 03'ün WiFi + scheme-5 MQTT + SYSMFG sürücüsü, artı
-eğitim 01'in `GetHwEui` / `Identity_FromEui` ve eğitim 02'nin JSON
-yardımcıları. Bu `Sw/`'de yeni: `tiremo_provision.c` ve
+Temel: Cloud Messaging 03'ün WiFi + scheme 5 MQTT + SYSMFG sürücüsü, artı
+Eğitim 01'in `GetHwEui` / `Identity_FromEui`'si ve Eğitim 02'nin JSON
+yardımcıları. Bu `Sw/`'de yeni olanlar: `tiremo_provision.c` ve
 `TIREMO_ESP32_CREDSLOT_PROV_MARKER` slotu.
 
-Gerçek iddia kimlik bilgileri ve canlı bir şablonla ilk açılış iddia
-bağlantısını, create/register değişimini, sonra kalıcı yeniden bağlantıyı
-loglamalıdır. Bir reset sonrası işaretçi eşleşir ve MQTT değişimi atlanır.
+**Gerçek donanımda doğrulandı:** `tdf build` macOS ve Windows 11'de hatasız derler ve bağlar (`.text` yaklaşık 30 KB; tam boyut araç zinciri sürümüne göre biraz değişir ve bağlayıcı, [01-Hello_Blink'in Çözüm bölümünde](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) açıklanan aynı beklenen, zararsız `_close` / `_lseek` / `_read` / `_write is not implemented` uyarılarını yazdırır). `tdf flash`, bağlı gerçek bir Tiremo Cortex kartında SWD üzerinden tam bir programlama ve doğrulama döngüsünü tamamladı (`** Verified OK **`); kart kendini Tiremo Cloud'a provision etti, sonraki açılışta alışverişi atladı ve 10 sn USER basılı tutulduktan sonra yeniden provision oldu. Aşağıda ürün tanımlayıcısı ve kartın MAC adresi yer tutucularla değiştirilmiştir.
 
-create/register gidiş-dönüşünün donanımda doğrulanması `certs/` ve
-`aws_iot_config.h` içinde gerçek bir iddia sertifikası ve şablon ister —
-bu dosyalar gitignore'ludur ve bu depo ile gelmez. `claim_cert.pem` ve
-`claim_key.pem` yokken CMake yapılandırmaz.
+### Zaten provision edilmiş bir kart
 
-## Adım Adım
+```text
+[INFO] Fleet_Provisioning_By_Claim: boot
+[INFO] hold USER 10000 ms to factory-reset (erase issued cert + marker)
+[INFO] ESP32: power cycling module...
+[INFO] ESP32: power-on boot delay elapsed
+[INFO] TIREMO_ESP32_Init: UART2 ready
+[INFO] ESP32: command echo disabled (ATE0)
+[INFO] identity: deviceId=<deviceId> clientId=<product>_<deviceId>
+[INFO] ESP32: online, SNTP epoch=...
+[INFO] provision: marker matches <deviceId>
+[INFO] provision: already done; using permanent credentials
+[INFO] provision: ready deviceId=<deviceId>
+```
 
-1. [`certs/`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/) — Amazon Root CA 1 commit'li; iddia PEM şablonları commit'li; gerçek iddia dosyaları gitignore'lu, Cloud Messaging 03'ün `device_*.pem` ile aynı.
-2. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/Src/prv_user_code.c) — MAC → `deviceId` / `clientId`, WiFi, SNTP, sonra `IsDone` veya `Run`. 10 s USER tutuşu verilen kimliği sıfırlar.
-3. [`tiremo_provision.c`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/Common/Src/tiremo_provision.c) — iddia bağlantısı, create, ayrıştırma, register, kurulum, işaretçi, yeniden bağlanma, `FactoryReset` silme.
-4. [`tiremo_esp32.c`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/Drivers/esp32/Src/tiremo_esp32.c) — işaretçi slotu `tiremo`/`provisioned`; MQTT RX tamponu PEM JSON için boyutlandırıldı.
+### Fabrika sıfırlaması, ardından claim alışverişi
 
-## Bittiğinde
+Hazır döngüsündeyken USER 10 sn basılı tutulduğunda:
 
-Fabrika taze bir kart, konsolda elle sertifika adımı olmadan benzersiz adlı
-bir Thing'e kendini kurar, verilen kimlik bilgilerini modül NVS'sine
-yazar ve sonraki açılışta kurulumu atlar. USER'ı 10 s tutmak o kimliği siler;
-sonraki açılış yeniden iddia eder.
+```text
+[WARN] USER button: hold 10000 ms to factory-reset
+[WARN] USER button: factory-reset hold reached
+[WARN] factory reset: erase mqtt_cert, mqtt_key, provisioned marker
+[INFO] factory reset: rebooting
+[INFO] Fleet_Provisioning_By_Claim: boot
+...
+[INFO] identity: deviceId=<deviceId> clientId=<product>_<deviceId>
+[INFO] ESP32: online, SNTP epoch=...
+[WARN] ESP32: SYSMFG read "tiremo"/"provisioned": ERROR (empty slot?)
+[INFO] provision: no matching marker
+[INFO] provision: write root CA (1206 bytes)
+[INFO] provision: write claim certificate (1220 bytes)
+[INFO] provision: write claim private key (1679 bytes)
+[INFO] provision: claim MQTT connected
+[INFO] provision: CreateKeysAndCertificate
+[INFO] provision: MQTT RX topic=$aws/certificates/create/json/accepted frag=979 accum=979
+[INFO] provision: MQTT RX topic=$aws/certificates/create/json/accepted frag=1024 accum=2003
+[INFO] provision: MQTT RX topic=$aws/certificates/create/json/accepted frag=1024 accum=3027
+[INFO] provision: MQTT RX topic=$aws/certificates/create/json/accepted frag=530 accum=3557
+[INFO] provision: RegisterThing deviceIdentifier=<deviceId>
+[INFO] provision: MQTT RX topic=$aws/provisioning-templates/tiremo-default/provision/json/accepted frag=66 accum=66
+[INFO] provision: registered Thing <product>_<deviceId>
+[INFO] provision: complete; permanent MQTT connected
+[INFO] provision: ready deviceId=<deviceId>
+```
+
+`[WARN] SYSMFG read ... (empty slot?)` satırı burada beklenir: sıfırlama
+işaretçiyi sildiği için okunacak bir şey yoktur. Kart ardından Tiremo
+UI'da ürününüzün altında `<product>_<deviceId>` adıyla görünür
+(`<deviceId>`, kartın 12 haneli hex MAC adresidir).
+
+## Adım Adım İnceleme
+
+1. [`certs/`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/) — Amazon Root CA 1 commit edilmiş; claim PEM
+   şablonları commit edilmiş; gerçek claim dosyaları, Cloud Messaging
+   03'ün `device_*.pem` dosyaları gibi gitignore'lu.
+2. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/Src/prv_user_code.c) — MAC → `deviceId` /
+   `clientId`, WiFi, SNTP, ardından `IsDone` veya `Run`. USER 10 sn basılı
+   tutulursa verilen kimlik fabrika ayarlarına sıfırlanır.
+3. [`tiremo_provision.c`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/Common/Src/tiremo_provision.c) —
+   claim bağlantısı, create, ayrıştırma, register, kurulum, işaretçi,
+   yeniden bağlanma, `FactoryReset` silme.
+4. [`tiremo_esp32.c`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/Drivers/esp32/Src/tiremo_esp32.c) — işaretçi
+   slotu `tiremo`/`provisioned`; PEM JSON'u için boyutlandırılmış MQTT RX
+   tamponu; DEBUG dökümünde WiFi şifresi gizlenir
+   (`AT+CWJAP=<credentials hidden>`).
+
+## Tamamlanma Ölçütü
+
+- Verilmiş kimliği olmayan bir kart, elle sertifika adımı olmadan kendini `<product>_<deviceId>` adlı bir Thing olarak provision eder ve `provision: complete; permanent MQTT connected` loglar.
+- Sonraki açılış `provision: already done; using permanent credentials` loglar ve alışverişi atlar.
+- USER 10 sn basılı tutulunca bu kimlik silinir ve kart bir sonraki açılışta yeniden provision olur.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 
-<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Eğitimleri — Empa Electronics</sub></p>

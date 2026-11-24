@@ -74,6 +74,9 @@ typedef struct
  *****************************************************************************/
 
 static bool s_initialized = false;
+/* Set around a command whose ERROR answer is expected (AT+MQTTCLEAN=0
+ * with no session open), so it logs at DEBUG instead of WARN. */
+static bool s_errorExpected = false;
 static volatile bool s_rxArmPending = false;
 static TIREMO_ESP32_RxRing_t s_rxRing;
 static uint8_t s_rxByte = 0U;
@@ -659,17 +662,22 @@ bool TIREMO_ESP32_MqttWaitMessage(char *pTopicOut, uint32_t topicOutSize,
 bool TIREMO_ESP32_MqttDisconnect(void)
 {
     char response[128];
+    bool ok;
 
     s_mqttRxLen = 0U;
     s_mqttRx[0] = '\0';
 
-    if (TIREMO_ESP32_SendCommandCapture("AT+MQTTCLEAN=0\r\n", "OK",
-                                        TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS,
-                                        response, sizeof(response)))
+    /* Not connected: the module answers ERROR. That is success here, so
+     * it is logged at DEBUG instead of as a WARN. */
+    s_errorExpected = true;
+    ok = TIREMO_ESP32_SendCommandCapture("AT+MQTTCLEAN=0\r\n", "OK",
+                                         TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS,
+                                         response, sizeof(response));
+    s_errorExpected = false;
+    if (ok)
     {
         return true;
     }
-    /* Not connected: the module answers ERROR. That is success here. */
     return (strstr(response, "ERROR") != NULL);
 }
 
@@ -1021,7 +1029,16 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
 
         TIREMO_LOG_DEBUG("ESP32 TX (%lu bytes): ",
                          (unsigned long)strlen(pCommand));
-        prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        if (strncmp(pCommand, "AT+CWJAP=", 9U) == 0)
+        {
+            /* Never dump the WiFi password, even at DEBUG level. */
+            prvESP32LogResponse("", "AT+CWJAP=<credentials hidden>",
+                                (uint32_t)strlen("AT+CWJAP=<credentials hidden>"));
+        }
+        else
+        {
+            prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        }
 
         if (TIREMO_HAL_UART_Transmit(TIREMO_ESP32_UART_PORT,
                                      (const uint8_t *)pCommand,
@@ -1073,8 +1090,16 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
     }
     else if (errored)
     {
-        TIREMO_LOG_WARN("ESP32 RX: \"%s\" rejected with ERROR after %lu bytes",
-                        pExpected, (unsigned long)length);
+        if (s_errorExpected)
+        {
+            TIREMO_LOG_DEBUG("ESP32 RX: \"%s\" answered ERROR (expected) after %lu bytes",
+                             pExpected, (unsigned long)length);
+        }
+        else
+        {
+            TIREMO_LOG_WARN("ESP32 RX: \"%s\" rejected with ERROR after %lu bytes",
+                            pExpected, (unsigned long)length);
+        }
         prvESP32LogResponse("", response, length);
     }
     else

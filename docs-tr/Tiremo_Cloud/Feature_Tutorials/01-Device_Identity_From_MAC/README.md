@@ -17,7 +17,7 @@
 
 # Device Identity from MAC
 
-***Kart: Tiremo Cortex (ESP32) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Orta***
+***Kart: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Bölüm: Tiremo Cloud / Feature Tutorials · Zorluk: Orta***
 
 > Bu sayfa [İngilizce orijinalinin](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/README.md)
 > Türkçe çevirisidir. Kod ve dosya yolları İngilizce kalır; içerik farklılaşırsa
@@ -25,65 +25,70 @@
 
 ## Giriş
 
-Filo kurulumu ve shadow konuları kararlı, cihaz başına bir isim ister. `"tiremo-cortex-01"` bir tezgah cihazında işe yarar; aynı firmware ikinci karta yazıldığı anda çöker. ESP32'nin zaten benzersiz 48 bitlik station MAC'i var; bu eğitim onu `AT+CIPSTAMAC?` ile okur ve sonraki eğitimlerin Thing adı / MQTT istemci kimliği olarak kullanacağı 12 haneli küçük harf hex `deviceId`'ye çevirir.
+Fleet provisioning ve shadow topic'lerinin ikisi de cihaz başına kararlı bir ad ister. `"tiremo-cortex-01"` gibi koda gömülü bir ad tek bir test kartında işe yarar, ama aynı üretici yazılımı ikinci bir karta yüklendiği anda bozulur. ESP32'nin zaten benzersiz, 48 bitlik bir station MAC adresi var; bu eğitim onu `AT+CIPSTAMAC?` ile okur ve sonraki eğitimlerin Thing adı ve MQTT client ID olarak kullanabileceği 12 haneli, küçük harfli hex bir `deviceId`'ye çevirir.
 
-Bu `Sw/` **WiFi'ye katılmaz ve Tiremo Cloud ile konuşmaz.** Kimlik bir donanım özelliğidir, bir bulut oturumu değil.
+Bu `Sw/` WiFi'ye **bağlanmaz** ve Tiremo Cloud ile konuşmaz. Kimlik bir donanım özelliğidir, bir bulut oturumu değil.
 
 ## Neler Öğreneceksiniz
 
-- `AT+CIPSTAMAC?` ve beklemenin `"+CIPSTAMAC:"` değil `"OK"` eşleştirmesi gerektiği
-- Altı MAC baytını ayırıcısız 12 hex haneli küçük harf kimliğe biçimlemek
-- Kimliğin kaynak koda gömülmek yerine modülden okunması
+- `AT+CIPSTAMAC?` ve beklemenin neden `"+CIPSTAMAC:"` değil `"OK"` ile eşleşmesi gerektiği
+- Altı MAC baytını ayırıcısız, 12 hex haneli, küçük harfli bir kimliğe biçimlemek
+- Kimliğin neden üretici yazılımı kaynağına gömülmek yerine modülden okunduğu
 
-## Önkoşullar
+## Ön Koşullar
 
-- [ESP32 Connectivity / 01-AT_Command_Transport](../../../../ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/) — bu `Sw/` o taşıma katmanı artı `GetHwEui()`
-- [Getting Started](../../../../Getting_Started/) ile toolchain ve flaş
-- Kimliği izlemek için `tdf.py monitor`
+- [ESP32 Connectivity / 01-AT_Command_Transport](../../../ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/README.md) — bu `Sw/`, o taşıma katmanı artı `GetHwEui()`'dir
+- [Getting Started](../../../Getting_Started/) bölümündeki kurulum betikleri çalıştırılmış olmalı, böylece `tdf` kullanılabilir
+- Logu izlemek için: `tdf monitor` veya herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …), kartın USB seri portunda 115200 8N1
+- Bilgisayarınıza USB kablosuyla bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../../Hardware.md))
 
-Cloud Messaging müfredatta önceki *bölümdür*. Bu eğitim için MQTT broker gerekmez.
+Müfredatta bir önceki *bölüm* Cloud Messaging'dir. Bu eğitim için MQTT broker gerekmez.
 
-## Platform belgelendirmesi
+## Platform dökümanı
 
-Bu eğitimin ürettiği ad, sonraki eğitimlerde
-[filo kurulumu](https://docs.tiremo.ai/device-provisioning/getting-started)
-sırasında `deviceIdentifier` ve shadow konularında Thing adı olarak gider
-([Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)).
+Bu eğitimin ürettiği ad, sonraki eğitimlerin
+[fleet provisioning](https://docs.tiremo.ai/device-provisioning/getting-started)
+sırasında `deviceIdentifier` olarak ve shadow topic'lerinde Thing adı olarak
+gönderdiği addır ([Device State Controller](https://docs.tiremo.ai/device-state-controller/introduction)).
 
-## Station MAC ile uydurma seri numarası
+## Station MAC ile uydurulmuş bir seri numarası arasındaki farkı anlamak
 
-Modülün iki MAC'i vardır. **Station** (`AT+CIPSTAMAC?`) WiFi istemcisi olarak kullandığı adrestir. SoftAP (`AT+CIPAPMAC?`) genelde station artı birdir. Filo kimliği station MAC'i izlemelidir: AP'nin zaten gördüğü adrestir ve sonra BluFi / SoftAP açsanız da değişmez.
+Modülün iki MAC adresi vardır. **Station** (`AT+CIPSTAMAC?`), WiFi istemcisi olarak kullandığı adrestir. SoftAP (`AT+CIPAPMAC?`) genellikle station adresinin bir fazlasıdır. Filo kimliği station MAC'i esas almalıdır: bu, bir AP'nin zaten gördüğü adrestir ve sonradan BluFi veya SoftAP'yi açtığınızda değişmez.
 
-Tipik yanıt:
+Tipik bir yanıt (örnek adres):
 
 ```text
 +CIPSTAMAC:"30:ed:a0:80:63:24"
 OK
 ```
 
-`TIREMO_ESP32_GetHwEui()` sonlandırıcı `"OK"`'i bekler, sonra tırnaklı, iki nokta üst üste ayrılmış hex'i ayrıştırır. `"+CIPSTAMAC:"` eşleştirmek on bir karakter gelir gelmez — bayt bayt — döner ve tırnaklı adres hâlâ yoldayken boş bırakır. WiFi eğitimlerindeki `AT+CWJAP?` tuzağı ile aynıdır.
+`TIREMO_ESP32_GetHwEui()` sondaki `"OK"`'i bekler, ardından tırnak içindeki, iki nokta üst üsteyle ayrılmış hex'i ayrıştırır. `"+CIPSTAMAC:"` ile eşleşmek, bu on bir karakter gelir gelmez — bayt bayt — geri döner ve tırnaklı adres hâlâ yoldayken kalır. Aynı tuzak `AT+CWJAP?` için [ESP32 Connectivity / 02-WiFi_Station_Join](../../../ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/README.md) eğitiminde anlatılır.
 
-Altı bayt kanonik kimliğe dönüşür:
+Altı bayt ardından kanonik bir kimliğe dönüşür:
 
 | Biçim | Örnek | Kim kullanır |
-|-------|--------|--------------|
-| İki noktalı MAC (yalnız log) | `30:ed:a0:80:63:24` | İnsanlar |
-| `deviceId` | `30eda0806324` | Sonra Thing adı / MQTT client ID |
+|------|---------|-------------|
+| İki noktalı MAC (yalnızca log) | `30:ed:a0:80:63:24` | İnsanlar |
+| `deviceId` | `30eda0806324` | Sonraki eğitimlerde Thing adı / MQTT client ID |
 
-Küçük harf, `0x` yok, iki nokta yok. Thing adları büyük/küçük harfe duyarlıdır; burada tek bir yazım seçmek, sonraki şablonların ve shadow konularının anlaşmazlığa düşmemesini sağlar.
+Küçük harf, `0x` yok, iki nokta yok. Thing adları büyük/küçük harfe duyarlıdır; burada tek bir kanonik yazım seçmek, fleet provisioning şablonlarının ve shadow topic'lerinin hiçbir zaman çelişmemesini sağlar.
 
-`TIREMO_Identity_FromEui()` [`tiremo_identity.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Common/Src/tiremo_identity.c) içindedir; eğitim 02 aynı dizeyi kopyalamadan kullanır. Sürücü yalnızca ham bayt döner.
+`TIREMO_Identity_FromEui()`, [`tiremo_identity.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Common/Src/tiremo_identity.c) içindedir; böylece bu ada ihtiyaç duyan bulut eğitimleri — [03](../03-Fleet_Provisioning_By_Claim/README.md) ve sonrası — kendi biçimleyicilerini yazmadan aynı dizeyi kullanır. Sürücü yalnızca ham baytları döndürür.
 
 ## Çözüm
 
+Depo kök dizininden:
+
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-**Doğrulandı:** `.text` 15060, flaş OK. UART:
+(`tdf`'nin ne olduğu için [Getting_Started/01-Hello_Blink'in Çözüm bölümüne](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) bakın. macOS/Linux'ta `tdf.py` de takma ad olarak çalışır; Windows'ta `tdf` kullanın. `tdf monitor` çalıştırmadan önce kartın seri portundaki diğer terminalleri kapatın — port aynı anda yalnızca bir program tarafından açılabilir.)
+
+**Gerçek donanımda doğrulandı:** `tdf build` macOS ve Windows 11'de hatasız derler ve bağlar (`.text` yaklaşık 14.9 KB; tam boyut araç zinciri sürümüne göre biraz değişir ve bağlayıcı, [01-Hello_Blink'in Çözüm bölümünde](../../../Getting_Started/01-Hello_Blink/README.md#çözüm) açıklanan aynı beklenen, zararsız `_close` / `_lseek` / `_read` / `_write is not implemented` uyarılarını yazdırır). `tdf flash`, bağlı gerçek bir Tiremo Cortex kartında SWD üzerinden tam bir programlama ve doğrulama döngüsünü tamamladı (`** Verified OK **`) ve UART logu şunu gösterdi (kartın MAC adresi aşağıda değiştirilmiştir):
 
 ```text
 [INFO] Device_Identity_From_MAC: boot
@@ -91,23 +96,39 @@ tdf.py monitor
 [INFO] ESP32: power-on boot delay elapsed
 [INFO] TIREMO_ESP32_Init: UART2 ready
 [INFO] ESP32: command echo disabled (ATE0)
-[INFO] identity: station MAC 30:ed:a0:80:63:24
-[INFO] identity: deviceId 30eda0806324
-[INFO] identity: still 30eda0806324
+[INFO] identity: station MAC aa:bb:cc:dd:ee:ff
+[INFO] identity: deviceId aabbccddeeff
+[INFO] identity: still aabbccddeeff
+[INFO] identity: still aabbccddeeff
+[INFO] identity: still aabbccddeeff
 ```
 
-Heartbeat her 5 s `CIPSTAMAC?` tekrar sorgular ve aynı 12 hex haneyi doğrular. İki fiziksel kart arasında benzersizlik insan kontrolüdür: aynı imajı ikinci bir Cortex'e yazın, `deviceId` satırı farklı olmalıdır.
+Heartbeat her 5 sn'de `CIPSTAMAC?` sorgusunu tekrarlar ve aynı 12 hex haneyi doğrular. Bir okuma farklı çıkarsa log bir hata olarak `identity: MAC changed <eski> -> <yeni>` gösterir. İkinci bir Tiremo Cortex, aynı `GetHwEui()` / `FromEui()` koduyla okunduğunda farklı bir `deviceId` verdi.
 
-## Adım adım
+## Adım Adım İnceleme
 
-1. [`tiremo_esp32.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Drivers/esp32/Src/tiremo_esp32.c) — `GetHwEui()`
-2. [`tiremo_identity.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Common/Src/tiremo_identity.c) — `FromEui` / `FormatMac`
-3. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Src/prv_user_code.c) — boot log + 5 s yeniden okuma
+1. [`tiremo_esp32.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Drivers/esp32/Src/tiremo_esp32.c) — `TIREMO_ESP32_GetHwEui()` (`AT+CIPSTAMAC?`, `"OK"` ile eşleş, `"aa:bb:cc:dd:ee:ff"`'yi ayrıştır).
+2. [`tiremo_identity.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Common/Src/tiremo_identity.c) — `FromEui` (12 hex) ve `FormatMac` (iki noktalı, yalnızca log için).
+3. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw/Src/prv_user_code.c) — açılış logu ve kimliğin değişmediğini 5 sn'de bir yeniden okuyarak doğrulama.
 
-## Bitti sayılır
+`GetHwEui()` içinden:
 
-Bu kartın her açılışında aynı `deviceId` basılır; ikinci bir kart (olduğunda) farklı 12 hex basar. Aynı-boot kararlılığı donanımda **doğrulandı** (`30eda0806324` heartbeat yeniden okumalarında kaldı). İki kartlık benzersizlik ikinci bir ünite ister.
+```c
+if (!TIREMO_ESP32_SendCommandCapture("AT+CIPSTAMAC?\r\n", "OK",
+                                     TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS,
+                                     response, sizeof(response)))
+{
+    return false;
+}
+
+return prvParseMacQuoted(response, pEui);
+```
+
+## Tamamlanma Ölçütü
+
+- Bu kartın her açılışında aynı 12 hex haneli `deviceId` yazdırılır ve her `identity: still` satırı onu tekrarlar.
+- Aynı imajı çalıştıran ikinci bir kart farklı bir `deviceId` yazdırır.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 
-<p class="sphinxhide" align="center"><sub>Tiremo Cortex Tutorials — Empa Electronics</sub></p>
+<p class="sphinxhide" align="center"><sub>Tiremo Cortex Eğitimleri — Empa Electronics</sub></p>

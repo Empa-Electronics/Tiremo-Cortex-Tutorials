@@ -457,6 +457,21 @@ void TIREMO_Jobs_OnMessage(const char *pTopic, const char *pPayload,
         /* start-next replies are consumed inside prvWaitStartNextAccepted. */
         return;
     }
+    if (strstr(pTopic, "/update/") != NULL)
+    {
+        /* The cloud's reply to our own jobs/<jobId>/update. It is not a new
+         * job, so do not treat it as a notify (that would send an extra
+         * start-next). */
+        if (strstr(pTopic, "/rejected") != NULL)
+        {
+            TIREMO_LOG_WARN("jobs: update rejected: %.120s", pPayload);
+        }
+        else
+        {
+            TIREMO_LOG_INFO("jobs: update accepted");
+        }
+        return;
+    }
 
     TIREMO_LOG_INFO("jobs: MQTT RX topic=%s len=%lu",
                     pTopic, (unsigned long)payloadLen);

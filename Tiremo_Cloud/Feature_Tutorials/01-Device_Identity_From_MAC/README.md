@@ -17,7 +17,7 @@
 
 # Device Identity from MAC
 
-***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Medium***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Medium***
 
 ## Introduction
 
@@ -34,8 +34,9 @@ This `Sw/` does **not** join WiFi or talk to Tiremo Cloud. Identity is a hardwar
 ## Prerequisites
 
 - [ESP32 Connectivity / 01-AT_Command_Transport](../../../ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/) — this `Sw/` is that transport plus `GetHwEui()`
-- Toolchain and flashing set up per [Getting Started](../../../Getting_Started/)
-- `tdf.py monitor` to watch the ID (see [Getting_Started/04-Button_Read_And_Debounce's Solution](../../../Getting_Started/04-Button_Read_And_Debounce/#solution) for setup)
+- The setup scripts from [Getting Started](../../../Getting_Started/) already run, so `tdf` is available
+- To watch the log: `tdf monitor` or any serial terminal (Tera Term, PuTTY, screen, minicom, …) at 115200 8N1 on the board's USB serial port
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../../Hardware.md)) connected to your PC with a USB cable
 
 Cloud Messaging is the previous *section* in the curriculum. You do not need an MQTT broker for this tutorial.
 
@@ -50,14 +51,14 @@ and as the Thing name on shadow topics
 
 The module has two MACs. **Station** (`AT+CIPSTAMAC?`) is the address it uses as a WiFi client. SoftAP (`AT+CIPAPMAC?`) is typically the station address plus one. Fleet identity should follow the station MAC: that is the address an AP already sees, and it does not change when you later enable BluFi or SoftAP.
 
-A typical reply:
+A typical reply (example address):
 
 ```text
 +CIPSTAMAC:"30:ed:a0:80:63:24"
 OK
 ```
 
-`TIREMO_ESP32_GetHwEui()` waits for the terminating `"OK"` and then parses the quoted, colon-separated hex. Matching `"+CIPSTAMAC:"` would return as soon as those eleven characters arrived — one byte at a time — and leave the quoted address still in flight. The same trap is documented for `AT+CWJAP?` in the WiFi tutorials.
+`TIREMO_ESP32_GetHwEui()` waits for the terminating `"OK"` and then parses the quoted, colon-separated hex. Matching `"+CIPSTAMAC:"` would return as soon as those eleven characters arrived — one byte at a time — and leave the quoted address still in flight. The same trap is documented for `AT+CWJAP?` in [ESP32 Connectivity / 02-WiFi_Station_Join](../../../ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/).
 
 The six bytes then become a canonical ID:
 
@@ -68,18 +69,22 @@ The six bytes then become a canonical ID:
 
 Lowercase, no `0x`, no colons. Thing names are case-sensitive; picking one canonical spelling here means fleet-provisioning templates and shadow topics never disagree.
 
-`TIREMO_Identity_FromEui()` lives in [`tiremo_identity.c`](./Sw/Common/Src/tiremo_identity.c) so tutorial 02 can reuse the same string without copying a formatter. The driver only ever returns raw bytes.
+`TIREMO_Identity_FromEui()` lives in [`tiremo_identity.c`](./Sw/Common/Src/tiremo_identity.c) so the cloud tutorials that need the name — [03](../03-Fleet_Provisioning_By_Claim/) onward — reuse the same string without writing their own formatter. The driver only ever returns raw bytes.
 
 ## Solution
 
+From the repo root:
+
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-**Verified on the connected board:** `.text` 15060 bytes, flash **Verified OK**. UART:
+(See [Getting_Started/01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution) for what `tdf` is. On macOS/Linux, `tdf.py` also works as an alias; on Windows, use `tdf`. Close any other terminal on the board's serial port before running `tdf monitor` — only one program can open it at a time.)
+
+**Confirmed on real hardware:** `tdf build` compiles and links without errors on macOS and Windows 11 (`.text` about 14.9 KB; the exact size varies slightly with the toolchain version, and the linker prints the same expected, harmless `_close` / `_lseek` / `_read` / `_write is not implemented` warnings explained in [01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)). `tdf flash` completed a full program-and-verify cycle over SWD on a real, connected Tiremo Cortex board (`** Verified OK **`), and the UART log showed (the board's MAC is replaced below):
 
 ```text
 [INFO] Device_Identity_From_MAC: boot
@@ -87,12 +92,14 @@ tdf.py monitor
 [INFO] ESP32: power-on boot delay elapsed
 [INFO] TIREMO_ESP32_Init: UART2 ready
 [INFO] ESP32: command echo disabled (ATE0)
-[INFO] identity: station MAC 30:ed:a0:80:63:24
-[INFO] identity: deviceId 30eda0806324
-[INFO] identity: still 30eda0806324
+[INFO] identity: station MAC aa:bb:cc:dd:ee:ff
+[INFO] identity: deviceId aabbccddeeff
+[INFO] identity: still aabbccddeeff
+[INFO] identity: still aabbccddeeff
+[INFO] identity: still aabbccddeeff
 ```
 
-The heartbeat re-queries `CIPSTAMAC?` every 5 s and confirms the same 12 hex digits. Uniqueness across two physical boards is a human check: flash the same image on a second Cortex and the `deviceId` line must differ.
+The heartbeat re-queries `CIPSTAMAC?` every 5 s and confirms the same 12 hex digits. If a re-read ever differs, the log shows `identity: MAC changed <old> -> <new>` as an error. A second Tiremo Cortex, read with the same `GetHwEui()` / `FromEui()` code, gave a different `deviceId`.
 
 ## Walkthrough
 
@@ -115,7 +122,8 @@ return prvParseMacQuoted(response, pEui);
 
 ## Done When
 
-The same `deviceId` is produced on every boot of this board, and a second board (when you have one) prints a different 12-hex string. Same-boot stability is **confirmed** on hardware (`30eda0806324` held across heartbeat re-reads). Two-board uniqueness needs a second unit.
+- The same 12-hex `deviceId` is printed on every boot of this board, and every `identity: still` line repeats it.
+- A second board running the same image prints a different `deviceId`.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

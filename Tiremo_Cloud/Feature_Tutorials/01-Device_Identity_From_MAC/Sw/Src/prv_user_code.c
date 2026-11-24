@@ -79,8 +79,8 @@ void PRV_USER_Code(void)
         }
         if (memcmp(eui, again, sizeof(eui)) != 0)
         {
-            TIREMO_LOG_ERROR("identity: MAC changed %s -> (re-read differs)",
-                             deviceId);
+            TIREMO_LOG_ERROR("identity: MAC changed %s -> %s",
+                             deviceId, checkId);
             continue;
         }
         TIREMO_LOG_INFO("identity: still %s", checkId);

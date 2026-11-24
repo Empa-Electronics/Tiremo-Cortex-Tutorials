@@ -17,7 +17,7 @@
 
 # Minimal JSON Helpers
 
-***Board: Tiremo Cortex (ESP32) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Medium***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: Tiremo Cloud / Feature Tutorials · Difficulty: Medium***
 
 ## Introduction
 
@@ -34,8 +34,10 @@ This `Sw/` does **not** talk to the ESP32 or to Tiremo Cloud. The tests run agai
 
 ## Prerequisites
 
-- [01-Device_Identity_From_MAC](../01-Device_Identity_From_MAC/) conceptually (Tiremo Cloud has started); this `Sw/` only needs debug UART from [Getting Started](../../../Getting_Started/)
-- Toolchain and flashing set up per Getting Started
+- [01-Device_Identity_From_MAC](../01-Device_Identity_From_MAC/) conceptually (Tiremo Cloud has started); this `Sw/` only needs the debug UART from [Getting Started](../../../Getting_Started/)
+- The setup scripts from [Getting Started](../../../Getting_Started/) already run, so `tdf` is available
+- To watch the log: `tdf monitor` or any serial terminal (Tera Term, PuTTY, screen, minicom, …) at 115200 8N1 on the board's USB serial port
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../../Hardware.md)) connected to your PC with a USB cable
 
 Fleet provisioning is [03](../03-Fleet_Provisioning_By_Claim/). It comes after this because `CreateKeysAndCertificate` replies are JSON too.
 
@@ -58,7 +60,7 @@ The documents these helpers parse are specified on the platform side:
 (void)TIREMO_Json_FindBool(pRep, repLen, "enabled", &enabled);
 ```
 
-That is the whole API. There is no JSON Pointer, no allocation, and no DOM. `FindBool("enabled")` on the root document **fails** even though the word appears deeper in — confirmed on hardware (`root has no sibling key enabled`).
+That is the whole API. There is no JSON Pointer, no allocation, and no DOM. `FindBool("enabled")` on the root document **fails** even though the word appears deeper in; the test logs that as `root has no sibling key enabled`.
 
 Strings are skipped as atomic values. The sample includes `"note":"colon:not-a-key"` so a naive `strstr` for `:` would have already gone wrong.
 
@@ -66,14 +68,18 @@ The writer is the other half of a report: echo the *full* applied desired object
 
 ## Solution
 
+From the repo root:
+
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-**Verified on the connected board:** `.text` 16156 bytes, flash **Verified OK**. UART:
+(See [Getting_Started/01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution) for what `tdf` is. On macOS/Linux, `tdf.py` also works as an alias; on Windows, use `tdf`. Close any other terminal on the board's serial port before running `tdf monitor` — only one program can open it at a time.)
+
+**Confirmed on real hardware:** `tdf build` compiles and links without errors on macOS and Windows 11 (`.text` about 16.3 KB; the exact size varies slightly with the toolchain version, and the linker prints the same expected, harmless `_close` / `_lseek` / `_read` / `_write is not implemented` warnings explained in [01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)). `tdf flash` completed a full program-and-verify cycle over SWD on a real, connected Tiremo Cortex board (`** Verified OK **`), and the UART log showed:
 
 ```text
 [INFO] Minimal_JSON_Helpers: boot
@@ -95,7 +101,11 @@ tdf.py monitor
 [INFO] json: echo enabled == true
 [INFO] json: echo intervalS == 60
 [INFO] json: round-trip ok
+[INFO] json: still ok
+[INFO] json: still ok
 ```
+
+Each check logs one line. A failed check logs `[ERROR] json: FAIL <check>` instead, and the program stops with `json: one or more checks failed` rather than reaching `round-trip ok`. After that, `json: still ok` repeats every 5 s.
 
 ## Walkthrough
 
@@ -104,7 +114,9 @@ tdf.py monitor
 
 ## Done When
 
-All four Find* helpers extract nested fields from a realistic shadow document, a missing sibling key fails, and the writer produces JSON the same helpers accept. Confirmed on hardware as above.
+- All four Find* helpers extract the nested fields from the sample shadow document.
+- Looking up `enabled` on the root document fails, because it is not a sibling there.
+- The writer's `state.reported` document is parsed again by the same helpers, and the log ends with `json: round-trip ok`.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 

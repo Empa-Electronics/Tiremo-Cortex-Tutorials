@@ -111,7 +111,8 @@ TIREMO_Debug_Level_t TIREMO_Debug_GetLevel(void)
 
 void TIREMO_Debug_Log(TIREMO_Debug_Level_t level, const char *format, ...)
 {
-    char buffer[176];
+    /* Large enough for the alarm publish line (topic + 116-byte JSON). */
+    char buffer[256];
     const char *pTag;
     int prefixLen;
     int length;
@@ -160,16 +161,16 @@ void TIREMO_Debug_Log(TIREMO_Debug_Level_t level, const char *format, ...)
     }
 
     length += prefixLen;
-    if (length >= (int)sizeof(buffer))
+    /* A message longer than the buffer is cut short, but always keep
+     * room for the line ending -- otherwise the next log line is glued
+     * onto the end of this one. */
+    if (length > ((int)sizeof(buffer) - 3))
     {
-        length = (int)sizeof(buffer) - 1;
+        length = (int)sizeof(buffer) - 3;
     }
 
-    if ((length + 2) < (int)sizeof(buffer))
-    {
-        buffer[length++] = '\r';
-        buffer[length++] = '\n';
-    }
+    buffer[length++] = '\r';
+    buffer[length++] = '\n';
     buffer[length] = '\0';
 
     prvDebugTransmitBlocking((const uint8_t *)buffer, (uint32_t)length);

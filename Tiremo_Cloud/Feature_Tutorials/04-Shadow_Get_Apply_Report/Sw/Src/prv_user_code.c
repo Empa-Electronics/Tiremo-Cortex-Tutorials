@@ -15,6 +15,19 @@
 #include "../Common/Include/tiremo_shadow.h"
 #include "../Drivers/esp32/Include/tiremo_esp32.h"
 #include "../Drivers/button/Include/tiremo_button.h"
+
+/* Check for the files first: a plain #include of a missing header stops
+ * the build with "No such file" before the checks below can explain what
+ * to do. */
+#if defined(__has_include)
+#if !__has_include("wifi_secrets.h")
+#error "Copy Sw/wifi_secrets.h.example to Sw/wifi_secrets.h and fill in your WiFi SSID and password"
+#endif
+#if !__has_include("aws_iot_config.h")
+#error "Copy Sw/aws_iot_config.h.example to Sw/aws_iot_config.h and fill in the Identifier and Secret Key from your product page"
+#endif
+#endif
+
 #include "wifi_secrets.h"
 #include "aws_iot_config.h"
 

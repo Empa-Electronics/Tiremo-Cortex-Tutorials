@@ -175,6 +175,10 @@ static bool prvWaitAccepted(const char *pAccepted,
                 topic, sizeof(topic), (uint8_t *)s_chunk,
                 sizeof(s_chunk) - 1U, &fragLen, PROV_TIMEOUT_MS))
         {
+            /* The driver does not log MQTT wait timeouts (the shadow
+             * poll times out every cycle), so say why here. */
+            TIREMO_LOG_ERROR("provision: no reply on %s within %lu ms",
+                             pAccepted, (unsigned long)PROV_TIMEOUT_MS);
             return false;
         }
         if (fragLen >= sizeof(s_chunk))
