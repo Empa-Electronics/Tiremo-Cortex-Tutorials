@@ -170,11 +170,14 @@ TIREMO_ESP32_JoinStatus_t TIREMO_ESP32_JoinStoredSsid(const char *pSsid,
                                                       uint32_t timeoutMs);
 
 /**
- * @brief Scan for visible access points and check whether one SSID is
- *        among them ("AT+CWLAP").
+ * @brief Scan for one SSID and check whether it is visible
+ *        ("AT+CWLAP=\"<ssid>\"").
  *
- * Matches the quoted SSID in the scan dump. An out-of-range AP fails
- * here in a few seconds instead of waiting out CWJAP's join timeout.
+ * Only access points with that SSID are listed, and the function waits for
+ * the closing "OK" before looking for the quoted SSID in the reply, so no
+ * scan output is still arriving when the next command goes out. An
+ * out-of-range AP fails here in a few seconds instead of waiting out
+ * CWJAP's join timeout.
  *
  * @param[in] pSsid      SSID to look for.
  * @param[in] timeoutMs  Maximum time to wait for the scan to complete.

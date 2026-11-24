@@ -17,7 +17,7 @@
 
 # Boot Cascade: Saved WiFi → BluFi
 
-***Board: Tiremo Cortex (ESP32) · Section: ESP32 Connectivity / Design Tutorials · Difficulty: Hard***
+***Board: Tiremo Cortex (ABOV A34G43A, Cortex-M4) · Section: ESP32 Connectivity / Design Tutorials · Difficulty: Hard***
 
 ## Introduction
 
@@ -32,19 +32,21 @@ Feature tutorials 01–05 each proved one piece. This is the board's real boot f
 ## Prerequisites
 
 - All of [ESP32 Connectivity / Feature Tutorials](../../Feature_Tutorials/) (01–05)
-- `tdf.py` from [Getting Started](../../../Getting_Started/)
-- EspBluFi on a phone (same as tutorial 05) for the factory-fresh path
+- EspBluFi on a phone (same as [tutorial 05](../../Feature_Tutorials/05-BluFi_Provisioning/)) for the factory-fresh path, and a 2.4 GHz WiFi network with internet access (for NTP)
+- The setup scripts from [Getting Started](../../../Getting_Started/) already run, so `tdf` is available
+- To watch the log: `tdf monitor` or any serial terminal (Tera Term, PuTTY, screen, minicom, …) at 115200 8N1 on the board's USB serial port, **at least 100 columns wide** (for the banner)
+- A Tiremo Cortex board (ABOV A34G43A MCU — see [Hardware Overview](../../../Hardware.md)) connected to your PC with a USB cable
 
 ## The boot banner
 
-Design Tutorials print the Tiremo Cortex wordmark so a bare terminal identifies the application. Feature Tutorials stay quiet. [`tiremo_banner.c`](./Sw/Common/Src/tiremo_banner.c) is the same artwork as the environmental logger (100 columns; single-space “blank” rows so `tdf.py monitor` does not collapse the gap). Title line:
+Design Tutorials print the Tiremo Cortex wordmark so a bare terminal identifies the application. Feature Tutorials stay quiet. [`tiremo_banner.c`](./Sw/Common/Src/tiremo_banner.c) is the same artwork as the [environmental logger](../../../Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/#the-boot-banner) (100 columns wide; single-space "blank" rows so `tdf monitor` does not collapse the gap). Its title lines here:
 
 ```text
   Boot Cascade: Saved WiFi then BluFi
   Design Tutorial - Empa Electronics
 ```
 
-`tdf.py monitor` resets then opens the port, so it usually misses the banner.
+`tdf monitor` opens the serial port first and then resets the board, so the banner is the first thing you see. With another terminal, connect first and then press RESET.
 
 ## Understanding the cascade
 
@@ -70,7 +72,7 @@ prvSyncNtpThenHeartbeat(pPath);                            /* tutorial 04 */
 
 | Persist | Path | What it does |
 |---------|------|----------------|
-| SSID + password | `saved` | `CWLAP` then `CWJAP="ssid","pass"` up to 3 times |
+| SSID + password | `saved` | `CWLAP="ssid"` (tutorial 03's filtered scan) then `CWJAP="ssid","pass"` up to 3 times |
 | SSID, empty password | `nvs` | `CWAUTOCONN=1`, then watch `CWSTATE` for 15 s while the module rejoins by itself |
 | Missing / bad `CS01` | `blufi` | Advertise `Tiremo-Cortex`, harvest URCs, save `CS01` |
 
@@ -78,11 +80,11 @@ A failed `saved` or `nvs` attempt **falls through** to BluFi. That is the produc
 
 Magic is **`CS01`** (`0x43533031`), not `WF01` / `BL01`. Flashing this image is factory-fresh for the cascade even if tutorial 03 still has a last-good join in sector 0 (that record is the wrong magic). The sector is still overwritten on the first successful BluFi save.
 
-`BlufiPoll` remains the only UART2 reader during the wait (tutorial 05). NTP still matches `"OK"` on `CIPSNTPTIME?` (tutorial 04).
+`BlufiPoll` remains the only UART2 reader during the wait (tutorial 05). NTP still matches `"OK"` on `CIPSNTPTIME?` (tutorial 04). As in tutorials 02–05, the DEBUG-level TX dump shows `AT+CWJAP=<credentials hidden>` instead of a saved password.
 
 ## Understanding the password you never get
 
-Not every ESP-AT build prints `+PASSWORD:`. On the board this tutorial was written against, provisioning emits `+BLUFICONN`, then `WIFI CONNECTED`, then `WIFI GOT IP` — and no credential URCs at all. The password is then unrecoverable: `AT+CWJAP?` answers with the SSID only, by design.
+Not every ESP-AT build prints `+PASSWORD:`. On the Tiremo Cortex board used to test this tutorial, provisioning emits `+BLUFICONN`, then `WIFI CONNECTED`, then `WIFI GOT IP` — and no credential URCs at all. The password is then unrecoverable: `AT+CWJAP?` answers with the SSID only, by design.
 
 The cascade treats that as a normal outcome instead of an error:
 
@@ -106,38 +108,61 @@ Any BluFi line the parser does not recognise is echoed as `ESP32: BluFi URC "...
 
 ## Solution
 
+There is no `wifi_secrets.h` to create. From the repo root:
+
 ```sh
-cd Sw
-tdf.py build
-tdf.py flash
-tdf.py monitor
+cd ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/Sw
+tdf build
+tdf flash
+tdf monitor
 ```
 
-**Verified on the connected board:** `.text` 25196 bytes, flash **Verified OK**. Factory-fresh boot advertised and was provisioned from EspBluFi:
+(See [Getting_Started/01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution) for what `tdf` is. On macOS/Linux, `tdf.py` also works as an alias; on Windows, use `tdf`. Close any other terminal on the board's serial port before running `tdf monitor` — only one program can open it at a time.)
+
+**Confirmed on real hardware:** `tdf build` compiles and links without errors on macOS and Windows 11 (`.text` about 25 KB; the exact size varies slightly with the toolchain version, and the linker prints the same expected, harmless `_close` / `_lseek` / `_read` / `_write is not implemented` warnings explained in [01-Hello_Blink's Solution](../../../Getting_Started/01-Hello_Blink/#solution)). `tdf flash` completed a full program-and-verify cycle over SWD on a real, connected Tiremo Cortex board (`** Verified OK **`), and both stages below ran on it. Network names are replaced with `YourSSID`.
+
+### 1. Factory-fresh boot: BluFi
+
+With no `CS01` record, the boot logs `persist: no CS01 record (factory-fresh for this app)` and `cascade: BluFi fallback`, starts advertising as `Tiremo-Cortex`, and repeats `BluFi: still advertising as "Tiremo-Cortex"` every 5 s. Provision it from EspBluFi exactly as in [tutorial 05](../../Feature_Tutorials/05-BluFi_Provisioning/#1-provision-from-the-phone) (Configure → Station → SSID and password). On the test board:
 
 ```text
-[INFO] persist: no CS01 record (factory-fresh for this app)
-[INFO] cascade: BluFi fallback
-[INFO] ESP32: BluFi started, advertising as "Tiremo-Cortex"
 [INFO] ESP32: BluFi phone connected
 [INFO] ESP32: BluFi URC "WIFI CONNECTED"
 [INFO] ESP32: BluFi WIFI GOT IP
 [INFO] ESP32: BluFi stopped
-[INFO] cascade: SSID from CWJAP? "Zyxel_4AA1"
+[INFO] cascade: SSID from CWJAP? "YourSSID"
 [INFO] cascade: no +PASSWORD: URC, saving SSID only (next boot uses NVS rejoin)
-[INFO] persist: saved SSID "Zyxel_4AA1" (password not logged)
-[INFO] clock: SetEpoch 1787773450  path=blufi
+[INFO] persist: saved SSID "YourSSID" (password not logged)
+[INFO] ESP32: SNTP enabled (timezone 0 = UTC)
+[INFO] clock: SetEpoch 1795506247  path=blufi
+[INFO] cascade: online path=blufi epoch=1795506252
+[INFO] cascade: online path=blufi epoch=1795506257
 ```
 
-The next reset skipped BluFi entirely and came up on the `nvs` path. The two `CWSTATE` warnings are the poll loop watching the module finish its own rejoin:
+### 2. Reset: the `nvs` path
+
+Press RESET (or run `tdf monitor` again) without touching the phone. The board skips BluFi entirely:
 
 ```text
-[INFO] persist: loaded SSID "Zyxel_4AA1" password=no
+  Boot Cascade: Saved WiFi then BluFi
+  Design Tutorial - Empa Electronics
+
+[INFO] Boot_Cascade: boot
+[INFO] ESP32: power cycling module...
+[INFO] ESP32: power-on boot delay elapsed
+[INFO] TIREMO_ESP32_Init: UART2 ready
+[INFO] ESP32: command echo disabled (ATE0)
+[INFO] persist: loaded SSID "YourSSID" password=no
 [INFO] cascade: try NVS auto-rejoin (SSID only, no MCU password)
-[WARN] ESP32 RX: timeout after 2000 ms, 33 bytes without "+CWSTATE:2"
+[WARN] ESP32 RX: timeout after 2000 ms, 59 bytes without "+CWSTATE:2"
+[WARN] ESP32 RX: timeout after 2000 ms, 54 bytes without "+CWSTATE:2"
 [INFO] cascade: NVS rejoin got IP
-[INFO] clock: SetEpoch 1787773514  path=nvs
+[INFO] ESP32: SNTP enabled (timezone 0 = UTC)
+[INFO] clock: SetEpoch 1795506430  path=nvs
+[INFO] cascade: online path=nvs epoch=1795506435
 ```
+
+The two `[WARN]` lines are expected: they are the `CWSTATE?` polls that ran while the module was still rejoining by itself (state 0–3, not 2 yet). `cascade: online` then repeats every 5 s.
 
 An AT build that *does* emit `+PASSWORD:` stores it in `CS01` and takes the `saved` path instead, scanning and joining with the MCU's own copy.
 
@@ -145,13 +170,14 @@ An AT build that *does* emit `+PASSWORD:` stores it in `CS01` and takes the `sav
 
 1. [`tiremo_banner.c`](./Sw/Common/Src/tiremo_banner.c) — Design Tutorial mark
 2. [`prv_user_code.c`](./Sw/Src/prv_user_code.c) — `prvTryScanJoin` / `prvTryNvsRejoin` / `prvTryBlufi` / NTP heartbeat
-3. [`tiremo_esp32.c`](./Sw/Drivers/esp32/Src/tiremo_esp32.c) — union of tutorials 01–05 (join, SNTP, BluFi, `JoinStoredSsid`)
-4. [`tiremo_persist.h`](./Sw/Common/Include/tiremo_persist.h) — `CS01` + `HasPassword`
-5. [`tiremo_clock.c`](./Sw/Common/Src/tiremo_clock.c) — tutorial 07 API, set from NTP
+3. [`tiremo_esp32.c`](./Sw/Drivers/esp32/Src/tiremo_esp32.c) — union of tutorials 01–05 (filtered scan, join, SNTP, BluFi, `JoinStoredSsid`, hidden `AT+CWJAP` in the DEBUG dump)
+4. [`tiremo_persist.h`](./Sw/Common/Include/tiremo_persist.h) — `CS01` + `HasPassword`. A received password is kept in plain text in the MCU's data flash, as in tutorials 03 and 05.
+5. [`tiremo_clock.c`](./Sw/Common/Src/tiremo_clock.c) — Sensors tutorial 07's API, set from NTP
 
 ## Done When
 
-Factory-fresh boot advertises BluFi; after EspBluFi, `CS01` is stored; the following reset joins WiFi and syncs NTP with no BluFi step. All three stages are **confirmed** on hardware, ending at `cascade: online path=nvs` because this AT build never sent `+PASSWORD:`.
+- A factory-fresh boot advertises BluFi; after EspBluFi, the log shows `persist: saved SSID` and `clock: SetEpoch ... path=blufi`.
+- After a reset, with nothing done on the phone, the log shows `persist: loaded SSID`, then `clock: SetEpoch ... path=nvs` (or `path=saved` on an AT build that reports `+PASSWORD:`) and `cascade: online` every 5 s — with no `BluFi started` line.
 
 <p align="center"><img alt="" src="../../../images/banner.png" width="100%"></p>
 
