@@ -83,7 +83,22 @@ static bool JoinSaved(const char *pSsid, const char *pPassword)
     {
         TIREMO_LOG_INFO("ESP32: join attempt %u/%u",
                         (unsigned)attempt, (unsigned)RETRY_MAX);
-        join = TIREMO_ESP32_JoinAP(pSsid, pPassword, JOIN_TIMEOUT_MS);
+        if (pPassword[0] == '\0')
+        {
+            /* No password was saved: this ESP-AT build did not report
+             * +PASSWORD: during BluFi, so the module's NVS holds the only
+             * copy. Joining with an empty password would be rejected. */
+            if (attempt == 1U)
+            {
+                TIREMO_LOG_INFO("ESP32: no saved password, joining the AP "
+                                "stored in the module");
+            }
+            join = TIREMO_ESP32_JoinStoredAP(JOIN_TIMEOUT_MS);
+        }
+        else
+        {
+            join = TIREMO_ESP32_JoinAP(pSsid, pPassword, JOIN_TIMEOUT_MS);
+        }
         if (join == TIREMO_ESP32_JOIN_GOT_IP)
         {
             TIREMO_LOG_INFO("ESP32: WIFI GOT IP (saved credentials)");
