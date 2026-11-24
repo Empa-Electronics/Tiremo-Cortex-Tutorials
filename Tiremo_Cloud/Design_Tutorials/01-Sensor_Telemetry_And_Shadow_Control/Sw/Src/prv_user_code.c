@@ -22,6 +22,15 @@
 #include "../Drivers/button/Include/tiremo_button.h"
 #include "../Drivers/sht40/Include/tiremo_sht40.h"
 #include "../Drivers/lis2de12/Include/tiremo_lis2de12.h"
+#include "../Drivers/led/Include/tiremo_led.h"
+
+/* Check for the file first: a plain #include of a missing header stops the
+ * build with "No such file" before the check below can explain what to do. */
+#if defined(__has_include)
+#if !__has_include("aws_iot_config.h")
+#error "Copy Sw/aws_iot_config.h.example to Sw/aws_iot_config.h and fill in endpoint / template / product values"
+#endif
+#endif
 #include "aws_iot_config.h"
 
 #include <stdio.h>
@@ -337,6 +346,7 @@ void PRV_USER_Code(void)
     (void)TIREMO_SysTick_Init();
     (void)TIREMO_Debug_Init();
     TIREMO_Button_Init();
+    TIREMO_LED_Init();   /* all ten off until the shadow says otherwise */
     TIREMO_Banner_Print("Sensor Telemetry and Shadow Control");
     TIREMO_LOG_INFO("Sensor_Telemetry_Shadow: boot");
     TIREMO_LOG_INFO("hold USER %u ms to factory-reset (WiFi CS01 + claim identity)",
@@ -432,10 +442,9 @@ void PRV_USER_Code(void)
         TIREMO_Telemetry_Poll(now);
         if ((now - lastBeatMs) >= HEARTBEAT_MS)
         {
-            TIREMO_LOG_INFO("ready thingName=%s ACC=%u GYRO=%u TEMP=%u HUM=%u intervalS=%lu",
+            TIREMO_LOG_INFO("ready thingName=%s ACC=%u TEMP=%u HUM=%u intervalS=%lu",
                             pThingName,
                             TIREMO_Shadow_AccEn() ? 1U : 0U,
-                            TIREMO_Shadow_GyroEn() ? 1U : 0U,
                             TIREMO_Shadow_TempEn() ? 1U : 0U,
                             TIREMO_Shadow_HumEn() ? 1U : 0U,
                             (unsigned long)TIREMO_Shadow_IntervalS());

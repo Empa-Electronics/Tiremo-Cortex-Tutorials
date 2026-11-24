@@ -279,16 +279,31 @@ bool TIREMO_ESP32_EnableAutoConnect(void)
 
 bool TIREMO_ESP32_ScanForSsid(const char *pSsid, uint32_t timeoutMs)
 {
+    char command[TIREMO_ESP32_SSID_MAX_LEN + 16U];
     char expected[TIREMO_ESP32_SSID_MAX_LEN + 2U];
+    char response[TIREMO_ESP32_RESPONSE_BUF_SIZE];
 
     if (pSsid == NULL)
     {
         return false;
     }
 
+    /* Ask for this one SSID only (AT+CWLAP="<ssid>") and wait for the
+     * closing OK. A plain AT+CWLAP lists every nearby network: matching our
+     * name in the middle of that list returned while the rest was still
+     * arriving, so the leftover lines filled the next command's response
+     * buffer, and a name listed after the first bytes was never seen. */
+    (void)snprintf(command, sizeof(command), "AT+CWLAP=\"%s\"\r\n", pSsid);
     (void)snprintf(expected, sizeof(expected), "\"%s\"", pSsid);
 
-    return TIREMO_ESP32_SendCommand("AT+CWLAP\r\n", expected, timeoutMs);
+    response[0] = '\0';
+    if (!TIREMO_ESP32_SendCommandCapture(command, "\r\nOK", timeoutMs,
+                                         response, sizeof(response)))
+    {
+        return false;
+    }
+
+    return (strstr(response, expected) != NULL);
 }
 
 TIREMO_ESP32_JoinStatus_t TIREMO_ESP32_JoinAP(const char *pSsid,
@@ -324,7 +339,6 @@ TIREMO_ESP32_JoinStatus_t TIREMO_ESP32_JoinAP(const char *pSsid,
 TIREMO_ESP32_JoinStatus_t TIREMO_ESP32_JoinStoredSsid(const char *pSsid,
                                                       uint32_t timeoutMs)
 {
-    char command[TIREMO_ESP32_SSID_MAX_LEN + 24U];
     char response[TIREMO_ESP32_RESPONSE_BUF_SIZE];
 
     if (pSsid == NULL)
@@ -332,10 +346,14 @@ TIREMO_ESP32_JoinStatus_t TIREMO_ESP32_JoinStoredSsid(const char *pSsid,
         return TIREMO_ESP32_JOIN_ERROR;
     }
 
-    (void)snprintf(command, sizeof(command), "AT+CWJAP=\"%s\"\r\n", pSsid);
-
-    if (TIREMO_ESP32_SendCommandCapture(command, "WIFI GOT IP", timeoutMs,
-                                        response, sizeof(response)))
+    /* Plain AT+CWJAP (no parameters) joins the AP the module stored in its
+     * own NVS, password included. AT+CWJAP="<ssid>" would mean "this SSID,
+     * no password" and is rejected with ERROR on a protected network --
+     * which sent every boot back to BluFi when auto-connect was off. */
+    response[0] = '\0';
+    if (TIREMO_ESP32_SendCommandCapture("AT+CWJAP\r\n", "WIFI GOT IP",
+                                        timeoutMs, response,
+                                        sizeof(response)))
     {
         return TIREMO_ESP32_JOIN_GOT_IP;
     }
@@ -1172,7 +1190,16 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
 
         TIREMO_LOG_DEBUG("ESP32 TX (%lu bytes): ",
                          (unsigned long)strlen(pCommand));
-        prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        if (strncmp(pCommand, "AT+CWJAP=", 9U) == 0)
+        {
+            /* Never dump the WiFi password, even at DEBUG level. */
+            prvESP32LogResponse("", "AT+CWJAP=<credentials hidden>",
+                                (uint32_t)strlen("AT+CWJAP=<credentials hidden>"));
+        }
+        else
+        {
+            prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        }
 
         if (TIREMO_HAL_UART_Transmit(TIREMO_ESP32_UART_PORT,
                                      (const uint8_t *)pCommand,

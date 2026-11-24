@@ -208,6 +208,12 @@ bool TIREMO_ESP32_EnableAutoConnect(void);
 
 bool TIREMO_ESP32_ScanForSsid(const char *pSsid, uint32_t timeoutMs);
 
+/**
+ * @brief Join the AP stored in the module's own NVS ("AT+CWJAP" with no
+ *        parameters) -- for a saved SSID whose password only the module
+ *        knows (BluFi without a +PASSWORD: URC). pSsid must not be NULL;
+ *        the command itself uses the module's stored SSID and password.
+ */
 TIREMO_ESP32_JoinStatus_t TIREMO_ESP32_JoinStoredSsid(const char *pSsid,
                                                       uint32_t timeoutMs);
 

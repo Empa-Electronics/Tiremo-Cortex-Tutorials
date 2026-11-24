@@ -30,10 +30,10 @@ bool TIREMO_Telemetry_Init(const char *pProductId, const char *pDeviceId);
 /**
  * @brief Sample enabled sensors and maybe publish telemetry.
  *
- * Shadow flags `ACC_en` / `GYRO_en` / `TEMP_en` / `HUM_en` (`true`/`false`
- * or `0`/`1`) select which keys go in the payload. GYRO_en is accepted
- * and reported so delta clears; Cortex has no gyro, so no gyro fields
- * are published. Interval is `reporting.intervalS` when present, else 60 s.
+ * Shadow flags `ACC_en` / `TEMP_en` / `HUM_en` (`true`/`false` or `0`/`1`)
+ * select which keys go in the payload. Interval is `reporting.intervalS`
+ * when present, else 60 s. A TEMP_HIGH alarm is published on
+ * `pub/{product}/{device}/alarm` when the SHT40 temperature crosses 30 C.
  *
  * @param[in] nowMs  TIREMO_SysTick_GetMs().
  */

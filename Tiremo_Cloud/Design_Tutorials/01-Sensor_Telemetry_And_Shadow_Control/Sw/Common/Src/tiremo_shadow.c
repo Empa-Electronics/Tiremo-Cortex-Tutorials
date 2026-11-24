@@ -12,6 +12,7 @@
 #include "../Include/tiremo_telemetry.h"
 #include "../Include/tiremo_debug.h"
 #include "../../Drivers/esp32/Include/tiremo_esp32.h"
+#include "../../Drivers/led/Include/tiremo_led.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -45,8 +46,13 @@ static char s_topicUpdAcc[SHADOW_TOPIC_MAX];
 static char s_topicUpdRej[SHADOW_TOPIC_MAX];
 static char s_topicDelta[SHADOW_TOPIC_MAX];
 
+/* LIGHT_on shadow key -> all ten board LEDs (TIREMO_LED_1..10) together.
+ * Default off; when the key is absent from desired the LEDs keep their
+ * last state. */
+#define SHADOW_LED_COUNT      ((uint32_t)TIREMO_LED_ID_MAX)
+static bool s_lightOn = false;
+
 static bool s_accEn = true;
-static bool s_gyroEn = false;
 static bool s_tempEn = true;
 static bool s_humEn = true;
 static uint32_t s_intervalS = 60U;
@@ -285,6 +291,21 @@ static bool prvApplyFlag(const char *pObj, uint32_t objLen,
     return false;
 }
 
+static void prvApplyLight(const char *pObj, uint32_t objLen)
+{
+    uint32_t i;
+
+    if ((pObj != NULL) && (objLen >= 2U))
+    {
+        (void)prvApplyFlag(pObj, objLen, "LIGHT_on", &s_lightOn);
+    }
+    for (i = 0U; i < SHADOW_LED_COUNT; i++)
+    {
+        TIREMO_LED_SetState((TIREMO_LED_Id_t)i, s_lightOn);
+    }
+    TIREMO_LOG_INFO("shadow: LIGHT_on=%u", s_lightOn ? 1U : 0U);
+}
+
 static void prvApplyLocal(const char *pObj, uint32_t objLen, bool resetToDefaults)
 {
     const char *pRep = NULL;
@@ -292,8 +313,8 @@ static void prvApplyLocal(const char *pObj, uint32_t objLen, bool resetToDefault
 
     if (resetToDefaults)
     {
+        s_lightOn = false;
         s_accEn = true;
-        s_gyroEn = false;
         s_tempEn = true;
         s_humEn = true;
         s_intervalS = 60U;
@@ -302,7 +323,6 @@ static void prvApplyLocal(const char *pObj, uint32_t objLen, bool resetToDefault
     if ((pObj != NULL) && (objLen >= 2U))
     {
         (void)prvApplyFlag(pObj, objLen, "ACC_en", &s_accEn);
-        (void)prvApplyFlag(pObj, objLen, "GYRO_en", &s_gyroEn);
         (void)prvApplyFlag(pObj, objLen, "TEMP_en", &s_tempEn);
         (void)prvApplyFlag(pObj, objLen, "HUM_en", &s_humEn);
         if (TIREMO_Json_FindObject(pObj, objLen, "reporting",
@@ -312,26 +332,29 @@ static void prvApplyLocal(const char *pObj, uint32_t objLen, bool resetToDefault
         }
     }
 
-    TIREMO_LOG_INFO("shadow: applied ACC_en=%u GYRO_en=%u TEMP_en=%u HUM_en=%u intervalS=%lu",
+    TIREMO_LOG_INFO("shadow: applied ACC_en=%u TEMP_en=%u HUM_en=%u intervalS=%lu",
                     s_accEn ? 1U : 0U,
-                    s_gyroEn ? 1U : 0U,
                     s_tempEn ? 1U : 0U,
                     s_humEn ? 1U : 0U,
                     (unsigned long)s_intervalS);
+
+    prvApplyLight(pObj, objLen);
 }
 
 static bool prvWriteApplied(TIREMO_JsonWriter_t *pW)
 {
-    return TIREMO_JsonWriter_ObjectStart(pW) &&
-           TIREMO_JsonWriter_Key(pW, "ACC_en") &&
-           TIREMO_JsonWriter_Bool(pW, s_accEn) &&
-           TIREMO_JsonWriter_Key(pW, "GYRO_en") &&
-           TIREMO_JsonWriter_Bool(pW, s_gyroEn) &&
-           TIREMO_JsonWriter_Key(pW, "TEMP_en") &&
-           TIREMO_JsonWriter_Bool(pW, s_tempEn) &&
-           TIREMO_JsonWriter_Key(pW, "HUM_en") &&
-           TIREMO_JsonWriter_Bool(pW, s_humEn) &&
-           TIREMO_JsonWriter_ObjectEnd(pW);
+    bool ok;
+
+    ok = TIREMO_JsonWriter_ObjectStart(pW) &&
+         TIREMO_JsonWriter_Key(pW, "ACC_en") &&
+         TIREMO_JsonWriter_Bool(pW, s_accEn) &&
+         TIREMO_JsonWriter_Key(pW, "TEMP_en") &&
+         TIREMO_JsonWriter_Bool(pW, s_tempEn) &&
+         TIREMO_JsonWriter_Key(pW, "HUM_en") &&
+         TIREMO_JsonWriter_Bool(pW, s_humEn) &&
+         TIREMO_JsonWriter_Key(pW, "LIGHT_on") &&
+         TIREMO_JsonWriter_Bool(pW, s_lightOn);
+    return ok && TIREMO_JsonWriter_ObjectEnd(pW);
 }
 
 static bool prvBuildReport(const char *pDesired, uint32_t desiredLen,
@@ -756,16 +779,12 @@ static bool prvHandleDelta(const char *pJson, uint32_t jsonLen)
 
     TIREMO_LOG_INFO("shadow: delta %lu bytes", (unsigned long)jsonLen);
 
-    if (TIREMO_Json_FindObject(pJson, jsonLen, "state", &pState, &stateLen))
-    {
-        prvApplyLocal(pState, stateLen, false);
-    }
-    else
+    if (!TIREMO_Json_FindObject(pJson, jsonLen, "state", &pState, &stateLen))
     {
         pState = pJson;
         stateLen = jsonLen;
-        prvApplyLocal(pJson, jsonLen, false);
     }
+    prvApplyLocal(pState, stateLen, false);
     TIREMO_Telemetry_Kick();
 
     if (!prvMergeDesired(pState, stateLen, s_report, sizeof(s_report),
@@ -934,11 +953,6 @@ void TIREMO_Shadow_Poll(void)
 bool TIREMO_Shadow_AccEn(void)
 {
     return s_accEn;
-}
-
-bool TIREMO_Shadow_GyroEn(void)
-{
-    return s_gyroEn;
 }
 
 bool TIREMO_Shadow_TempEn(void)

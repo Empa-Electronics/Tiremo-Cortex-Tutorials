@@ -1,27 +1,35 @@
 # certs/
 
-Same layout as [Cloud Messaging 03](../../../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/Sw/certs/README.md), but the gitignored pair is the shared **claim** identity, not a per-Thing device certificate.
+Same layout as [Cloud Messaging 03](../../../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/Sw/certs/README.md): the gitignored pair is the **Provisioning Certificates** (claim certificate and key) from your product page in the Tiremo UI.
 
 | File | Committed? | What it is |
 |---|---|---|
-| `root_ca.pem` | Yes | Amazon Root CA 1 — public, identical for every Tiremo Cloud tenant, fetched from `https://www.amazontrust.com/repository/AmazonRootCA1.pem`. Verifies Tiremo Cloud's server certificate. |
+| `root_ca.pem` | Yes | Amazon Root CA 1 — public, the same for every Tiremo Cloud device, from `https://www.amazontrust.com/repository/AmazonRootCA1.pem`. Verifies Tiremo Cloud's server certificate. |
 | `claim_cert.pem.example` / `claim_key.pem.example` | Yes | Placeholders showing the format. |
-| `claim_cert.pem` | **No** (gitignored) | The shared claim certificate attached to the restricted fleet-provisioning policy. |
-| `claim_key.pem` | **No** (gitignored) | The claim certificate's private key. Never share this or paste it anywhere public. |
+| `claim_cert.pem` | **No** (gitignored) | The claim certificate from **Provisioning Certificates** on your product page. Its policy only allows fleet provisioning (`CreateKeysAndCertificate` / `RegisterThing`). |
+| `claim_key.pem` | **No** (gitignored) | The claim certificate's private key. Never share it or paste it anywhere public. |
 
-Copy the two `.example` files to `claim_cert.pem` and `claim_key.pem`
-in this same folder and fill in the real claim certificate and key
-before building. See the tutorial's own `README.md` for the full walkthrough
-and [tutorial 03](../../../Feature_Tutorials/03-Fleet_Provisioning_By_Claim/#getting-credentials-from-the-tiremo-ui)
-(platform: [Phase 1](https://docs.tiremo.ai/device-provisioning/first-phase)).
+The download gives you two files named after your product's identifier.
+Put them into this folder and rename them:
 
-After [tutorial 03](../../../Feature_Tutorials/03-Fleet_Provisioning_By_Claim/) the issued
-identity already lives in the ESP32's `mqtt_cert` / `mqtt_key` slots.
-This tutorial still embeds the claim PEMs so a factory-fresh board (or
-a 10 s USER factory reset) can claim again before the shadow + telemetry +
-jobs loop.
+| Downloaded file | Rename to |
+|---|---|
+| `<identifier>.certificate.pem` | `claim_cert.pem` |
+| `<identifier>.private.key` | `claim_key.pem` |
 
-Do **not** copy Cloud Messaging 03's `device_cert.pem` / `device_key.pem`
-here — those are a hand-made Thing identity. The claim certificate is a
-different platform object, with a policy that is only allowed to call
-CreateKeysAndCertificate / RegisterThing.
+If you already put them into Cloud Messaging 03 as `device_cert.pem` /
+`device_key.pem`, copy those two files here under the new names — they
+are the same certificate and key. The build stops with
+`Missing claim credentials` if either file is missing. Both names are
+gitignored, and so is any `*.key` file in a `certs/` folder; check
+`git status` before you commit anyway.
+
+See the tutorial's own `README.md` and
+[tutorial 03](../../../Feature_Tutorials/03-Fleet_Provisioning_By_Claim/#getting-credentials-from-the-tiremo-ui)
+for where these are in the Tiremo UI (platform:
+[Phase 1](https://docs.tiremo.ai/device-provisioning/first-phase)).
+
+During provisioning the board receives its **own** certificate and
+stores it in the ESP32's `mqtt_cert` / `mqtt_key` slots. The claim PEMs
+stay embedded so a factory-fresh board (or one reset with a 10 s USER
+hold) can provision again.

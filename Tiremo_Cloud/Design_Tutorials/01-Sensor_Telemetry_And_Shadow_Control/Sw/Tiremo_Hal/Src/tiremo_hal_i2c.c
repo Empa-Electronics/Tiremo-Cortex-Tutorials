@@ -155,7 +155,16 @@ TIREMO_HAL_I2C_Status_t TIREMO_HAL_I2C_WriteRead(TIREMO_HAL_I2C_Bus_t bus,
     prvI2CBusBegin(bus, ptI2c);
 
     SET_I2C_CR_ACK(ptI2c, true);
-    SET_I2C_DR_TX(ptI2c, (uint8_t)(address << 1));
+    if (txLength == 0U)
+    {
+        /* Read-only transfer (used by SHT40): address for read directly. */
+        phase = 1U;
+        SET_I2C_DR_TX(ptI2c, (uint8_t)((address << 1) | 0x01U));
+    }
+    else
+    {
+        SET_I2C_DR_TX(ptI2c, (uint8_t)(address << 1));
+    }
     SET_I2C_CR_START(ptI2c, true);
 
     while ((!isDone) && (guard > 0U))
@@ -197,12 +206,27 @@ TIREMO_HAL_I2C_Status_t TIREMO_HAL_I2C_WriteRead(TIREMO_HAL_I2C_Bus_t bus,
                 isDone = true;
             }
         }
+        /* The ACK/NACK sent for a byte is decided by ACKEN at the moment
+         * the flag is cleared to start receiving it. The last byte must be
+         * NACKed, so ACKEN is dropped BEFORE that byte is clocked in;
+         * acknowledging it left the slave mid-transfer, driving the next
+         * byte onto SDA while the master tried to send STOP. */
         else if (status == I2C_MASTER_RX_ADDR_ACK)
         {
+            if (rxLength == 1U)
+            {
+                SET_I2C_CR_ACK(ptI2c, false);
+            }
             SET_I2C_SR_CLEAR(ptI2c);
         }
         else if (status == I2C_RX_DATA_ACK)
         {
+            if (rxCount < rxLength)
+            {
+                pRxData[rxCount] = (uint8_t)GET_I2C_DR_RX(ptI2c);
+                rxCount++;
+            }
+
             if (rxCount >= rxLength)
             {
                 result = TIREMO_HAL_I2C_STATUS_OK;
@@ -210,21 +234,21 @@ TIREMO_HAL_I2C_Status_t TIREMO_HAL_I2C_WriteRead(TIREMO_HAL_I2C_Bus_t bus,
             }
             else
             {
-                pRxData[rxCount] = (uint8_t)GET_I2C_DR_RX(ptI2c);
-                rxCount++;
-
-                if (rxCount == rxLength)
+                if (rxCount == (rxLength - 1U))
                 {
                     SET_I2C_CR_ACK(ptI2c, false);
                 }
-                else
-                {
-                    SET_I2C_SR_CLEAR(ptI2c);
-                }
+                SET_I2C_SR_CLEAR(ptI2c);
             }
         }
         else if (status == I2C_MASTER_RX_DATA_NOACK)
         {
+            /* Last byte, received with NACK as intended. */
+            if (rxCount < rxLength)
+            {
+                pRxData[rxCount] = (uint8_t)GET_I2C_DR_RX(ptI2c);
+                rxCount++;
+            }
             if (rxCount == rxLength)
             {
                 result = TIREMO_HAL_I2C_STATUS_OK;
@@ -321,7 +345,12 @@ static void prvI2CSetOpStop(I2C_Type *ptI2c)
 {
     uint32_t timeout = TIREMO_HAL_I2C_POLL_TIMEOUT;
 
+    /* Request STOP, then clear the pending flag so the peripheral releases
+     * SCL and actually drives the STOP. Previously the flag of the last
+     * byte was still set, the wait below returned at once and STOP was
+     * withdrawn before it reached the bus (SCL was left held low). */
     SET_I2C_CR_STOP(ptI2c, true);
+    SET_I2C_SR_CLEAR(ptI2c);
 
     while (!GET_I2C_IER_FLAG(ptI2c))
     {

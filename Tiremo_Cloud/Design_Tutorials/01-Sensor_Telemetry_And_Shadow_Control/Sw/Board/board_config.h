@@ -1,4 +1,4 @@
-/******************************************************************************
+﻿/******************************************************************************
  * @file    board_config.h
  * @brief   Tiremo Cortex board pin configuration (AT Command Transport).
  *
@@ -59,6 +59,42 @@ extern "C"
 
 #define TIREMO_BOARD_LIS2DE12_I2C_BUS       TIREMO_HAL_I2C_BUS_2
 #define TIREMO_BOARD_LIS2DE12_I2C_ADDRESS   (0x19U)
+
+/* LED bank (same pins as Getting Started 05), driven from the shadow's
+ * LIGHT_on key (all ten together). */
+/** @brief LEDs are active-low on this board. */
+#define TIREMO_BOARD_LED_ACTIVE_LOW    (1U)
+#define TIREMO_BOARD_LED_COUNT         (10U)
+
+#define TIREMO_BOARD_LED1_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED1_PIN          TIREMO_HAL_GPIO_PIN_4
+
+#define TIREMO_BOARD_LED2_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED2_PIN          TIREMO_HAL_GPIO_PIN_9
+
+#define TIREMO_BOARD_LED3_PORT         TIREMO_HAL_GPIO_PORT_F
+#define TIREMO_BOARD_LED3_PIN          TIREMO_HAL_GPIO_PIN_7
+
+#define TIREMO_BOARD_LED4_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED4_PIN          TIREMO_HAL_GPIO_PIN_5
+
+#define TIREMO_BOARD_LED5_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED5_PIN          TIREMO_HAL_GPIO_PIN_10
+
+#define TIREMO_BOARD_LED6_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED6_PIN          TIREMO_HAL_GPIO_PIN_11
+
+#define TIREMO_BOARD_LED7_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED7_PIN          TIREMO_HAL_GPIO_PIN_12
+
+#define TIREMO_BOARD_LED8_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED8_PIN          TIREMO_HAL_GPIO_PIN_13
+
+#define TIREMO_BOARD_LED9_PORT         TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED9_PIN          TIREMO_HAL_GPIO_PIN_14
+
+#define TIREMO_BOARD_LED10_PORT        TIREMO_HAL_GPIO_PORT_B
+#define TIREMO_BOARD_LED10_PIN         TIREMO_HAL_GPIO_PIN_15
 
 #ifdef __cplusplus
 }

@@ -18,11 +18,12 @@ set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 if(NOT EXISTS ${CERTS_DIR}/claim_cert.pem OR NOT EXISTS ${CERTS_DIR}/claim_key.pem)
     message(FATAL_ERROR
-        "Missing claim credentials.\n"
-        "  cp certs/claim_cert.pem.example certs/claim_cert.pem\n"
-        "  cp certs/claim_key.pem.example certs/claim_key.pem\n"
-        "then paste the real Tiremo Cloud claim certificate and private key. "
-        "Those two files are gitignored; see certs/README.md.")
+        "Missing claim credentials (certs/claim_cert.pem, certs/claim_key.pem).\n"
+        "Put the Provisioning Certificates from your product page in the Tiremo UI\n"
+        "into certs/ and rename them:\n"
+        "  <identifier>.certificate.pem -> certs/claim_cert.pem\n"
+        "  <identifier>.private.key     -> certs/claim_key.pem\n"
+        "Both names are gitignored; see certs/README.md.")
 endif()
 
 function(embed_pem name symbol)
@@ -81,6 +82,7 @@ add_executable(SensorTelemetryShadow
     Drivers/button/Src/tiremo_button.c
     Drivers/sht40/Src/tiremo_sht40.c
     Drivers/lis2de12/Src/tiremo_lis2de12.c
+    Drivers/led/Src/tiremo_led.c
     ${GENERATED_DIR}/root_ca.c
     ${GENERATED_DIR}/claim_cert.c
     ${GENERATED_DIR}/claim_key.c
@@ -99,6 +101,7 @@ target_include_directories(SensorTelemetryShadow PRIVATE
     Drivers/button/Include
     Drivers/sht40/Include
     Drivers/lis2de12/Include
+    Drivers/led/Include
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GEN_DIR}/Platform/HAL/I2C
     ${GEN_DIR}/Platform/HAL/FMC
@@ -111,9 +114,12 @@ target_compile_definitions(SensorTelemetryShadow PRIVATE
 
 # Log verbosity compile-time ceiling (0=NONE ... 4=DEBUG). Default INFO in
 # tiremo_debug.h when unset. Override at configure time:
-#   tdf.py build -D TIREMO_DEBUG_LEVEL=2   (WARN and below)
+#   tdf build -DTIREMO_DEBUG_LEVEL=2   (WARN and ERROR only)
 set(TIREMO_DEBUG_LEVEL "" CACHE STRING "Log verbosity compile-time ceiling (0=NONE, 1=ERROR, 2=WARN, 3=INFO, 4=DEBUG). Empty = tiremo_debug.h's own default (INFO).")
-if(TIREMO_DEBUG_LEVEL)
+# Compare against the empty string, not truthiness: CMake treats "0" as
+# false, so `if(TIREMO_DEBUG_LEVEL)` would silently ignore level 0 (NONE).
+# Pass -DTIREMO_DEBUG_LEVEL= (empty) to return to the header's default.
+if(NOT TIREMO_DEBUG_LEVEL STREQUAL "")
     target_compile_definitions(SensorTelemetryShadow PRIVATE TIREMO_DEBUG_LEVEL=${TIREMO_DEBUG_LEVEL})
 endif()
 

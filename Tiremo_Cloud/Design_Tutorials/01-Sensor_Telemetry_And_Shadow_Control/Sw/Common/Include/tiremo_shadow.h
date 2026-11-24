@@ -41,9 +41,6 @@ void TIREMO_Shadow_Poll(void);
 /** @brief Last applied `ACC_en` (`true`/1, default on). */
 bool TIREMO_Shadow_AccEn(void);
 
-/** @brief Last applied `GYRO_en` (default off — Cortex has no gyro). */
-bool TIREMO_Shadow_GyroEn(void);
-
 /** @brief Last applied `TEMP_en` (`true`/1, default on). */
 bool TIREMO_Shadow_TempEn(void);
 
