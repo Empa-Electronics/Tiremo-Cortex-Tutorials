@@ -1,18 +1,17 @@
 /******************************************************************************
  * @file    prv_user_code.c
- * @brief   MQTT mTLS to AWS IoT Core -- load the three credential slots,
+ * @brief   MQTT mTLS to Tiremo Cloud -- load the three credential slots,
  *          configure a scheme-5 mutual-TLS MQTT identity, set SNI, and
  *          attempt the connection. No subscribe/publish yet -- this is
  *          just proving the mTLS handshake itself succeeds.
  *
  * WiFi credentials come from wifi_secrets.h (copy wifi_secrets.h.example),
  * same as every other Cloud Messaging / ESP32 Connectivity tutorial. The
- * three mTLS credentials come from certs/root_ca.pem (real, public --
- * Amazon's own Root CA 1) and certs/device_cert.pem / certs/device_key.pem
- * (YOUR real AWS IoT Thing's certificate and private key -- gitignored,
- * copy from the .example templates in certs/ and fill in your own). MQTT
- * endpoint and client ID are plain #defines below -- replace both with
- * your own AWS IoT Core endpoint and Thing name/client ID before building.
+ * three mTLS credentials come from certs/root_ca.pem (public Amazon Root
+ * CA 1) and certs/device_cert.pem / certs/device_key.pem (the certificate
+ * and private key from your product page in the Tiremo UI -- gitignored,
+ * see certs/README.md). Set MQTT_CLIENT_ID below to your Identifier
+ * before building.
  *
  * Copyright (c) 2026 Tiremo
  * SPDX-License-Identifier: MIT
@@ -21,6 +20,15 @@
 #include "../Common/Include/tiremo_systick.h"
 #include "../Common/Include/tiremo_debug.h"
 #include "../Drivers/esp32/Include/tiremo_esp32.h"
+
+/* Check for the file first: a plain #include of a missing header stops the
+ * build with "No such file" before any of the checks below can explain
+ * what to do. */
+#if defined(__has_include)
+#if !__has_include("wifi_secrets.h")
+#error "Copy Sw/wifi_secrets.h.example to Sw/wifi_secrets.h and set TIREMO_WIFI_SSID / TIREMO_WIFI_PASSWORD"
+#endif
+#endif
 #include "wifi_secrets.h"
 
 #include <stddef.h>
@@ -31,7 +39,7 @@
 #error "Copy Sw/wifi_secrets.h.example to Sw/wifi_secrets.h and set TIREMO_WIFI_SSID / TIREMO_WIFI_PASSWORD"
 #endif
 
-/* Real AWS IoT credentials embedded from the certs/ folder's PEM files
+/* Device credentials embedded from the certs/ folder's PEM files
  * at build time -- see cmake/embed_pem.cmake and this tutorial's
  * CMakeLists.txt. */
 extern const unsigned char g_rootCaPem[];
@@ -44,10 +52,11 @@ extern const size_t g_deviceKeyPem_len;
 #define JOIN_TIMEOUT_MS          (20000U)
 #define SNTP_TIMEOUT_MS          (20000U)
 
-/* Replace both with your own AWS IoT Core setup -- see this tutorial's
- * README for how to find your account's endpoint and register a Thing. */
+/* Set MQTT_CLIENT_ID to the Identifier from your product page in the
+ * Tiremo UI, instead of a placeholder every user would share. See this
+ * tutorial's README. */
 #define MQTT_ENDPOINT             "iot.tiremo.ai"
-#define MQTT_CLIENT_ID            "trackerfzfo5_TiremoCortex"
+#define MQTT_CLIENT_ID            "YOUR_DEVICE_ID"
 
 #define MQTT_PORT                 (8883U)
 #define MQTT_CONNECT_TIMEOUT_MS   (45000U)

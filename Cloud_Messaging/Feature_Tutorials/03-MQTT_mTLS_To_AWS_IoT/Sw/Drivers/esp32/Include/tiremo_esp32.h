@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    tiremo_esp32.h
  * @brief   ESP32 AT-command transport: WiFi join, plain-TCP MQTT, mTLS
- *          credential storage, and a real AWS IoT Core connection.
+ *          credential storage, and a real Tiremo Cloud connection.
  *
  * Power sequencing, an interrupt-driven RX ring, and an expect/timeout
  * command primitive, plus station-mode join (CWMODE / CWJAP / CWSTATE),
@@ -55,7 +55,7 @@ extern "C"
  * ".0" suffix here.
  *
  * "mqtt_ca" is ESP-AT's real, if slightly confusing, name for what
- * AWS IoT tutorials usually call the Root CA -- it's the CA the
+ * TLS guides usually call the Root CA -- it's the CA the
  * *client* uses to verify the server, not a CA that belongs to the
  * client.
  */
@@ -277,8 +277,8 @@ bool TIREMO_ESP32_MqttUserConfig(const char *pClientId,
  * whatever TIREMO_ESP32_CredWrite() last stored in the CLIENT_CERT /
  * CLIENT_KEY / ROOT_CA slots (see TIREMO_ESP32_CredSlot_t).
  *
- * @param[in] pClientId  MQTT client ID (your AWS IoT Thing name, or
- *                        whatever client ID your Thing's policy allows).
+ * @param[in] pClientId  MQTT client ID (the Identifier from your product
+ *                        page in the Tiremo UI).
  *
  * @return true when the module acknowledged with "OK".
  */

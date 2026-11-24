@@ -7,12 +7,22 @@ project(MQTTmTLSToAWSIoT C)
 set(GEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Generation/AUDK32_A34xxxx-1.0.12)
 
 # --- embed the mTLS credentials as C byte arrays -----------------------
-# certs/root_ca.pem is Amazon's own public Root CA -- safe to commit.
-# certs/device_cert.pem and certs/device_key.pem are YOUR real AWS IoT
-# device identity -- gitignored, never committed. See certs/README.md.
+# certs/root_ca.pem is Amazon Root CA 1 (public) -- safe to commit.
+# certs/device_cert.pem and certs/device_key.pem are YOUR real Tiremo
+# Cloud device identity -- gitignored, never committed. See certs/README.md.
 set(EMBED_PEM_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake/embed_pem.cmake)
 set(CERTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/certs)
 set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
+if(NOT EXISTS ${CERTS_DIR}/device_cert.pem OR NOT EXISTS ${CERTS_DIR}/device_key.pem)
+    message(FATAL_ERROR
+        "Missing device credentials (certs/device_cert.pem, certs/device_key.pem).\n"
+        "Put the Provisioning Certificates from your product page in the Tiremo UI\n"
+        "into certs/ and rename them:\n"
+        "  <identifier>.certificate.pem -> certs/device_cert.pem\n"
+        "  <identifier>.private.key     -> certs/device_key.pem\n"
+        "Both names are gitignored; see certs/README.md.")
+endif()
 
 function(embed_pem name symbol)
     add_custom_command(
@@ -77,9 +87,12 @@ target_compile_definitions(MQTTmTLSToAWSIoT PRIVATE
 
 # Log verbosity compile-time ceiling (0=NONE ... 4=DEBUG). Default INFO in
 # tiremo_debug.h when unset. Override at configure time:
-#   tdf.py build -D TIREMO_DEBUG_LEVEL=2   (WARN and below)
+#   tdf build -DTIREMO_DEBUG_LEVEL=2   (WARN and ERROR only)
 set(TIREMO_DEBUG_LEVEL "" CACHE STRING "Log verbosity compile-time ceiling (0=NONE, 1=ERROR, 2=WARN, 3=INFO, 4=DEBUG). Empty = tiremo_debug.h's own default (INFO).")
-if(TIREMO_DEBUG_LEVEL)
+# Compare against the empty string, not truthiness: CMake treats "0" as
+# false, so `if(TIREMO_DEBUG_LEVEL)` would silently ignore level 0 (NONE).
+# Pass -DTIREMO_DEBUG_LEVEL= (empty) to return to the header's default.
+if(NOT TIREMO_DEBUG_LEVEL STREQUAL "")
     target_compile_definitions(MQTTmTLSToAWSIoT PRIVATE TIREMO_DEBUG_LEVEL=${TIREMO_DEBUG_LEVEL})
 endif()
 

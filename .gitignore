@@ -14,3 +14,7 @@ aws_iot_config.h
 # (root_ca.pem) is public and stays committed.
 **/certs/*.pem
 !**/certs/root_ca.pem
+
+# Private keys as they come from Tiremo Cloud / AWS IoT downloads
+# (<thing>.private.key) or openssl (*.key) — never commit these.
+**/certs/*.key

@@ -441,8 +441,8 @@ bool TIREMO_ESP32_MqttSni(const char *pHost)
     /* TLS SNI -- required for a custom domain endpoint that may sit
      * behind shared TLS-terminating infrastructure routed by hostname.
      * Without it, the TLS/MQTT handshake can still complete (against
-     * whatever the SNI-less default routes to) while the actual AWS
-     * IoT backend never sees the connection -- publishes and
+     * whatever the SNI-less default routes to) while the actual Tiremo
+     * Cloud backend never sees the connection -- publishes and
      * subscribes ack locally but nothing ever answers on the expected
      * topics. Must be sent between AT+MQTTUSERCFG and AT+MQTTCONN. */
     (void)snprintf(command, sizeof(command), "AT+MQTTSNI=0,\"%s\"\r\n",
@@ -921,7 +921,16 @@ static bool prvESP32SendCommandCapture(const char *pCommand,
 
         TIREMO_LOG_DEBUG("ESP32 TX (%lu bytes): ",
                          (unsigned long)strlen(pCommand));
-        prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        if (strncmp(pCommand, "AT+CWJAP=", 9U) == 0)
+        {
+            /* Never dump the WiFi password, even at DEBUG level. */
+            prvESP32LogResponse("", "AT+CWJAP=<credentials hidden>",
+                                (uint32_t)strlen("AT+CWJAP=<credentials hidden>"));
+        }
+        else
+        {
+            prvESP32LogResponse("", pCommand, (uint32_t)strlen(pCommand));
+        }
 
         if (TIREMO_HAL_UART_Transmit(TIREMO_ESP32_UART_PORT,
                                      (const uint8_t *)pCommand,
