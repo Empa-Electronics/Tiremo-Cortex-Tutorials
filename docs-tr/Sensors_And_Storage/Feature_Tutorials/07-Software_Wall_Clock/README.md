@@ -26,7 +26,7 @@
 
 ## Giriş
 
-Bu karttaki A34G43A'nın pille desteklenen bir donanım RTC'si yoktur; bu yüzden duvar saati zamanı yazılımla hesaplanır: `epoch_at_sync + (SysTick_now - SysTick_at_sync) / 1000`. Bu eğitim bilinen bir epoch'u elle yerleştirir; [NTP Time Sync](../../ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/README.md) eğitimi daha sonra aynı API'ye gerçek bir NTP zamanı verir.
+Bu karttaki A34G43A'nın pille desteklenen bir donanım RTC'si yoktur; bu yüzden duvar saati zamanı yazılımla hesaplanır: `epoch_at_sync + (SysTick_now - SysTick_at_sync) / 1000`. Bu eğitim bilinen bir epoch'u elle yerleştirir; [NTP Time Sync](../../../ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/README.md) eğitimi daha sonra aynı API'ye gerçek bir NTP zamanı verir.
 
 ## Neler Öğreneceksiniz
 
@@ -91,7 +91,7 @@ tdf monitor
 
 her saniye yeni bir satır gelir; `elapsed`, `SetEpoch()`'tan bu yana geçen saniye sayısıdır. Saat herhangi bir senkronizasyondan önce okunsaydı log bunun yerine `[WARN] clock: not synced` gösterirdi.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. `tiremo_clock.c`
 
@@ -111,7 +111,7 @@ tdf monitor
 
 (Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 `SetEpoch(1704067200)` satırından sonra `tdf monitor`, `epoch`'un her saniye bir arttığını ve `elapsed`'in 1, 2, 3, … diye saydığını gösterir — ve gerçek bir ürünün bu saati neden periyodik olarak yeniden senkronize etmesi gerektiğini (kayma ve 49,7 günlük taşma) açıklayabilirsiniz.
 

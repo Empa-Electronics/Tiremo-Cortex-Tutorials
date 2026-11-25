@@ -38,7 +38,7 @@ Aşağıdaki eğitim düğmeleri tablosu işlenmiş bir HMR Edge örneği içeri
 
 ## Ön Koşullar
 
-- [02-Data_Sources](../../../../Intelligence/Feature_Tutorials/02-Data_Sources/) ile görevi oluşturacağınız Experiment ile eşleşen **Dataset Ready** bir sürüm (HMR örneği için Classification + Time Series)
+- [02-Data_Sources](../02-Data_Sources/) ile görevi oluşturacağınız Experiment ile eşleşen **Dataset Ready** bir sürüm (HMR örneği için Classification + Time Series)
 - Tiremo UI
 
 ## Eğitim Yapılandırmasını Anlamak
@@ -76,7 +76,7 @@ Time Series Classification klasik modellerin yanı sıra ANN / CNN / LSTM / GRU 
 
 ![Experiments listesi, Create New](../../../../Intelligence/figures/03_experiments_list.png)
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Experiment oluşturun
 
@@ -112,7 +112,7 @@ Durum: Pending → In Progress → Completed (veya Failed / Stopped). Çalışı
 
 Design Tutorial'daki Edge anlık görüntüsü pencere 8, 3 öznitelik, 5 sınıflı bir **ANN**'dir; o HMR aramasının olası bir kazananı, bölünüzde başka bir deneme daha iyiyse ANN seçme zorunluluğu değil.
 
-## Bittiğinde
+## Tamamlanma Ölçütü
 
 Bir Training Record **Completed**, ihtiyacınız olan **Deployable Target** olan bir model **Selected** (üretici yazılım indirecekseniz Edge), ve eniyileme, çıkarım ve pencere seçimlerini açıklayabilirsiniz. Eğitim 04 o kaydı bir Solution'a sarar.
 

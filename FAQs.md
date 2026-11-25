@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="docs-tr/FAQs.md">Türkçe</a></p>
 <table class="sphinxhide" width="100%">
   <tr>
     <td align="center">

@@ -58,7 +58,7 @@ Modülün iki MAC adresi vardır. **Station** (`AT+CIPSTAMAC?`), WiFi istemcisi 
 Tipik bir yanıt (örnek adres):
 
 ```text
-+CIPSTAMAC:"30:ed:a0:80:63:24"
++CIPSTAMAC:"aa:bb:cc:11:22:33"
 OK
 ```
 
@@ -68,8 +68,8 @@ Altı bayt ardından kanonik bir kimliğe dönüşür:
 
 | Biçim | Örnek | Kim kullanır |
 |------|---------|-------------|
-| İki noktalı MAC (yalnızca log) | `30:ed:a0:80:63:24` | İnsanlar |
-| `deviceId` | `30eda0806324` | Sonraki eğitimlerde Thing adı / MQTT client ID |
+| İki noktalı MAC (yalnızca log) | `aa:bb:cc:11:22:33` | İnsanlar |
+| `deviceId` | `aabbcc112233` | Sonraki eğitimlerde Thing adı / MQTT client ID |
 
 Küçük harf, `0x` yok, iki nokta yok. Thing adları büyük/küçük harfe duyarlıdır; burada tek bir kanonik yazım seçmek, fleet provisioning şablonlarının ve shadow topic'lerinin hiçbir zaman çelişmemesini sağlar.
 

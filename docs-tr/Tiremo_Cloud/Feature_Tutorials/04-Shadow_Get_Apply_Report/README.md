@@ -177,7 +177,7 @@ En kolayı onları eğitim 03'ün `Sw/`'sinden kopyalamaktır:
 
 - **`wifi_secrets.h`**: WiFi SSID'niz ve şifreniz (`wifi_secrets.h.example`'dan).
 - **`aws_iot_config.h`**: ürününüzün **Identifier**'ı ve **Secret Key**'i (`aws_iot_config.h.example`'dan). Bu eğitimin örneği isteğe bağlı bir `TIREMO_AWS_THING_NAME` ekler; client ID'nin kullanılması için tanımlamayın veya boş bırakın.
-- **`certs/claim_cert.pem`** ve **`certs/claim_key.pem`**: yeniden adlandırılmış **Provisioning Certificates** — bkz. [`certs/README.md`](../../../../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/Sw/certs/README.md). Kart bunları yalnızca henüz verilmiş bir kimliği yoksa (fabrikadan yeni veya 10 sn USER basılı tutulduktan sonra) kullanır, ama derleme her durumda bunlara ihtiyaç duyar.
+- **`certs/claim_cert.pem`** ve **`certs/claim_key.pem`**: yeniden adlandırılmış **Provisioning Certificates** — bkz. [`certs/README.md`](Sw/certs/README.md). Kart bunları yalnızca henüz verilmiş bir kimliği yoksa (fabrikadan yeni veya 10 sn USER basılı tutulduktan sonra) kullanır, ama derleme her durumda bunlara ihtiyaç duyar.
 
 Dört ad da gitignore'ludur; yine de commit etmeden önce `git status` ile kontrol edin. Biri eksikse derleme, ne yapılacağını söyleyen bir mesajla durur. Değerlerin Tiremo UI'da nerede olduğu: [eğitim 03](../03-Fleet_Provisioning_By_Claim/README.md#tiremo-uidan-kimlik-bilgileri).
 

@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../../../docs-tr/Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/Sw/certs/README.md">Türkçe</a></p>
 # certs/
 
 Same layout as [tutorial 03](../../../03-Fleet_Provisioning_By_Claim/Sw/certs/README.md): the gitignored pair is the **Provisioning Certificates** (claim certificate and key) from your product page in the Tiremo UI.

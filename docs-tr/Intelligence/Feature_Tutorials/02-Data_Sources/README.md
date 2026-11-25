@@ -26,7 +26,7 @@
 
 **Data Source**, veri kümelerini, analizlerini ve bir Experiment'in eğitmesine izin verilen dondurulmuş **sürümleri** sahiplenen Intelligence nesnesidir. Bir tane oluşturmak **görev** ve **tür** için tek yönlü bir seçimdir; bunlar sonra değiştirilemez, bu yüzden bu eğitim çekmeceyi geçiştirmek değil, onları bilinçli seçmek üzerinedir.
 
-[01](../../../../Intelligence/Feature_Tutorials/01-Data_Collection/) CSV'sini (veya elinizdeki herhangi bir etiketli dosyayı) içe aktaracak, **Data Studio**'dan geçirecek ve bir sürüm oluşturacaksınız. Aşağıdaki ekranlar ve örnek başlık işlenmiş örnek olarak HMR hareket kümesini kullanır; aynı ekranlar diğer öznitelik sütunlarına ve sınıf adlarına uygulanır.
+[01](../01-Data_Collection/) CSV'sini (veya elinizdeki herhangi bir etiketli dosyayı) içe aktaracak, **Data Studio**'dan geçirecek ve bir sürüm oluşturacaksınız. Aşağıdaki ekranlar ve örnek başlık işlenmiş örnek olarak HMR hareket kümesini kullanır; aynı ekranlar diğer öznitelik sütunlarına ve sınıf adlarına uygulanır.
 
 ## Neler Öğreneceksiniz
 
@@ -37,7 +37,7 @@
 
 ## Ön Koşullar
 
-- [01-Data_Collection](../../../../Intelligence/Feature_Tutorials/01-Data_Collection/) *veya* [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) gibi hazır bir dosya (HMR örneği)
+- [01-Data_Collection](../01-Data_Collection/) *veya* [`Dataset_HMR_3Axis_TiremoCortex_4Hz.csv`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Datasets/Dataset_HMR_3Axis_TiremoCortex_4Hz.csv) gibi hazır bir dosya (HMR örneği)
 - Data Source oluşturma izni olan Tiremo UI
 
 ## Görev ve Türü Anlamak
@@ -78,7 +78,7 @@ Classification + Time Series, sürüm oluşturmadan önce en az 2 en fazla 50 s�
 
 ![Data Sources listesi, Create New](../../../../Intelligence/figures/02_data_sources_list.png)
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Data Source oluşturun
 
@@ -133,7 +133,7 @@ Data Source profilinde **Preprocessing Configuration** elle strateji seçmek iç
 
 ![Create New Version çekmecesi](../../../../Intelligence/figures/02_data_source_version.png)
 
-## Bittiğinde
+## Tamamlanma Ölçütü
 
 Data Source özeti seçtiğiniz görev ve türü, bir örnek sayısını, dosyayla eşleşen öznitelik ve sınıf sayılarını ve bir Experiment'ten seçebileceğiniz en az bir sürümü gösterir. Eğitim 03 o sürümü bağlar ve eğitir.
 

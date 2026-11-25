@@ -100,7 +100,7 @@ tdf monitor
 
 RESET'e basın (ya da kartı resetleyen `tdf monitor`'ü çalıştırın); `bootCount` her seferinde bir artar — kalıcılığın kanıtı budur. Data flash boşken yapılan ilk açılışta ikinci satır `persist: no valid record, using defaults` olur ve sayaç `1`'den başlar. Flash sürücüsü kurulamazsa log `[ERROR] persist: flash init failed` gösterir ve program orada durur; başarısız bir yazma `[WARN] persist: save failed` loglar.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. `Tiremo_Hal_Flash`
 
@@ -124,7 +124,7 @@ tdf monitor
 
 (Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 Her resetten sonra log `persist: loaded bootCount=N` ve ardından `saved bootCount=N+1` gösterir, `bootCount` resetler, `tdf flash` ve `tdf clean-device` boyunca artmaya devam eder, ve her açılış `persist: corrupt CRC rejected (expected)` ile biter.
 

@@ -124,7 +124,7 @@ Bunları Cloud Messaging 03'e zaten `device_cert.pem` / `device_key.pem`
 olarak koyduysanız, bu iki dosyayı yeni adlarıyla buraya kopyalayın —
 aynı sertifika ve anahtardır. Dosyalardan biri eksikse derleme
 `Missing claim credentials` ile durur; `.example` yer tutucularını asla
-gömmez. Bkz. [`certs/README.md`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/README.md).
+gömmez. Bkz. [`certs/README.md`](Sw/certs/README.md).
 
 Verilen cihaza özel sertifika hiçbir zaman `certs/` içinde durmaz. Tiremo
 Cloud onu CreateKeysAndCertificate JSON'unda döndürür ve üretici yazılımı
@@ -348,7 +348,7 @@ UI'da ürününüzün altında `<product>_<deviceId>` adıyla görünür
 
 ## Adım Adım İnceleme
 
-1. [`certs/`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/certs/) — Amazon Root CA 1 commit edilmiş; claim PEM
+1. [`certs/`](Sw/certs/) — Amazon Root CA 1 commit edilmiş; claim PEM
    şablonları commit edilmiş; gerçek claim dosyaları, Cloud Messaging
    03'ün `device_*.pem` dosyaları gibi gitignore'lu.
 2. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/Sw/Src/prv_user_code.c) — MAC → `deviceId` /

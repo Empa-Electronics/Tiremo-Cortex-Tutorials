@@ -55,8 +55,8 @@ debounce edilmiş şekilde.
 
 ## Ön Koşullar
 
-- [03-Debug_UART_Logging](../../../Getting_Started/03-Debug_UART_Logging/README.md) — bu eğitimin LED döngüsü ve loglaması, buton işleme eklenmiş Tutorial 03'ün ta kendisi
-- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites))
+- [03-Debug_UART_Logging](../03-Debug_UART_Logging/README.md) — bu eğitimin LED döngüsü ve loglaması, buton işleme eklenmiş Tutorial 03'ün ta kendisi
+- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../01-Hello_Blink/README.md#ön-koşullar))
 - Basma/bırakma/tutma log satırlarını görmek için: ya `tdf monitor`
   (aşağıdaki **Çözüm**'e bakın — `pyserial` gerektiriyor, `./install.sh` /
   `install.ps1` / `install.bat` bunu ayrı bir `tdf_venv/` içinde kurar), ya
@@ -128,7 +128,7 @@ bakın. macOS/Linux'ta `tdf.py` takma ad olarak da çalışır; Windows'ta
 `tdf` kullanın.)
 
 Önceki her eğitimle aynı paylaşılan satıcı SDK'sı ve aynı CMake derleme
-şekli ([`Generation/`](../../../Generation/), depo kökünde). Hiç yeni
+şekli ([`Generation/`](../../Generation/), depo kökünde). Hiç yeni
 satıcı kaynağı gerekmedi — buton, Tutorial 01'den beri `hal_pcu.c`
 tarafından zaten kapsanan saf bir GPIO — bu yüzden tek yeni derleme
 girdisi, bu eğitimin kendi `Drivers/button/Src/tiremo_button.c`'i,
@@ -204,7 +204,7 @@ renkte öne çıkar. İpucu: LED satırlarını tamamen gizlemek için
 basma/bırakma satırları kalır (o seviyede `INFO` uzun-tutma satırı da
 derlemeden çıkarılır).
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — USER butonunu ekler
 
@@ -349,7 +349,7 @@ aynı paketlenmiş OpenOCD akışı — bkz.
 Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne
 bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 `tdf monitor`, önyükleme satırını ve sürekli `LED1`/`LED2 toggle @
 ... ms` satırlarını yeşil renkte akıtır. USER butonuna basıp basılı

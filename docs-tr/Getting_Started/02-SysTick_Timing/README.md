@@ -46,8 +46,8 @@ bir şeyle kanıtlar: tek bir döngüden iki LED'i iki farklı, doğru hızda
 
 ## Ön Koşullar
 
-- [01-Hello_Blink](../../../Getting_Started/01-Hello_Blink/README.md) — bu eğitim onun GPIO HAL'ini ve board_config.h desenini değişmeden yeniden kullanır
-- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşullar bölümü](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites) — burada aynısı geçerli, Windows'un bu derleme sistemiyle neden Git Bash/WSL gerektirmediği dahil)
+- [01-Hello_Blink](../01-Hello_Blink/README.md) — bu eğitim onun GPIO HAL'ini ve board_config.h desenini değişmeden yeniden kullanır
+- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşullar bölümü](../01-Hello_Blink/README.md#ön-koşullar) — burada aynısı geçerli, Windows'un bu derleme sistemiyle neden Git Bash/WSL gerektirmediği dahil)
 - Bilgisayarınıza USB kablosuyla bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
 ## Bloklamayan Zamanlamayı Anlamak
@@ -145,7 +145,7 @@ ve bu deponun neden ham `cmake` çağrıları yerine onu kullandığı için
 bakın.)
 
 Tutorial 01 ile aynı paylaşılan satıcı SDK'sı
-([`Generation/`](../../../Generation/), depo kökünde), bu depodaki her
+([`Generation/`](../../Generation/), depo kökünde), bu depodaki her
 eğitimle aynı CMake derlemesi (neden CMake olduğu için
 [01-Hello_Blink'in Çözüm bölümüne](../01-Hello_Blink/README.md#çözüm)
 bakın) — bu sefer Tutorial 01'in GPIO HAL'inin üzerine SysTick katmanı
@@ -163,7 +163,7 @@ içindeki `LED1_INTERVAL_MS` / `LED2_INTERVAL_MS` değerleri, iki hız bir
 bakışta ayırt edilsin diye `1000` / `5000` (2 s ve 10 s tam döngü)
 olarak ayarlanmıştır.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — ikinci bir LED ekleme
 
@@ -255,7 +255,7 @@ akışı, sadece tam `cmake --build build --target flash` yazmak yerine
 `tdf` üzerinden ulaşılıyor — bunun gerçek donanıma gerçekten
 ulaştığının onayı için yukarıdaki Çözüm bölümüne bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 Hiçbir debugger bağlı değilken, tek bir bloklamayan döngüden iki LED
 bağımsız, gözle görülür farklı hızlarda yanıp söner: LED1 her saniye

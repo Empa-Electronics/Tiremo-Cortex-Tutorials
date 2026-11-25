@@ -526,7 +526,7 @@ release.
   `"aa:bb:cc:dd:ee:ff"`), 12-hex lowercase `deviceId` with no
   separators (`TIREMO_Identity_FromEui`). No WiFi join, no AWS
   session — identity is a hardware property. Built (`.text` 15060),
-  flashed; `30:ed:a0:80:63:24` → `30eda0806324`, heartbeat re-read
+  flashed; `aa:bb:cc:11:22:33` → `aabbcc112233`, heartbeat re-read
   unchanged. English + Turkish walkthroughs.
 - `Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/Sw/`:
   `FindObject` / `FindBool` / `FindUint` / `FindString` and a nested

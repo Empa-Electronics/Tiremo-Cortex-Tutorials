@@ -33,7 +33,7 @@ bağımsız bir dilimidir — mevcut durum için aşağıdaki
 
 ## Nereden Başlamalı
 
-Bu koda yeni misiniz? [Getting Started](../Getting_Started/README.md) ile
+Bu koda yeni misiniz? [Getting Started](Getting_Started/README.md) ile
 başlayın — bir LED yakıp söndürün, UART loglamayı devreye alın, butonu okuyun,
 on LED'lik bankayı sürün. Bu bölüm için WiFi veya bulut hesabı gerekmez.
 
@@ -56,7 +56,7 @@ Her konu iki tür eğitime ayrılır:
   çözümün yazılıp yazılmadığını orada görürsünüz.
 - Bulut platformu (MQTT, filo kurulumu, Device Shadow, işler) için
   [Tiremo belgelendirmesi](https://docs.tiremo.ai) — her
-  [Tiremo Cloud](../Tiremo_Cloud/) eğitimi eşleşen sayfaları bağlar.
+  [Tiremo Cloud](Tiremo_Cloud/) eğitimi eşleşen sayfaları bağlar.
 - Bir eğitimle ilgili sorularınız veya sorunlarınız için bir
   [Issue](https://github.com/Empa-Electronics/Tiremo-Cortex-Tutorials/issues)
   açın.
@@ -91,7 +91,7 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../Getting_Started">Getting Started</a></strong>
+                <strong><a href="Getting_Started/">Getting Started</a></strong>
             </td>
         </tr>
         <tr>
@@ -119,7 +119,7 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../Sensors_And_Storage/">Sensors & Local Storage</a></strong>
+                <strong><a href="Sensors_And_Storage/">Sensors & Local Storage</a></strong>
             </td>
         </tr>
         <tr>
@@ -132,31 +132,31 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="../Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/">I2C Bus Bring-up</a></td>
-            <td><a href="../Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/">Standalone Environmental Logger</a></td>
+            <td><a href="Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/">I2C Bus Bring-up</a></td>
+            <td><a href="Sensors_And_Storage/Design_Tutorials/01-Standalone_Environmental_Logger/">Standalone Environmental Logger</a></td>
         </tr>
         <tr>
-            <td><a href="../Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/">SHT40 Temperature / Humidity</a></td>
+            <td><a href="Sensors_And_Storage/Feature_Tutorials/02-SHT40_Temperature_Humidity/">SHT40 Temperature / Humidity</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/">LIS2DE12 Accelerometer</a></td>
+            <td><a href="Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/">LIS2DE12 Accelerometer</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Sensors_And_Storage/Feature_Tutorials/04-Battery_Voltage_ADC/">Battery Voltage via ADC</a></td>
+            <td><a href="Sensors_And_Storage/Feature_Tutorials/04-Battery_Voltage_ADC/">Battery Voltage via ADC</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Sensors_And_Storage/Feature_Tutorials/05-Microphone_RMS_To_dB/">Microphone: RMS Capture to dB</a></td>
+            <td><a href="Sensors_And_Storage/Feature_Tutorials/05-Microphone_RMS_To_dB/">Microphone: RMS Capture to dB</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/">Flash-Backed Config</a></td>
+            <td><a href="Sensors_And_Storage/Feature_Tutorials/06-Flash_Backed_Config/">Flash-Backed Config</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/">Software Wall Clock</a></td>
+            <td><a href="Sensors_And_Storage/Feature_Tutorials/07-Software_Wall_Clock/">Software Wall Clock</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -167,7 +167,7 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../ESP32_Connectivity/">ESP32 Connectivity</a></strong>
+                <strong><a href="ESP32_Connectivity/">ESP32 Connectivity</a></strong>
             </td>
         </tr>
         <tr>
@@ -180,23 +180,23 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="../ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/">AT Command Transport</a></td>
-            <td><a href="../ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/">Boot Cascade: Saved WiFi → BluFi</a></td>
+            <td><a href="ESP32_Connectivity/Feature_Tutorials/01-AT_Command_Transport/">AT Command Transport</a></td>
+            <td><a href="ESP32_Connectivity/Design_Tutorials/01-Boot_Cascade_Saved_WiFi_Then_BluFi/">Boot Cascade: Saved WiFi → BluFi</a></td>
         </tr>
         <tr>
-            <td><a href="../ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/">WiFi Station Join</a></td>
+            <td><a href="ESP32_Connectivity/Feature_Tutorials/02-WiFi_Station_Join/">WiFi Station Join</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../ESP32_Connectivity/Feature_Tutorials/03-Connect_Retry_State_Machine/">Connect/Retry State Machine</a></td>
+            <td><a href="ESP32_Connectivity/Feature_Tutorials/03-Connect_Retry_State_Machine/">Connect/Retry State Machine</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/">NTP Time Sync</a></td>
+            <td><a href="ESP32_Connectivity/Feature_Tutorials/04-NTP_Time_Sync/">NTP Time Sync</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/">BluFi BLE Provisioning</a></td>
+            <td><a href="ESP32_Connectivity/Feature_Tutorials/05-BluFi_Provisioning/">BluFi BLE Provisioning</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -207,7 +207,7 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../Cloud_Messaging/">Cloud Messaging (MQTT & TLS)</a></strong>
+                <strong><a href="Cloud_Messaging/">Cloud Messaging (MQTT & TLS)</a></strong>
             </td>
         </tr>
         <tr>
@@ -220,15 +220,15 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="../Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/">MQTT to a Public Broker</a></td>
+            <td><a href="Cloud_Messaging/Feature_Tutorials/01-MQTT_To_Public_Broker/">MQTT to a Public Broker</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/">mTLS Credentials in Module NVS</a></td>
+            <td><a href="Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/">mTLS Credentials in Module NVS</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to Tiremo Cloud</a></td>
+            <td><a href="Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/">MQTT mTLS to Tiremo Cloud</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -239,7 +239,7 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../Tiremo_Cloud/">Tiremo Cloud</a></strong>
+                <strong><a href="Tiremo_Cloud/">Tiremo Cloud</a></strong>
             </td>
         </tr>
         <tr>
@@ -252,35 +252,35 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
             <td height="24"><strong>Design Tutorials</strong></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
-            <td><a href="../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/01-Device_Identity_From_MAC/">Device Identity from MAC</a></td>
+            <td><a href="Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/">Sensor Telemetry and Shadow Control</a></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/02-Minimal_JSON_Helpers/">Minimal JSON Helpers</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/">Fleet Provisioning by Claim Certificate</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/04-Shadow_Get_Apply_Report/">Shadow Get + Apply + Report</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/05-Live_Shadow_Delta_Handling/">Live Shadow Delta Handling</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/">Publishing Alarms and Telemetry</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/">Tiremo Jobs</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/">Tiremo Jobs</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="../Tiremo_Cloud/Feature_Tutorials/08-OTA_Firmware_Update/">OTA Firmware Update</a></td>
+            <td><a href="Tiremo_Cloud/Feature_Tutorials/08-OTA_Firmware_Update/">OTA Firmware Update</a></td>
             <td></td>
         </tr>
     </tbody>
@@ -327,7 +327,7 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
     <tbody>
         <tr>
             <td colspan="2" height="24" align="center">
-                <strong><a href="../Developer_Contributed">Developer Contributed</a></strong>
+                <strong><a href="Developer_Contributed/">Developer Contributed</a></strong>
             </td>
         </tr>
         <tr>
@@ -346,12 +346,12 @@ varsayılan ayarlar. Host tarafı aynı AT komutlarını göndermeye devam eder.
 yerel bir `Sw/` klasöründe eksiksiz, derlenebilir bir çözüm sunar; o
 eğitimin kendi **Çözüm** bölümü nasıl derlenip flaşlanacağını ve çıktının
 nasıl görünmesi gerektiğini gösterir. (Dört
-[Intelligence Feature Tutorial](../Intelligence/Feature_Tutorials/)
+[Intelligence Feature Tutorial](Intelligence/Feature_Tutorials/)
 Tiremo Intelligence web arayüzünün anlatımlarıdır; bu yüzden `Sw/`
 klasörleri yoktur.)
 
 Derlenebilir eğitimler, bu depoya tek kopya olarak eklenmiş tek bir ABOV
-satıcı SDK'sını ([`Generation/`](../Generation/)) ve tek bir
+satıcı SDK'sını ([`Generation/`](Generation/)) ve tek bir
 derleme/flaşlama CLI'ını paylaşır: [`tools/tdf.py`](../tools/tdf.py)
 ("Tiremo Development Framework" — ESP-IDF için `idf.py`'nin oynadığı ile
 aynı rol). Yalnızca ilk seferde:

@@ -41,7 +41,7 @@ zaten kanıtladı; bu eğitim o adresteki asıl SHT4x protokolünü öğretir.
 
 ## Ön Koşullar
 
-- [01-I2C_Bus_Bringup](../../../../Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/README.md) — bu eğitim o `Sw/`'nin SysTick'ini, debug UART'ını, I2C HAL'ini ve `PRV_I2C_Init()`'ini değişmeden yeniden kullanır
+- [01-I2C_Bus_Bringup](../01-I2C_Bus_Bringup/README.md) — bu eğitim o `Sw/`'nin SysTick'ini, debug UART'ını, I2C HAL'ini ve `PRV_I2C_Init()`'ini değişmeden yeniden kullanır
 - Okumaları izlemek için: `tdf monitor` (kurulum için [Getting_Started/04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#çözüm) bakın) ya da kartın USB seri portunda 115200 8N1'de herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …)
 - Bilgisayarınıza USB kablosuyla bağlı, SHT40'ın I2C2 üzerinde bulunduğu bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
@@ -120,7 +120,7 @@ bakın. macOS/Linux'ta `tdf.py` takma ad olarak da çalışır; Windows'ta
 diğer terminalleri kapatın — portu aynı anda yalnızca bir program
 açabilir.)
 
-[01-I2C_Bus_Bringup](../../../../Sensors_And_Storage/Feature_Tutorials/01-I2C_Bus_Bringup/README.md)
+[01-I2C_Bus_Bringup](../01-I2C_Bus_Bringup/README.md)
 ile aynı paylaşılan satıcı SDK'sı ve aynı CMake şekli — `GEN_DIR` hâlâ
 `../../../../Generation/...` kullanır. Yeni satıcı kaynağı yok: I2C2
 zaten ayakta. Yeni olan `Drivers/sht40`, bu deponun ilk I2C cihaz
@@ -153,7 +153,7 @@ birkaç okuma içinde yükselir, sonra geri oturur. Bir okuma başarısız
 olursa (NACK ya da CRC uyuşmazlığı), log bunun yerine sarı bir
 `[WARN] SHT40: read failed (NACK or CRC)` satırı gösterir.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — I2C2 ve bir adres
 
@@ -212,7 +212,7 @@ tdf monitor
 (Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Çıktının
 nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne bakın.
 
-## Bittiğinde
+## Tamamlanma Ölçütü
 
 `tdf monitor` saniyede bir sıcaklık ve nem çifti gösterir ve hiç
 `read failed` satırı yoktur; ardışık değerler sensör gürültüsü içinde

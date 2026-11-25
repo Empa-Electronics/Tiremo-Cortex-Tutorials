@@ -25,7 +25,7 @@
 
 ## Giriş
 
-[Eğitim 07](../../../../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/)
+[Eğitim 07](../07-Tiremo_Jobs/)
 bir Firmware-Update işini `REJECTED "ota_not_implemented"` ile geçiştirir.
 Bu eğitim onu gerçek yapar: kart yeni imajı ağ üzerinden indirir,
 doğrular ve kendi kendine geçiş yapar — A34G43x'in donanım A/B kod-flash
@@ -78,13 +78,13 @@ sequenceDiagram
 - Bir işin sonucunu, hazır döngünün kendi önyükleme yoklamasının onu
   yeniden ele geçirme fırsatı bulmasından *önce* bildirme
 
-## Önkoşullar
+## Ön Koşullar
 
-- [07-Tiremo_Jobs](../../../../Tiremo_Cloud/Feature_Tutorials/07-Tiremo_Jobs/) — hazır döngü, Thing adı, `jobs/notify` + `start-next`
+- [07-Tiremo_Jobs](../07-Tiremo_Jobs/) — hazır döngü, Thing adı, `jobs/notify` + `start-next`
 - 06/07 ile aynı gitignore'lu dosyalar bu `Sw/` içinde
-- [Getting Started](../../../../Getting_Started/) ile araç zinciri ve yanıp sönme kurulumu
+- [Getting Started](../../../Getting_Started/) ile araç zinciri ve yanıp sönme kurulumu
 
-## Platform belgelendirmesi
+## Platform dökümanı
 
 - [Tiremo Jobs'a giriş](https://docs.tiremo.ai/developer-guide/jobs/jobs-introduction)
 - [İş şablonları](https://docs.tiremo.ai/developer-guide/jobs/jobs-phase-1-definition)
@@ -202,7 +202,7 @@ bırakmadı.
 ## Tiremo UI'da iş oluşturma
 
 Bu cihaza bir **firmware-update** işi oluşturun (kart hazır döngüde ve
-[eğitim 03](../../../../Tiremo_Cloud/Feature_Tutorials/03-Fleet_Provisioning_By_Claim/)
+[eğitim 03](../03-Fleet_Provisioning_By_Claim/)
 ile kurulmuş olmalı).
 
 **1. Ana menüden Jobs** açın.
@@ -260,7 +260,7 @@ Configuration** (Repository Name / Version Name), **Target Selection**
 *Şekil: Tiremo UI — **Job Executions**, kartın önyükleme sonrası
 `jobs/<id>/update`'i geldikten sonra **Succeeded** gösterir.*
 
-## İnceleme
+## Adım Adım İnceleme
 
 1. [`prv_user_code.c`](../../../../Tiremo_Cloud/Feature_Tutorials/08-OTA_Firmware_Update/Sw/Src/prv_user_code.c) —
    `TIREMO_OTA_Init()` radyoya dokunmadan önce ilk iş olarak çalışır:
@@ -294,7 +294,7 @@ Configuration** (Repository Name / Version Name), **Target Selection**
    yol/sorgu dizesi asla bir komut satırına dokunmaz), yanıt aynı
    şekilde geri okunur.
 
-## Bitti Sayılınca
+## Tamamlanma Ölçütü
 
 Tiremo UI'da oluşturulan bir Firmware-Update işi ele alınır, imajı
 indirilir ve doğrulanır, kart onunla yeniden başlar ve iş

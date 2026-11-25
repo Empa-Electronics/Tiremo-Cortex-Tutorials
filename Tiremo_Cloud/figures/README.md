@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../docs-tr/Tiremo_Cloud/figures/README.md">Türkçe</a></p>
 # Tiremo UI figures
 
 Screenshots for [Getting credentials from the Tiremo UI](../Feature_Tutorials/03-Fleet_Provisioning_By_Claim/#getting-credentials-from-the-tiremo-ui),

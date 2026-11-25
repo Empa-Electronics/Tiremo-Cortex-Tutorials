@@ -81,7 +81,7 @@ tdf monitor
 
 her saniye yeni bir satır gelir. Aynı kartın VDDA hattında (C16 ya da MCU'nun 11. pini) multimetre **2,69 V** okudu — üretici yazılımının sonucu gerçek hatla örtüşüyor.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — ADC1, kanal 23
 
@@ -105,7 +105,7 @@ tdf monitor
 
 (Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 `tdf monitor` saniyede bir `BAT: VCORE raw=…  AVDD=… mV` gösterir ve AVDD 2,7 V civarındadır; multimetreniz varsa değer, C16'da ya da MCU'nun 11. pininde ölçülen VDDA hattından ~50 mV içindedir.
 

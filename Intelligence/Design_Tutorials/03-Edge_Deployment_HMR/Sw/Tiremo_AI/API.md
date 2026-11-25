@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../../../docs-tr/Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/API.md">Türkçe</a></p>
 # Tiremo_AI API
 
 ## Input

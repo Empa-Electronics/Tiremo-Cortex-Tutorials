@@ -46,8 +46,8 @@ olmak yerine UART üzerinden anlatılır.
 
 ## Ön Koşullar
 
-- [02-SysTick_Timing](../../../Getting_Started/02-SysTick_Timing/README.md) — bu eğitimin LED döngüsü, üzerine loglama eklenmiş Tutorial 02'nin ta kendisi
-- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites) — burada aynısı geçerli, Windows Git Bash/WSL gerektirmemesi dahil)
+- [02-SysTick_Timing](../02-SysTick_Timing/README.md) — bu eğitimin LED döngüsü, üzerine loglama eklenmiş Tutorial 02'nin ta kendisi
+- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../01-Hello_Blink/README.md#ön-koşullar) — burada aynısı geçerli, Windows Git Bash/WSL gerektirmemesi dahil)
 - Log çıktısını görmek için 115200 8N1'de bir seri terminal: `tdf monitor` (bkz. [Çözüm](#çözüm)), Tera Term, PuTTY, screen, minicom ya da IDE'nizin yerleşik olanı. Ayrı bir USB-seri adaptör gerekmez: kartın üzerindeki CMSIS-DAP hata ayıklayıcısı aynı USB kablosu üzerinden bir seri port sağlar (Windows'ta örneğin `USB Serial Device (COMx)`).
 - Bilgisayarınıza USB kablosuyla bağlı bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
@@ -145,7 +145,7 @@ bakın. macOS/Linux'ta `tdf.py` takma ad olarak da çalışır; Windows'ta
 `tdf` kullanın.)
 
 Tutorial 01/02 ile aynı paylaşılan satıcı SDK'sı
-([`Generation/`](../../../Generation/), depo kökünde), bu depodaki her
+([`Generation/`](../../Generation/), depo kökünde), bu depodaki her
 eğitimle aynı CMake derlemesi (neden CMake olduğu için
 [01-Hello_Blink'in Çözüm bölümüne](../01-Hello_Blink/README.md#çözüm)
 bakın). Satıcı kaynak listesinin belirgin şekilde büyüdüğü ilk eğitim
@@ -180,7 +180,7 @@ yalnızca bir program açabilir, bu yüzden önce o porttaki diğer terminalleri
 daha ayrıntılı anlatılıyor; burada kullanmak için Tutorial 04'ü bitirmeniz
 gerekmez.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — Tutorial 02'den değişmedi
 
@@ -282,7 +282,7 @@ için [01-Hello_Blink'in Çözüm bölümüne](../01-Hello_Blink/README.md#çöz
 bakın. Bu eğitim için gerçek donanımda tam olarak neyin doğrulandığı
 için yukarıdaki **Çözüm** bölümüne bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 Boot log'u, 115200 8N1 bir seri bağlantı üzerinden önyükleme ve her LED
 toggle'ı için `[INFO]` satırları gösterir, ve `-DTIREMO_DEBUG_LEVEL=2`

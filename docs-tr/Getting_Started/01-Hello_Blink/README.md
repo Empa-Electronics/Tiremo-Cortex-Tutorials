@@ -164,14 +164,14 @@ sarmalayıcısı sayesinde `tdf`) yazabilme kolaylığını ekler. Ayrıca
 `tdf.py clean` (`build/`'i kaldırır) ve `tdf.py clean-device` (bağlı
 kartın çip flash'ını toptan siler — önce sorar) de var. Gerçekten
 okunacak bir UART ortaya çıkınca eklenen `tdf.py monitor` (bkz.
-[04-Button_Read_And_Debounce'un Çözüm bölümü](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#solution)),
+[04-Button_Read_And_Debounce'un Çözüm bölümü](../04-Button_Read_And_Debounce/README.md#çözüm)),
 kartı SWD üzerinden resetler ve log'u akıtır — saf CMake devretmesi
 olmayan tek alt komut, çünkü ayrıca `pyserial` de gerektiriyor;
 `install.sh` / `install.ps1` / `install.bat` tarafından ayrı bir
 `tdf_venv/` içine kurulur, eşleşen `export.*` tarafından etkinleştirilir.
 
 Bu depodaki paylaşılan satıcı SDK'sına karşı derlenir
-([`Generation/`](../../../Generation/), depo kökünde — neden tek seferde,
+([`Generation/`](../../Generation/), depo kökünde — neden tek seferde,
 paylaşılan olarak kontrol altına alındığını, her eğitime kopyalanmak
 yerine, o klasöre bakın) ve tek bir ~5 KB imaj bağlar: sensör yok, radyo
 yok, debug UART yok, sadece port init, saat init ve GPIO.
@@ -213,7 +213,7 @@ sonra `tdf.py flash` onu normal önyüklemeye geri getirdi.
 elle seçilmiş bir tahmindir — kartınızda yanıp sönme hızı gözle görülür
 şekilde farklıysa yukarı veya aşağı ayarlayın.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — pini adlandırma
 
@@ -251,7 +251,7 @@ int main(void)
 Tam satıcı şablonu burada ayrıca `PRV_UART_Init()`, `PRV_ADC_Init()`,
 `PRV_Timer1_Init()` ve `PRV_I2C_Init()` çağırır, artı isteğe bağlı debug
 UART kurulumu. Bu eğitim bunların hiçbirine henüz ihtiyaç duymuyor — UART
-loglama [03. Eğitim](../../../Getting_Started/03-Debug_UART_Logging/README.md)'de
+loglama [03. Eğitim](../03-Debug_UART_Logging/README.md)'de
 — bu yüzden `main.c` yalnızca GPIO-only bir programın gerçekten ihtiyaç
 duyduğu iki çağrıyı tutar: pin muxing ve saat kurulumu. Kullanılmayan
 çevre birimi init'lerini dışarıda bırakmak sadece derlilik değil — aynı
@@ -291,7 +291,7 @@ void PRV_USER_Code(void)
 Döngü sayacındaki `volatile` süsleme değil, taşıyıcı bir gerekliliktir:
 `-Og` seviyesinde derleyici aksi halde döngünün gözlemlenebilir bir etkisi
 olmadığını fark edip tamamen silmekte özgürdür. Bu fonksiyonun tamamı,
-[02. Eğitim](../../../Getting_Started/02-SysTick_Timing/README.md)'in
+[02. Eğitim](../02-SysTick_Timing/README.md)'in
 tam olarak değiştirdiği şeydir — aynı LED, aynı fikir, ama elle ayarlanmış
 boş bir döngü yerine SysTick donanım zamanlayıcısına göre zamanlanmış;
 böylece tek bir döngüden iki LED bağımsız, doğru hızlarda yanıp
@@ -302,7 +302,7 @@ sönebilir.
 [`Sw/CMakeLists.txt`](../../../Getting_Started/01-Hello_Blink/Sw/CMakeLists.txt)
 tek bir `add_executable(HelloBlink ...)` bildirir; bu eğitimin kendi
 kaynaklarını (`Src/`, `Tiremo_Hal/`) paylaşılan
-[`Generation/`](../../../Generation/) SDK'sından üç dizin yukarıdan
+[`Generation/`](../../Generation/) SDK'sından üç dizin yukarıdan
 (`../../../Generation/AUDK32_A34xxxx-1.0.12`) çekilen altı satıcı
 dosyasıyla birlikte listeler — bu eğitimin orijinal Make tabanlı
 sürümünün aksine ayrı bir kaynak-grubu muhasebesi gerekmez (tam olarak
@@ -335,7 +335,7 @@ kullanışlı. Windows'a
 neyin doğrulanıp doğrulanmadığı için yukarıdaki Çözüm bölümündeki
 Dürüstlük notuna bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 Taze bir flaşlamadan sonra, hiçbir debugger bağlı değilken LED1 düzenli
 olarak, yaklaşık saniyede bir yanıp söner. Gecikme kalibre edilmemiş bir

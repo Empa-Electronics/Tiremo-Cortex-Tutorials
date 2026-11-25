@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../../docs-tr/Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Datasets/README.md">Türkçe</a></p>
 # HMR 3-axis datasets
 
 Same recording, three sample rates. Header on every file:

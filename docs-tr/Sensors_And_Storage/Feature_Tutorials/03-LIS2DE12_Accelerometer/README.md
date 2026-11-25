@@ -96,7 +96,7 @@ Eğitim 01/02'nin ötesinde yeni satıcı kaynağı yok. Yeni kod `Drivers/lis2d
 
 Kart düz dururken yerçekimi Z'de yaklaşık +1000 mg'dır ve X/Y küçük kalır (yüz mg civarı normaldir — kart nadiren tam yataydır; yukarıdaki son satırda toplam büyüklük √(117² + 171² + 967²) ≈ 989 mg, yani 1 g). Kartı sırayla her kenarına yatırın; ~1000 mg o eksene geçer (yatırdığınız yöne göre pozitif ya da negatif); iki eksenin arasındayken ikisine paylaşılır. Sensör açılışta yanıt vermezse log `[ERROR] LIS2DE12: init failed (WHO_AM_I or Configure)` gösterir ve program orada durur; sonraki başarısız bir okuma `[WARN] LIS2DE12: read failed` loglar.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — I2C2'de `0x19`
 
@@ -120,7 +120,7 @@ tdf monitor
 
 (Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 `tdf monitor` `WHO_AM_I=0x33` gösterir, ardından kart düz dururken Z'de yaklaşık +1000 mg görünür ve kartı sırayla her kenarına yatırdığınızda ~1000 mg X'e ve Y'ye geçer.
 

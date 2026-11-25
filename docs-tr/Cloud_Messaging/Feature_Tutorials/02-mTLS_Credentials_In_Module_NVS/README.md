@@ -64,12 +64,12 @@ MQTT ad alanlarında `.0` da yoktur: genel SSL istemcisi, sertifikalar arasında
 
 ## `certs/` klasörünü anlamak (C dizesi değil)
 
-Gerçek PEM içeriği, bir C dize sabitine elle yazması tam bir eziyet ve hataya açık olan türden bir şeydir — yanlış kaçışlanmış tek bir satır sonu ve sertifika sessizce ayrıştırılamaz hâle gelir. Bu yüzden buradaki üç kimlik bilgisi [`Sw/certs/`](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/) içindeki gerçek dosyalardır:
+Gerçek PEM içeriği, bir C dize sabitine elle yazması tam bir eziyet ve hataya açık olan türden bir şeydir — yanlış kaçışlanmış tek bir satır sonu ve sertifika sessizce ayrıştırılamaz hâle gelir. Bu yüzden buradaki üç kimlik bilgisi [`Sw/certs/`](Sw/certs/) içindeki gerçek dosyalardır:
 
 - `root_ca.pem` commit'lidir: kendinden imzalı bir TEST kök CA'sı (`CN=... TEST Root CA - not for real use`).
 - `client_cert.pem` ve `client_key.pem` gitignore'dadır: kendinden imzalı TEST çiftini kendiniz üretirsiniz (aşağıya bakın). Özel anahtar asla bir commit'e girmemelidir.
 
-Güven hakkında hiçbir şey kanıtlamazlar — hiçbir sunucu onları kabul etmez. Bu eğitime yazılacak, geri okunacak ve karşılaştırılacak gerçek PEM baytları sağlamak için vardırlar. Bkz. [`certs/README.md`](../../../../Cloud_Messaging/Feature_Tutorials/02-mTLS_Credentials_In_Module_NVS/Sw/certs/README.md).
+Güven hakkında hiçbir şey kanıtlamazlar — hiçbir sunucu onları kabul etmez. Bu eğitime yazılacak, geri okunacak ve karşılaştırılacak gerçek PEM baytları sağlamak için vardırlar. Bkz. [`certs/README.md`](Sw/certs/README.md).
 
 [`cmake/embed_pem.cmake`](../../../../cmake/embed_pem.cmake) (repo kökünde, gerektiren her eğitim tarafından yeniden kullanılabilir), derleme sırasında bir `.pem` dosyasını üretilmiş bir `.c` kaynağına dönüştürür:
 

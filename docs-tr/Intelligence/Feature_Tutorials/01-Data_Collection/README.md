@@ -24,11 +24,11 @@
 
 ## Giriş
 
-Intelligence bir eğitim kümesi uyduramaz. [02-Data_Sources](../../../../Intelligence/Feature_Tutorials/02-Data_Sources/) öncesinde etiketli (veya etiketlenebilir) bir öznitelik CSV'sine ihtiyacınız vardır. Bu dosyayı nasıl topladığınız size kalmıştır: Tiremo UI'daki **Data Explorer**, yerel bir UART/SD günlüğü, çevrimdışı bir araç veya tercih ettiğiniz başka herhangi bir yol. Önemli olan, eğitim için etiketlenebilecek sayısal öznitelik sütunlarıyla bitirmektir.
+Intelligence bir eğitim kümesi uyduramaz. [02-Data_Sources](../02-Data_Sources/) öncesinde etiketli (veya etiketlenebilir) bir öznitelik CSV'sine ihtiyacınız vardır. Bu dosyayı nasıl topladığınız size kalmıştır: Tiremo UI'daki **Data Explorer**, yerel bir UART/SD günlüğü, çevrimdışı bir araç veya tercih ettiğiniz başka herhangi bir yol. Önemli olan, eğitim için etiketlenebilecek sayısal öznitelik sütunlarıyla bitirmektir.
 
 Bu eğitim **Data Explorer** yolunu yürür çünkü Tiremo Cloud'a gömülüdür: ürüne bağlı bir Thing örnekleri **telemetry** olarak yayınlar; Data Explorer bu örneklerin geldiğini kanıtladığınız, öznitelik anahtarlarına indirdiğiniz ve CSV dışa aktardığınız yerdir. Data Explorer ana kenar çubuğundadır, **Intelligence** altında değil. Tek bir ürün/cihaz için en fazla 30 günlük aralıkta geçmiş telemetri, alarm ve çıkarımı, artı canlı bir MQTT kuyruğu, sorgular.
 
-Aşağıdaki yürüyüş somut örnek olarak bir hareket sınıflandırma yakalaması kullanır (`acc_x`, `acc_y`, `acc_z`). Aynı süzgeçler ve dışa aktarma, bir Cortex'in (veya başka bir Thing'in) yayınladığı herhangi bir telemetri anahtarına uygulanır. Başka bir yöntemle uygun bir CSV'niz zaten varsa [02-Data_Sources](../../../../Intelligence/Feature_Tutorials/02-Data_Sources/) ile devam edin.
+Aşağıdaki yürüyüş somut örnek olarak bir hareket sınıflandırma yakalaması kullanır (`acc_x`, `acc_y`, `acc_z`). Aynı süzgeçler ve dışa aktarma, bir Cortex'in (veya başka bir Thing'in) yayınladığı herhangi bir telemetri anahtarına uygulanır. Başka bir yöntemle uygun bir CSV'niz zaten varsa [02-Data_Sources](../02-Data_Sources/) ile devam edin.
 
 ## Neler Öğreneceksiniz
 
@@ -39,11 +39,11 @@ Aşağıdaki yürüyüş somut örnek olarak bir hareket sınıflandırma yakala
 
 ## Ön Koşullar
 
-- Tiremo Cloud hesabı ve eğitmek istediğiniz telemetri anahtarlarını yayınlayan provizyonlanmış bir Cortex (veya aynı üründe herhangi bir Thing). Bir hareket sınıflandırma örneği için bunlar milli-g cinsinden `acc_x`, `acc_y`, `acc_z`'dir; Design Tutorial'daki HMR CSV'leriyle aynı eksen adları. [Tiremo Cloud / 06](../../../../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) o yayın yolunun üretici yazılımı eğitimidir; hâlâ iskelet, bu yüzden bu UI yürüyüşü için o anahtarları zaten gönderen bir cihaz, veya Device Simulator, yeterlidir
-- İsteğe bağlı, hareket örneği için: örneklerin ne anlama geldiği için [Sensors & Local Storage / 03 LIS2DE12](../../../../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/)
+- Tiremo Cloud hesabı ve eğitmek istediğiniz telemetri anahtarlarını yayınlayan provizyonlanmış bir Cortex (veya aynı üründe herhangi bir Thing). Bir hareket sınıflandırma örneği için bunlar milli-g cinsinden `acc_x`, `acc_y`, `acc_z`'dir; Design Tutorial'daki HMR CSV'leriyle aynı eksen adları. [Tiremo Cloud / 06](../../../Tiremo_Cloud/Feature_Tutorials/06-Publishing_Alarms_And_Telemetry/) o yayın yolunun üretici yazılımı eğitimidir; hâlâ iskelet, bu yüzden bu UI yürüyüşü için o anahtarları zaten gönderen bir cihaz, veya Device Simulator, yeterlidir
+- İsteğe bağlı, hareket örneği için: örneklerin ne anlama geldiği için [Sensors & Local Storage / 03 LIS2DE12](../../../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/)
 - [`iot.tiremo.ai`](https://iot.tiremo.ai) adresindeki Tiremo UI
 
-Canlı yeniden yakalayamıyorsanız fiziksel oturumu atlayın ve [Design Tutorial 03](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/) ile gelen etiketli dosyaları kullanın; cihaz yayınlamaya başlayınca buraya dönün.
+Canlı yeniden yakalayamıyorsanız fiziksel oturumu atlayın ve [Design Tutorial 03](../../Design_Tutorials/03-Edge_Deployment_HMR/) ile gelen etiketli dosyaları kullanın; cihaz yayınlamaya başlayınca buraya dönün.
 
 ## Bir Toplama Oturumunu Anlamak
 
@@ -70,11 +70,11 @@ Bu eğitim için `Sw/` yoktur. İşlenen yol UI'dır.
 2. **+ Filters** → Product, Device, **Data Type** = Telemetry, **Keys** = her öznitelik anahtarından sonra Enter (örneğin 3 eksenli bir hareket kümesi için `acc_x`, `acc_y`, `acc_z`), oturumu kapsayan tarih aralığı, **Apply Filters** / **View Data**
 3. Tablonun örnek gösterdiğini doğrulayın; cihaz önemsediğiniz davranışı üretirken isteğe bağlı **Live**
 4. **Export CSV**
-5. [02-Data_Sources](../../../../Intelligence/Feature_Tutorials/02-Data_Sources/) öncesi düzleştirilmiş sütunları yeniden adlandırın ve etiket ekleyin
+5. [02-Data_Sources](../02-Data_Sources/) öncesi düzleştirilmiş sütunları yeniden adlandırın ve etiket ekleyin
 
 ![Data Explorer boş durum, Open Filters](../../../../Intelligence/figures/01_data_explorer_menu.png)
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Data Explorer'ı açın
 
@@ -106,7 +106,7 @@ Data Studio sonra ince kümelerde uyarır veya reddeder. Ne kadarının yeterli 
 
 Kartın örnekleme hızı ile yayın hızını hizalı tutun. Design Tutorial o HMR vakasında bu hızların neden denendiğini anlatır.
 
-## Bittiğinde
+## Tamamlanma Ölçütü
 
 Öznitelik sütunları sayısal olan, zaman damgaları yalnızca kaydetmek istediğiniz aralığı kapsayan bir CSV'niz vardır ve sonraki içe aktarmanın **One class file** mi yoksa `class` sütunlu mu olacağını bilirsiniz. Henüz hiçbir şey eğitilmez; bu 02 ve 03'tür.
 

@@ -23,7 +23,7 @@
 Kart seviyesinde referans: Tiremo Cortex kartında neler olduğu, MCU'ya
 nasıl kablolandığı, ve bir host bilgisayarın kartla nasıl konuştuğu.
 Burada üretici yazılımı yok — bu donanım üzerine kod yazmaya başlamak
-için [Getting Started](../Getting_Started/README.md)'a bakın.
+için [Getting Started](Getting_Started/README.md)'a bakın.
 
 ## Kart Blok Diyagramı
 

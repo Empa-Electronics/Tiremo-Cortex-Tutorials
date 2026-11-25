@@ -54,8 +54,8 @@ edilmiş bir USER butonu (Tutorial 04) döngüyü manuel olarak ilerletir.
 
 ## Ön Koşullar
 
-- [04-Button_Read_And_Debounce](../../../Getting_Started/04-Button_Read_And_Debounce/README.md) — bu eğitim onun debounce durum makinesini ve `Drivers/button`'unu birebir yeniden kullanır
-- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../../../Getting_Started/01-Hello_Blink/README.md#prerequisites))
+- [04-Button_Read_And_Debounce](../04-Button_Read_And_Debounce/README.md) — bu eğitim onun debounce durum makinesini ve `Drivers/button`'unu birebir yeniden kullanır
+- `PATH` üzerinde `arm-none-eabi-gcc`, `cmake` (3.20+) ve `ninja` (bkz. [01-Hello_Blink'in Ön Koşulları](../01-Hello_Blink/README.md#ön-koşullar))
 - Sahne değişikliklerini log'da izlemek için: `tdf monitor` (kurulum için [04-Button_Read_And_Debounce'un Çözüm bölümüne](../04-Button_Read_And_Debounce/README.md#çözüm) bakın — `pyserial` gerektiriyor, `./install.sh` / `install.ps1` / `install.bat`'ın oluşturduğu `tdf_venv/` üzerinden), ya da kartın USB seri portunda 115200 8N1'de herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …). LED'lerin kendisi terminal olmadan da çalışır.
 - Bilgisayarınıza USB kablosuyla bağlı, on LED'in tamamına ve USER butonuna erişilebilen bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
@@ -158,7 +158,7 @@ pressed` satırını sarı bir `[WARN] scene -> ... (button) @ ... ms`
 satırı izler ve 8 saniyelik otomatik ilerleme zamanlayıcısı o andan
 itibaren yeniden başlar.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — LED bankasının geri kalanı
 
@@ -238,7 +238,7 @@ bkz. [01-Hello_Blink'in Çözüm bölümü](../01-Hello_Blink/README.md#çözüm
 Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne
 bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 `tdf monitor`, 8 saniyelik aralıklarla `scene -> SOLID`, ardından
 `scene -> BLINK (auto)`, ardından `scene -> PULSE (auto)` gösterir ve

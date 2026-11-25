@@ -42,7 +42,7 @@ yerine taze, minimal bir `Sw/` ile başlıyor.
 
 ## Ön Koşullar
 
-- [Getting_Started](../../../../Getting_Started/README.md) tamamlanmış — bu eğitim onun SysTick'ini ve debug-UART loglamasını değişmeden yeniden kullanır, ve kurulum betiklerinin (`install.sh`/`export.sh`, ya da `install.ps1`/`export.ps1`, ya da `install.bat`/`export.bat`) zaten çalıştırılıp `tdf`'nin kullanılabilir olduğunu varsayar
+- [Getting_Started](../../../Getting_Started/README.md) tamamlanmış — bu eğitim onun SysTick'ini ve debug-UART loglamasını değişmeden yeniden kullanır, ve kurulum betiklerinin (`install.sh`/`export.sh`, ya da `install.ps1`/`export.ps1`, ya da `install.bat`/`export.bat`) zaten çalıştırılıp `tdf`'nin kullanılabilir olduğunu varsayar
 - Probe sonuçlarını izlemek için: `tdf monitor` (kurulum için [Getting_Started/04-Button_Read_And_Debounce'un Çözüm bölümüne](../../../Getting_Started/04-Button_Read_And_Debounce/README.md#çözüm) bakın) ya da kartın USB seri portunda 115200 8N1'de herhangi bir seri terminal (Tera Term, PuTTY, screen, minicom, …)
 - Bilgisayarınıza USB kablosuyla bağlı, SHT40 ve LIS2DE12'nin I2C2 üzerinde bulunduğu bir Tiremo Cortex kartı (ABOV A34G43A MCU — bkz. [Donanım Genel Bakışı](../../../Hardware.md)). Kartın üzerindeki CMSIS-DAP hata ayıklayıcısı SWD üzerinden flaşlamayı yapar; ayrı bir programlayıcı gerekmez.
 
@@ -133,7 +133,7 @@ yanıt veriyor. Bir sensör eksik olsaydı ya da bus yanlış kablolanmış
 olsaydı, aynı log o adres için sarı bir `[WARN] ... NACK -- not
 responding` satırı gösterirdi.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — I2C2 ve iki adres, başka hiçbir şey yok
 
@@ -211,7 +211,7 @@ bkz. [01-Hello_Blink'in Çözüm bölümü](../../../Getting_Started/01-Hello_Bl
 Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne
 bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 `tdf monitor`, her 5 sn'de bir tekrarlanan `SHT40 (0x44): ACK` ve
 `LIS2DE12 (0x19): ACK` gösterir; hiç `NACK` satırı yoktur.

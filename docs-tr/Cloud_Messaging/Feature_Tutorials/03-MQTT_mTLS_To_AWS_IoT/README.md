@@ -79,7 +79,7 @@ TIREMO_ESP32_MqttConnect(MQTT_ENDPOINT, 8883, ...);/* AT+MQTTCONN=0,"<host>",888
 | `<identifier>.certificate.pem` | `device_cert.pem` |
 | `<identifier>.private.key` | `device_key.pem` |
 
-Dosyalardan biri eksikse derleme `Missing device credentials (certs/device_cert.pem, certs/device_key.pem)` hatasıyla durur ve aynı yeniden adlandırmayı gösterir. İki ad da gitignore'dadır; deponun `.gitignore` dosyası ayrıca bir `certs/` klasöründeki her `*.key` dosyasını da yok sayar; böylece yeniden adlandırılmamış bir `<identifier>.private.key` bile commit'e kaçmaz. Yine de commit atmadan önce `git status`'a bakın: bu iki dosya orada asla görünmemelidir. Bkz. [`certs/README.md`](../../../../Cloud_Messaging/Feature_Tutorials/03-MQTT_mTLS_To_AWS_IoT/Sw/certs/README.md).
+Dosyalardan biri eksikse derleme `Missing device credentials (certs/device_cert.pem, certs/device_key.pem)` hatasıyla durur ve aynı yeniden adlandırmayı gösterir. İki ad da gitignore'dadır; deponun `.gitignore` dosyası ayrıca bir `certs/` klasöründeki her `*.key` dosyasını da yok sayar; böylece yeniden adlandırılmamış bir `<identifier>.private.key` bile commit'e kaçmaz. Yine de commit atmadan önce `git status`'a bakın: bu iki dosya orada asla görünmemelidir. Bkz. [`certs/README.md`](Sw/certs/README.md).
 
 `iot.tiremo.ai`'nin sunucu sertifikası `iot.tiremo.ai` → `Amazon RSA 2048 M04` → `Amazon Root CA 1` zinciriyle bağlanır; `root_ca.pem`'in Amazon Root CA 1 olmasının nedeni budur. Bir zinciri kendiniz `openssl s_client -connect iot.tiremo.ai:8883 -servername iot.tiremo.ai -showcerts` ile kontrol edebilirsiniz.
 

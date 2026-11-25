@@ -54,7 +54,7 @@ The module has two MACs. **Station** (`AT+CIPSTAMAC?`) is the address it uses as
 A typical reply (example address):
 
 ```text
-+CIPSTAMAC:"30:ed:a0:80:63:24"
++CIPSTAMAC:"aa:bb:cc:11:22:33"
 OK
 ```
 
@@ -64,8 +64,8 @@ The six bytes then become a canonical ID:
 
 | Form | Example | Who uses it |
 |------|---------|-------------|
-| Colon MAC (log only) | `30:ed:a0:80:63:24` | Humans |
-| `deviceId` | `30eda0806324` | Thing name / MQTT client ID later |
+| Colon MAC (log only) | `aa:bb:cc:11:22:33` | Humans |
+| `deviceId` | `aabbcc112233` | Thing name / MQTT client ID later |
 
 Lowercase, no `0x`, no colons. Thing names are case-sensitive; picking one canonical spelling here means fleet-provisioning templates and shadow topics never disagree.
 

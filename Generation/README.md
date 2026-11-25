@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../docs-tr/Generation/README.md">Türkçe</a></p>
 # Generation/ — Shared Vendor SDK
 
 This is ABOV Semiconductor's AUDK32 SDK for the A34G43x (CMSIS device

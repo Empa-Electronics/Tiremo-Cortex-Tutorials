@@ -1,3 +1,4 @@
+<p class="sphinxhide" align="right"><a>English</a> | <a href="../../../../../docs-tr/Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/IMPLEMENTATION.md">Türkçe</a></p>
 # Implementation
 
 1. Include the public header:

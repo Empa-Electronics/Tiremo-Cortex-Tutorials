@@ -144,7 +144,7 @@ Denemek için SHT40'ı nefesinizle veya parmak ucunuzla 30 °C'nin üstüne çı
 Bu `Sw/` klasörü, hepsi Tiremo UI'daki ürün sayfanızdan gelen, gitignore'lu üç dosyaya ihtiyaç duyar (nerede olduklarını [eğitim 03](../../Feature_Tutorials/03-Fleet_Provisioning_By_Claim/README.md#tiremo-uidan-kimlik-bilgileri)'te bulabilirsiniz):
 
 - **`aws_iot_config.h`**: `aws_iot_config.h.example` dosyasını `aws_iot_config.h` olarak kopyalayın, sonra `TIREMO_AWS_PRODUCT_IDENTIFIER` değerine **Identifier**'ınızı, `TIREMO_AWS_PRODUCT_SECRET` değerine **Secret Key**'inizi yazın. Endpoint (`iot.tiremo.ai`) ve şablon (`tiremo-default`) zaten doldurulmuştur.
-- **`certs/claim_cert.pem`** ve **`certs/claim_key.pem`**: **Provisioning Certificates**, `<identifier>.certificate.pem` ve `<identifier>.private.key` adlarından yeniden adlandırılmış hâlde. Bunları Cloud Messaging 03'e `device_cert.pem` / `device_key.pem` olarak zaten koyduysanız, bu iki dosyayı yeni adlarıyla buraya kopyalayın. Bkz. [`certs/README.md`](../../../../Tiremo_Cloud/Design_Tutorials/01-Sensor_Telemetry_And_Shadow_Control/Sw/certs/README.md).
+- **`certs/claim_cert.pem`** ve **`certs/claim_key.pem`**: **Provisioning Certificates**, `<identifier>.certificate.pem` ve `<identifier>.private.key` adlarından yeniden adlandırılmış hâlde. Bunları Cloud Messaging 03'e `device_cert.pem` / `device_key.pem` olarak zaten koyduysanız, bu iki dosyayı yeni adlarıyla buraya kopyalayın. Bkz. [`certs/README.md`](Sw/certs/README.md).
 
 Üç ad da gitignore'ludur; yine de commit etmeden önce `git status` ile kontrol edin. `aws_iot_config.h` veya sertifikalardan biri eksikse derleme, ne yapılacağını söyleyen bir mesajla durur. `wifi_secrets.h` yoktur.
 

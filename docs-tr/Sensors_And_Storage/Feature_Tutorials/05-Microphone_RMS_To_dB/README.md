@@ -103,7 +103,7 @@ tdf monitor
 
 Sessiz bir odada seviye rms 10–40 civarındadır (yaklaşık 20–35 dB); mikrofona yakından konuşmak onu rms 1000–3500'e (yaklaşık 60–70 dB) çıkarır. DMA yakalaması çalıştığı sürece `blocks` artmaya devam eder — durursa yakalama takılmış demektir. Bir alarm satırındaki `rms`, durumun değiştiği andaki seviyedir; bu yüzden tepe değerde değil, bir eşiğin yakınında durur. Mikrofon kurulamazsa log `[ERROR] MIC: init failed` ya da `[ERROR] MIC: start failed` gösterir ve program orada durur.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Kart yapılandırması — satıcı kimlikleri
 
@@ -127,7 +127,7 @@ tdf monitor
 
 (Ya da tek komutta zincirleyerek: `tdf build flash monitor`.) Çıktının nasıl görünmesi gerektiği için yukarıdaki **Çözüm** bölümüne bakın.
 
-## Ne Zaman Tamamlanmış Sayılır
+## Tamamlanma Ölçütü
 
 `tdf monitor`, `blocks`'un her saniye arttığını, oda sessizken düşük bir seviye (rms onlarca, ~20–35 dB) ve bir `SILENCE` alarmı, mikrofona yakından konuştuğunuzda ise rms'si 1000'in üzerinde (~60 dB ya da daha fazla) bir `HIGH_VOICE` alarmı gösterir.
 

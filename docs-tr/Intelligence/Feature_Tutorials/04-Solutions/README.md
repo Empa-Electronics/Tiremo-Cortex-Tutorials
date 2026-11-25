@@ -38,8 +38,8 @@ Bu eğitim **Edge** yolunu yürür: üretilmiş bir `Tiremo_AI` ağacını indir
 
 ## Ön Koşullar
 
-- [03-Experiments](../../../../Intelligence/Feature_Tutorials/03-Experiments/) ile **Completed** bir Training Record ve, üretici yazılım indirecekseniz, **Deployable Targets** içinde Edge olan bir **Selected Model**
-- Modeli çalıştırması gereken cihazların Product'ı ([Tiremo Cloud](../../../../Tiremo_Cloud/) içinde provizyonladığınız Cortex ürünü)
+- [03-Experiments](../03-Experiments/) ile **Completed** bir Training Record ve, üretici yazılım indirecekseniz, **Deployable Targets** içinde Edge olan bir **Selected Model**
+- Modeli çalıştırması gereken cihazların Product'ı ([Tiremo Cloud](../../../Tiremo_Cloud/) içinde provizyonladığınız Cortex ürünü)
 - Tiremo UI
 
 ## Edge'e karşı Cloud
@@ -78,7 +78,7 @@ Bu eğitim **Edge** yolunu yürür: üretilmiş bir `Tiremo_AI` ağacını indir
 
 Design Tutorial zaten böyle bir zip açmasını içerir (`Tiremo-Secure-Iot-Sw-Cloud-Collect-Infer/Tiremo_Lib/Tiremo_AI` kopyası), böylece bir derlemeyi beklemeden API'yi okuyabilirsiniz.
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Solution oluşturun
 
@@ -116,9 +116,9 @@ Girdi tamponunu eğittiğiniz sırada ve birimlerde ardışık örnekler olarak 
 
 ![Cihaz ve alias seçili Solution Activity](../../../../Intelligence/figures/04_solution_activity.png)
 
-## Bittiğinde
+## Tamamlanma Ölçütü
 
-Bir Edge satırı **Ready**, bir zip'iniz var (veya paketlenmiş `Tiremo_AI/`'yi incelediniz) ve Data Explorer o Solution için **Inference**'a yöneltilebilir. HMR vakası için `tiremo_ai_run`'ı Cortex döngüsüne koymak [Design Tutorial 03](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/)'dir.
+Bir Edge satırı **Ready**, bir zip'iniz var (veya paketlenmiş `Tiremo_AI/`'yi incelediniz) ve Data Explorer o Solution için **Inference**'a yöneltilebilir. HMR vakası için `tiremo_ai_run`'ı Cortex döngüsüne koymak [Design Tutorial 03](../../Design_Tutorials/03-Edge_Deployment_HMR/)'dir.
 
 <p align="center"><img alt="" src="../../../../images/banner.png" width="100%"></p>
 

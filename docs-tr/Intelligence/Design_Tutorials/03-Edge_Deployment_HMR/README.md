@@ -27,7 +27,7 @@
 
 Özellik eğitimleri 01–04 her biri genel olarak tek bir Intelligence nesnesini öğretir (dışa aktarma, Data Source, Experiment, Solution). Bu tasarım eğitimi o zinciri gerçekten göndereceğiniz bir şeye uygular: Tiremo Cortex LIS2DE12 üzerinde **Human Motion Recognition**: beş jest, üç eksen, MCU'ya sığan bir model, çıkarım olarak yayınlanan sonuçlar.
 
-Yakalama **128 Hz**'de başladı. O dosya 8 örnekli bir TinyML penceresi için çok yoğundur, bu yüzden aynı kayıt **8 Hz** ve **4 Hz**'e indirgenmiştir. Üç CSV [`Datasets/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Datasets/) içindedir. Intelligence'ın bu vaka için ürettiği Edge paketi [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/) içindedir; `Tiremo-Secure-Iot-Sw-Cloud-Collect-Infer/Tiremo_Lib/Tiremo_AI` klasörünün olduğu gibi kopyası, elle yazılmış bir sürücü değil.
+Yakalama **128 Hz**'de başladı. O dosya 8 örnekli bir TinyML penceresi için çok yoğundur, bu yüzden aynı kayıt **8 Hz** ve **4 Hz**'e indirgenmiştir. Üç CSV [`Datasets/`](Datasets/) içindedir. Intelligence'ın bu vaka için ürettiği Edge paketi [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/) içindedir; `Tiremo-Secure-Iot-Sw-Cloud-Collect-Infer/Tiremo_Lib/Tiremo_AI` klasörünün olduğu gibi kopyası, elle yazılmış bir sürücü değil.
 
 Burada ekstra bir Feature-Tutorial `Sw/` ağacı yoktur. Eğitim ve dağıtım Tiremo UI'dır. Bu tasarım eğitiminin Cortex ikilisi [`Sw/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/) içindedir (`tiremo_ai_run` + `…/inference` MQTT). `Tiremo_AI/` `Sw/` içindedir.
 
@@ -41,10 +41,10 @@ Burada ekstra bir Feature-Tutorial `Sw/` ağacı yoktur. Eğitim ve dağıtım T
 
 ## Ön Koşullar
 
-- Dört [Intelligence Feature Tutorial](../../../../Intelligence/Feature_Tutorials/)
+- Dört [Intelligence Feature Tutorial](../../Feature_Tutorials/)
 - Data Sources / Experiments / Solutions oluşturabilen bir Tiremo UI oturumu
 - İsteğe bağlı: `Datasets/` yerine yeniden yakalıyorsanız `acc_x` / `acc_y` / `acc_z` yayınlayan provizyonlanmış bir Cortex
-- İsteğe bağlı: `Tiremo_AI/`'yi kartta derliyorsanız [Getting Started](../../../../Getting_Started/) + bir Cortex `Sw/`
+- İsteğe bağlı: `Tiremo_AI/`'yi kartta derliyorsanız [Getting Started](../../../Getting_Started/) + bir Cortex `Sw/`
 
 ## Üç dosya: aynı hareket, üç saat
 
@@ -54,7 +54,7 @@ Burada ekstra bir Feature-Tutorial `Sw/` ağacı yoktur. Eğitim ve dağıtım T
 acc_x,acc_y,acc_z,class
 ```
 
-Birimler milli-g'dir ([LIS2DE12](../../../../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/) ile aynı dönüşüm). Sınıflar: `CIRCLE`, `HORIZONTAL`, `STANDBY`, `TRIANGLE`, `VERTICAL`.
+Birimler milli-g'dir ([LIS2DE12](../../../Sensors_And_Storage/Feature_Tutorials/03-LIS2DE12_Accelerometer/) ile aynı dönüşüm). Sınıflar: `CIRCLE`, `HORIZONTAL`, `STANDBY`, `TRIANGLE`, `VERTICAL`.
 
 ![Tiremo Cortex üzerinde beş HMR jesti](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/figures/hmr_gestures_board.png)
 
@@ -160,9 +160,9 @@ UI yolu (Feature 02–04 ile aynı, 4 Hz dosyasıyla):
 
 Veya beklemeyi atlayın ve o indirme olarak [`Tiremo_AI/`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/) kullanın.
 
-**Anlık görüntünün doğrulanmış içeriği** (üretilme 2026-08-24, config hash `a7ad8992e5fc917e`): Classification, pencere 8, 3 öznitelik, girdi 24, 5 sınıf, ANN, konu soneki `inference`. Ayrıntı: [`Tiremo_AI/API.md`](../../../../Intelligence/Design_Tutorials/03-Edge_Deployment_HMR/Sw/Tiremo_AI/API.md).
+**Anlık görüntünün doğrulanmış içeriği** (üretilme 2026-08-24, config hash `a7ad8992e5fc917e`): Classification, pencere 8, 3 öznitelik, girdi 24, 5 sınıf, ANN, konu soneki `inference`. Ayrıntı: [`Tiremo_AI/API.md`](Sw/Tiremo_AI/API.md).
 
-## Adım Adım
+## Adım Adım İnceleme
 
 ### 1. Bir hız seçin ve içe aktarın
 
@@ -212,7 +212,7 @@ Data Explorer → Data Type **Inference** → o Solution. Jestleri tekrarladığ
 
 ![HMR Edge dağıtımı için Solution Activity grafiği](../../../../Intelligence/figures/04_solution_activity.png)
 
-## Bittiğinde
+## Tamamlanma Ölçütü
 
 - 128 → 8 → 4'ü **aynı yakalama, 8 örnekli bir pencerenin bir jesti kapsaması için indirgenmiş** diye açıklayabilirsiniz
 - CSV'lerden biri üzerinde **Classification + Time Series** bir Data Source ve dondurulmuş bir sürüm vardır
