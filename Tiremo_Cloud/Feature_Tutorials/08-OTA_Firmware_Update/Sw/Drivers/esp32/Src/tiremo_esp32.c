@@ -52,6 +52,10 @@
 #define TIREMO_ESP32_MQTT_RX_SIZE        (13312U)
 #define TIREMO_ESP32_MQTT_PUB_TIMEOUT_MS    (10000U)
 #define TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS (1000U)
+/** @brief AT+MQTTSUB / AT+MQTTPUB answer "OK" only after the broker's
+ *  SUBACK / PUBACK, a full TLS round trip. 1 s is too short on a slow
+ *  network, so wait up to 5 s. */
+#define TIREMO_ESP32_MQTT_ACK_TIMEOUT_MS    (5000U)
 
 /* The '>' prompt after AT+MQTTPUBRAW can lag well past the 1 s default
  * command timeout when the module is mid-delivery of an inbound
@@ -519,7 +523,7 @@ bool TIREMO_ESP32_MqttSubscribe(const char *pTopic, uint8_t qos)
                    pTopic, (unsigned int)qos);
 
     return TIREMO_ESP32_SendCommand(command, "OK",
-                                    TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS);
+                                    TIREMO_ESP32_MQTT_ACK_TIMEOUT_MS);
 }
 
 bool TIREMO_ESP32_MqttPublish(const char *pTopic, const char *pPayload,
@@ -537,7 +541,7 @@ bool TIREMO_ESP32_MqttPublish(const char *pTopic, const char *pPayload,
                    pTopic, pPayload, (unsigned int)qos, retain ? 1U : 0U);
 
     return TIREMO_ESP32_SendCommand(command, "OK",
-                                    TIREMO_ESP32_DEFAULT_CMD_TIMEOUT_MS);
+                                    TIREMO_ESP32_MQTT_ACK_TIMEOUT_MS);
 }
 
 /**
