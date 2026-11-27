@@ -214,7 +214,7 @@ See [`Tiremo_AI/API.md`](./Sw/Tiremo_AI/API.md).
 
 Start from the 128 Hz file only if you intend to decimate yourself. For the Edge window of 8, import **4 Hz** (2 s context) or **8 Hz** (1 s). Feature 02's import/Data Studio/version steps apply unchanged.
 
-![Data Studio on the HMR 8 Hz file](../../figures/02_data_studio_labels.png)
+![Data Studio on the HMR dataset](../../figures/02_data_studio_labels.png)
 
 ### 2. Train with window 8
 

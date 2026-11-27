@@ -106,7 +106,7 @@ Değerler milli-g tamsayıları, etiketler beş jest adıdır. Data Explorer'dan
 
 Durum yükleme / çıkarma / analizden geçer, sonra **Dataset Ready** veya **Review Required** / **Dataset Improper**. İncelemeyi temizlemek Data Studio'dadır. İçe aktarmadan sonra profilde veri kümesi satırı görünür; **Review Required** etiketlerin ve Issues'ın henüz kaydedilmediği anlamına gelir.
 
-![Data Source profili, içe aktarmadan sonra, Review Required](../../../../Intelligence/figures/02_data_source_afterimport.png)
+![Data Source profili, içe aktarmadan sonra, Dataset Ready](../../../../Intelligence/figures/02_data_source_afterimport.png)
 
 ### 3. Data Studio: etiketler ve sorunlar
 

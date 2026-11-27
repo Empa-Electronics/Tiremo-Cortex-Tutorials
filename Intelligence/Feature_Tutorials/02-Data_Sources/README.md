@@ -102,7 +102,7 @@ Values are milli-g integers, labels are the five gesture names. If you came from
 
 Status moves through upload / extract / analysis (`Upload in Progress`, `Statistics Extraction in Progress`, `Analysis in Progress`, then **Dataset Ready** or **Review Required** / **Dataset Improper**). Data Studio is how you clear review. After import the dataset row appears on the profile; **Review Required** means labels and issues are not saved yet.
 
-![Data Source profile after import, Review Required](../../figures/02_data_source_afterimport.png)
+![Data Source profile after import, Dataset Ready](../../figures/02_data_source_afterimport.png)
 
 ### 3. Data Studio: labels and issues
 

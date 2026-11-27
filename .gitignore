@@ -2,6 +2,8 @@ referance_only/
 tdf_venv/
 __pycache__/
 *.pyc
+.DS_Store
+*/.DS_Store
 
 # Firmware build trees (also listed in each Sw/.gitignore)
 **/Sw/build/
