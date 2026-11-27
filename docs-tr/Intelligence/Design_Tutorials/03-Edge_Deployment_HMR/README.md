@@ -168,7 +168,7 @@ Veya beklemeyi atlayın ve o indirme olarak [`Tiremo_AI/`](../../../../Intellige
 
 Kendi indirgemenizi yapmayı düşünüyorsanız 128 Hz dosyadan başlayın. Edge penceresi 8 için **4 Hz** (2 s bağlam) veya **8 Hz** (1 s) içe aktarın. Feature 02'nin içe aktarma/Data Studio/sürüm adımları aynıdır.
 
-![HMR 8 Hz dosyasında Data Studio](../../../../Intelligence/figures/02_data_studio_labels.png)
+![HMR veri kümesinde Data Studio](../../../../Intelligence/figures/02_data_studio_labels.png)
 
 ### 2. Pencere 8 ile eğitin
 
